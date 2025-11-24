@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundation Series: Correlation & Basic Regression in Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Fira+Code:wght@400;500;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-blue: #007BA7;
+            --secondary-red: #DC2626;
+            --light-blue: #20B2AA;
+            --pale-blue: #E0F2F1;
+            --teal: #008B8B;
+            --medical-green: #4CAF50;
+            --clinical-gray: #546E7A;
+            --warm-orange: #FF7043;
+            --health-purple: #7B1FA2;
+            --silver: #B0BEC5;
+            --charcoal: #263238;
+            --slate: #455A64;
+            --cream: #F8F9FA;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F0F8FF 50%, var(--pale-blue) 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Healthcare Analytics Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -80%;
+            left: -80%;
+            width: 260%;
+            height: 260%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 123, 167, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 80%, rgba(32, 178, 170, 0.07) 0%, transparent 65%),
+                radial-gradient(ellipse at 95% 10%, rgba(76, 175, 80, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 10% 90%, rgba(255, 112, 67, 0.04) 0%, transparent 55%);
+            animation: analyticsFlow 50s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes analyticsFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.75; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.15) translate(25px, -25px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.85) translate(-20px, 20px); 
+                opacity: 0.8; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.1) translate(15px, -10px); 
+                opacity: 0.9; 
+            }
+        }
+
+        /* Correlation Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(45deg, 
+                    transparent 0px, 
+                    rgba(0, 123, 167, 0.025) 1px, 
+                    transparent 2px, 
+                    transparent 80px),
+                repeating-linear-gradient(-45deg, 
+                    transparent 0px, 
+                    rgba(32, 178, 170, 0.02) 1px, 
+                    transparent 2px, 
+                    transparent 100px);
+            z-index: -1;
+            animation: correlationGrid 35s linear infinite;
+        }
+
+        @keyframes correlationGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(80px) translateY(100px); }
+        }
+
+        .container {
+            max-width: 1900px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 
+                0 0 85px rgba(0, 123, 167, 0.12),
+                0 25px 70px rgba(32, 178, 170, 0.1),
+                0 15px 35px rgba(76, 175, 80, 0.08);
+            border-radius: 45px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            animation: regressionEntry 2.8s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(0, 123, 167, 0.15);
+        }
+
+        @keyframes regressionEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.85) translateY(80px) rotateX(20deg);
+                filter: blur(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Healthcare Analytics Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-blue) 35%, var(--teal) 70%, #006064 100%);
+            color: white;
+            padding: 70px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(75deg, 
+                transparent 0%, 
+                rgba(32, 178, 170, 0.14) 12%, 
+                transparent 28%, 
+                rgba(76, 175, 80, 0.11) 42%, 
+                transparent 58%, 
+                rgba(255, 112, 67, 0.09) 72%, 
+                transparent 88%);
+            animation: analyticsHeader 16s ease-in-out infinite;
+        }
+
+        @keyframes analyticsHeader {
+            0%, 100% { 
+                transform: translateX(-120px) scaleY(1) rotate(0deg); 
+                opacity: 0.8; 
+            }
+            33% { 
+                transform: translateX(70px) scaleY(1.2) rotate(1.5deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-40px) scaleY(0.85) rotate(-1deg); 
+                opacity: 0.88; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4.6em;
+            font-weight: 900;
+            margin-bottom: 32px;
+            text-shadow: 4px 6px 18px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--light-blue) 35%, #B2DFDB 60%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleCorrelation 4.5s ease-in-out infinite alternate;
+            letter-spacing: -2.5px;
+        }
+
+        @keyframes titleCorrelation {
+            from { 
+                filter: drop-shadow(0 0 18px rgba(32, 178, 170, 0.65)); 
+                text-shadow: 0 0 35px rgba(76, 175, 80, 0.45);
+            }
+            to { 
+                filter: drop-shadow(0 0 25px rgba(0, 123, 167, 0.75)); 
+                text-shadow: 0 0 45px rgba(255, 112, 67, 0.55);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 2.0em;
+            font-weight: 400;
+            opacity: 0.94;
+            position: relative;
+            z-index: 2;
+            color: var(--light-blue);
+            text-shadow: 3px 4px 15px rgba(0,0,0,0.5);
+            letter-spacing: 1.3px;
+            font-style: italic;
+        }
+
+        /* Healthcare Analytics Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--light-blue) 20%, var(--medical-green) 40%, var(--warm-orange) 60%, var(--health-purple) 80%, var(--primary-blue) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 5px 0 rgba(32, 178, 170, 0.6);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 45%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(32, 178, 170, 0.18) 50%, 
+                rgba(255,255,255,0.1) 100%);
+            transform: translateX(-180%);
+            animation: analyticsNav 11s ease-in-out infinite;
+        }
+
+        @keyframes analyticsNav {
+            0%, 100% { transform: translateX(-180%); }
+            50% { transform: translateX(450%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 36px 42px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 7px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 0.8px;
+        }
+
+        .tab-button:hover {
+            background: rgba(32, 178, 170, 0.22);
+            transform: translateY(-12px);
+            box-shadow: 0 25px 65px rgba(0,0,0,0.35);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(32, 178, 170, 0.32);
+            border-bottom-color: var(--warm-orange);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -7px 0 var(--warm-orange);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 75px;
+            animation: analyticsSlide 1.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes analyticsSlide {
+            from {
+                opacity: 0;
+                transform: translateY(65px) scale(0.94);
+                filter: blur(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4.0em;
+            color: var(--secondary-red);
+            margin-bottom: 65px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 3px 4px 15px rgba(0,0,0,0.16);
+            letter-spacing: -2.2px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--light-blue) 0%, 
+                var(--medical-green) 16%, 
+                var(--warm-orange) 32%, 
+                var(--health-purple) 48%, 
+                var(--primary-blue) 64%, 
+                var(--teal) 80%, 
+                var(--light-blue) 100%);
+            border-radius: 5px;
+            animation: analyticsUnderline 6.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes analyticsUnderline {
+            from { width: 220px; opacity: 0.75; }
+            to { width: 320px; opacity: 1; }
+        }
+
+        /* Medical Coral/Salmon Boxes - Foundation Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+            gap: 55px;
+            margin-bottom: 75px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, #F0F8FF 50%, var(--white) 100%);
+            padding: 52px;
+            border-radius: 30px;
+            border: 4px solid var(--light-blue);
+            box-shadow: 
+                0 20px 58px rgba(0, 123, 167, 0.1),
+                0 9px 28px rgba(32, 178, 170, 0.12);
+            transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, 
+                rgba(32, 178, 170, 0.1) 0%, 
+                rgba(0, 123, 167, 0.08) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardCorrelation 11s ease-in-out infinite;
+        }
+
+        @keyframes cardCorrelation {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.85; 
+            }
+            25% { 
+                transform: scale(1.25) translateX(35px) translateY(-35px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.8) translateX(-25px) translateY(25px) rotate(180deg); 
+                opacity: 0.8; 
+            }
+            75% { 
+                transform: scale(1.15) translateX(25px) translateY(-15px) rotate(270deg); 
+                opacity: 0.9; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-25px) rotateX(15deg) rotateY(6deg);
+            box-shadow: 
+                0 25px 60px rgba(0, 123, 167, 0.15),
+                0 10px 25px rgba(32, 178, 170, 0.18);
+            border-color: var(--primary-blue);
+        }
+
+        .theory-card h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary-red);
+            margin-bottom: 38px;
+            font-size: 2.2em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.8px;
+        }
+
+        .theory-card p {
+            font-size: 1.3em;
+            line-height: 1.9;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Analytics Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-blue) 50%, var(--teal) 100%);
+            color: white;
+            padding: 48px;
+            border-radius: 28px;
+            margin: 42px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.35em;
+            box-shadow: 
+                inset 0 4px 25px rgba(0,0,0,0.5), 
+                0 15px 40px rgba(0, 123, 167, 0.25);
+            overflow-x: auto;
+            border: 4px solid rgba(32, 178, 170, 0.4);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--light-blue) 15%, 
+                var(--medical-green) 30%, 
+                var(--warm-orange) 45%, 
+                var(--health-purple) 60%, 
+                var(--primary-blue) 75%, 
+                transparent 100%);
+            animation: formulaCorrelation 5.2s ease-in-out infinite;
+        }
+
+        @keyframes formulaCorrelation {
+            0%, 100% { opacity: 0.65; transform: scaleX(0.5); }
+            50% { opacity: 1; transform: scaleX(1.6); }
+        }
+
+        /* Medical Coral Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, #F0F8FF 50%, var(--white) 100%);
+            padding: 58px;
+            border-radius: 34px;
+            margin: 58px 0;
+            border: 5px solid var(--light-blue);
+            box-shadow: 
+                0 25px 70px rgba(32, 178, 170, 0.18),
+                inset 0 1px 0 rgba(255,255,255,0.98);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -110%;
+            left: -110%;
+            width: 320%;
+            height: 320%;
+            background: conic-gradient(from 60deg at 50% 50%, 
+                transparent 0%, 
+                rgba(32, 178, 170, 0.05) 22%, 
+                transparent 44%, 
+                rgba(0, 123, 167, 0.04) 66%, 
+                transparent 88%);
+            animation: controlCorrelation 26s linear infinite;
+        }
+
+        @keyframes controlCorrelation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary-red);
+            font-size: 3.2em;
+            margin-bottom: 48px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.8px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 45px;
+            margin-bottom: 55px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 22px;
+            color: var(--charcoal);
+            font-size: 1.3em;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 28px;
+            border: 2px solid #E5E7EB;
+            border-radius: 20px;
+            font-size: 1.2em;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 6px 22px rgba(0,0,0,0.07);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 
+                0 0 30px rgba(0, 123, 167, 0.3),
+                0 0 0 4px rgba(32, 178, 170, 0.18);
+            transform: translateY(-6px) scale(1.03);
+        }
+
+        /* Healthcare Analytics Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 35px;
+            margin-top: 55px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 30px 60px;
+            border: none;
+            border-radius: 22px;
+            font-weight: 600;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2.0px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.7) 50%, 
+                transparent 100%);
+            transition: left 1.0s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--teal) 100%);
+            color: white;
+            box-shadow: 0 11px 30px rgba(0, 123, 167, 0.42);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--primary-blue) 100%);
+            transform: translateY(-9px);
+            box-shadow: 0 18px 50px rgba(0, 123, 167, 0.48);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--medical-green) 0%, #388E3C 100%);
+            color: white;
+            box-shadow: 0 11px 30px rgba(76, 175, 80, 0.42);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #388E3C 0%, var(--medical-green) 100%);
+            transform: translateY(-9px);
+            box-shadow: 0 18px 50px rgba(76, 175, 80, 0.48);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--warm-orange) 0%, #E64A19 100%);
+            color: white;
+            box-shadow: 0 11px 30px rgba(255, 112, 67, 0.42);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #E64A19 0%, var(--warm-orange) 100%);
+            transform: translateY(-9px);
+            box-shadow: 0 18px 50px rgba(255, 112, 67, 0.48);
+        }
+
+        /* Medical Coral Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, #F0F8FF 100%);
+            border: 5px solid var(--light-blue);
+            border-radius: 38px;
+            padding: 65px;
+            margin: 65px 0;
+            box-shadow: 
+                0 35px 100px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 7px;
+            background: linear-gradient(90deg, 
+                var(--light-blue) 0%, 
+                var(--medical-green) 14%, 
+                var(--warm-orange) 28%, 
+                var(--health-purple) 42%, 
+                var(--primary-blue) 56%, 
+                var(--teal) 70%, 
+                var(--light-blue) 84%, 
+                var(--light-blue) 100%);
+            animation: analyticsResults 5.2s ease-in-out infinite;
+        }
+
+        @keyframes analyticsResults {
+            0%, 100% { opacity: 0.75; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.3em;
+            color: var(--secondary-red);
+            margin-bottom: 48px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+        }
+
+        /* Medical Coral Chart Container */
+        .chart-container {
+            position: relative;
+            height: 700px;
+            margin: 65px 0;
+            background: linear-gradient(135deg, var(--pale-blue) 0%, var(--white) 100%);
+            border-radius: 26px;
+            padding: 48px;
+            box-shadow: 0 20px 58px rgba(0,0,0,0.14);
+            border: 4px solid var(--light-blue);
+        }
+
+        /* Statistics Grid - Medical Coral Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 45px;
+            margin: 58px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, var(--white) 100%);
+            padding: 40px;
+            border-radius: 22px;
+            text-align: center;
+            border: 4px solid var(--light-blue);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--light-blue) 0%, var(--primary-blue) 50%, var(--medical-green) 100%);
+            transform: scaleX(0);
+            transition: transform 0.7s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-18px) scale(1.05);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.2);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 2.4em;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 18px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            color: var(--slate);
+            font-weight: 500;
+        }
+
+        /* Correlation & Regression-Specific Elements */
+        .correlation-info {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, #F0F8FF 100%);
+            border: 4px solid var(--light-blue);
+            border-radius: 25px;
+            padding: 45px;
+            margin: 45px 0;
+        }
+
+        .regression-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 28px;
+            margin: 38px 0;
+        }
+
+        .regression-metric-card {
+            background: var(--primary-coral);
+            color: white;
+            padding: 28px 20px;
+            border-radius: 18px;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .regression-metric-card:nth-child(1) { background: var(--light-blue); }
+        .regression-metric-card:nth-child(2) { background: var(--medical-green); }
+        .regression-metric-card:nth-child(3) { background: var(--primary-blue); }
+        .regression-metric-card:nth-child(4) { background: var(--warm-orange); }
+
+        /* Decision Framework - Medical Coral */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, rgba(32, 178, 170, 0.25) 100%);
+            border: 5px solid var(--light-blue);
+            border-radius: 35px;
+            padding: 55px;
+            margin: 55px 0;
+        }
+
+        .decision-question {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.7em;
+            margin-bottom: 45px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 35px;
+        }
+
+        .decision-option {
+            padding: 35px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 22px;
+            cursor: pointer;
+            transition: all 0.7s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.2em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--medical-green);
+            background: #E8F5E8;
+            transform: translateY(-8px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-blue);
+            background: var(--pale-blue);
+            box-shadow: 0 0 32px rgba(0, 123, 167, 0.4);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 45px;
+            border-radius: 26px;
+            margin: 45px 0;
+            font-weight: 500;
+            font-size: 1.3em;
+        }
+
+        .feedback-success {
+            background: var(--pale-blue);
+            border: 4px solid var(--light-blue);
+            color: var(--teal);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 4px solid var(--warm-orange);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 4px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 25px;
+                border-radius: 38px;
+            }
+
+            .header-title {
+                font-size: 3.4em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .regression-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Coral */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-coral) 0%, #F0F8FF 100%);
+            padding: 45px;
+            border-radius: 22px;
+            margin: 45px 0;
+            border-left: 8px solid var(--primary-blue);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '📈';
+            position: absolute;
+            top: 45px;
+            left: 38px;
+            font-size: 1.7em;
+        }
+
+        .research-note p {
+            margin-left: 55px;
+            line-height: 2.0;
+        }
+
+        /* Advanced Visual Effects */
+        .analytics-highlight {
+            background: rgba(0, 123, 167, 0.12);
+            border-left: 7px solid var(--primary-blue);
+            padding: 26px;
+            margin: 26px 0;
+            border-radius: 14px;
+        }
+
+        .r-value-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+            color: white;
+            padding: 14px 26px;
+            border-radius: 30px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            margin: 0 14px;
+            font-size: 1.1em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-healthcare {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 22px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 0.92em;
+            display: inline-block;
+            margin: 0 12px;
+        }
+
+        /* Scatterplot Visualization */
+        .scatterplot-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--pale-blue);
+            padding: 30px;
+            border-radius: 18px;
+            margin: 30px 0;
+        }
+
+        .scatter-metric {
+            background: var(--primary-blue);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 14px;
+            text-align: center;
+            flex: 1;
+            margin: 0 12px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 1.0em;
+        }
+
+        .scatter-metric:first-child {
+            background: var(--light-blue);
+        }
+
+        .scatter-metric:nth-child(2) {
+            background: var(--medical-green);
+        }
+
+        .scatter-metric:last-child {
+            background: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Correlation & Basic Regression in Healthcare</h1>
+            <p class="header-subtitle">Foundation Series: Analyzing Health Outcome Relationships</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">📈 Correlation & Regression Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Healthcare Analytics</button>
+            <button class="tab-button" onclick="showSection('analysis')">📊 Statistical Modeling</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Correlation & Regression Framework for Healthcare</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>📈 Correlation in Medical Data</h3>
+                    <p><strong>Relationship Quantification:</strong> Correlation measures the strength and direction of linear relationships between health variables, providing foundation for understanding disease patterns and treatment responses.</p>
+                    <div class="formula-display">
+                        Pearson Correlation: r = Σ(x-x̄)(y-ȳ)/√[Σ(x-x̄)²Σ(y-ȳ)²]<br><br>
+                        Range: -1 ≤ r ≤ +1<br>
+                        |r| > 0.7: Strong relationship<br>
+                        0.3 < |r| ≤ 0.7: Moderate relationship<br>
+                        |r| ≤ 0.3: Weak relationship
+                    </div>
+                    <p><em>Clinical insight: Strong correlations suggest potential causal relationships requiring further investigation</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎯 Simple Linear Regression</h3>
+                    <p><strong>Predictive Modeling:</strong> Linear regression quantifies how one health variable predicts another, enabling clinical prediction models and treatment planning.</p>
+                    <div class="formula-display">
+                        Linear Model: Y = β₀ + β₁X + ε<br><br>
+                        Slope: β₁ = Σ(x-x̄)(y-ȳ)/Σ(x-x̄)²<br>
+                        Intercept: β₀ = ȳ - β₁x̄<br>
+                        R²: Proportion of variance explained
+                    </div>
+                    <p><strong>Medical Interpretation:</strong> β₁ represents the expected change in outcome for one unit increase in predictor</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔍 Model Assumptions in Healthcare</h3>
+                    <p><strong>Validity Requirements:</strong> Medical regression models require specific assumptions about data structure to ensure valid clinical interpretations and reliable predictions.</p>
+                    <div class="formula-display">
+                        1. Linearity: Relationship is linear<br>
+                        2. Independence: Observations independent<br>
+                        3. Homoscedasticity: Constant variance<br>
+                        4. Normality: Residuals normally distributed<br><br>
+                        Diagnostic: Residual plots, Q-Q plots
+                    </div>
+                    <p><strong>Clinical Impact:</strong> Violated assumptions can lead to incorrect medical conclusions and inappropriate treatment decisions</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⚠️ Confounding in Medical Research</h3>
+                    <p><strong>Bias Recognition:</strong> Confounding variables can create spurious correlations in health data, requiring careful consideration in study design and interpretation.</p>
+                    <div class="formula-display">
+                        Confounding occurs when:<br>
+                        1. Variable associated with exposure<br>
+                        2. Variable associated with outcome<br>
+                        3. Variable not on causal pathway<br><br>
+                        Solution: Control, stratify, or adjust
+                    </div>
+                    <p><strong>Example:</strong> Age confounds relationship between exercise and heart disease - older patients exercise less and have more disease</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📊 R-squared & Clinical Relevance</h3>
+                    <p><strong>Explained Variation:</strong> R-squared quantifies how much outcome variation is explained by the predictor, but clinical relevance depends on context and effect size.</p>
+                    <div class="formula-display">
+                        R² = SS_regression / SS_total<br>
+                        R² = 1 - SS_residual / SS_total<br><br>
+                        Adjusted R² = 1 - [(1-R²)(n-1)/(n-p-1)]<br>
+                        (accounts for model complexity)
+                    </div>
+                    <p><strong>Clinical Note:</strong> Low R² doesn't mean clinically irrelevant - biological systems are complex with multiple influences</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🩺 Diagnostic Plots & Residual Analysis</h3>
+                    <p><strong>Model Validation:</strong> Residual analysis identifies model violations and guides improvements in medical prediction models for better clinical accuracy.</p>
+                    <div class="formula-display">
+                        Residual: e = Y_observed - Y_predicted<br><br>
+                        Plots for assessment:<br>
+                        • Residuals vs. Fitted Values<br>
+                        • Q-Q Plot of Residuals<br>
+                        • Scale-Location Plot<br>
+                        • Cook's Distance (outliers)
+                    </div>
+                    <p><strong>Clinical Application:</strong> Outliers may represent rare conditions or measurement errors requiring clinical review</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Healthcare Correlation & Regression Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 40px;">
+                    <div>
+                        <h4>🏥 Clinical Prediction Models:</h4>
+                        <ul>
+                            <li><strong>BMI & Cardiovascular Risk:</strong> Predicting blood pressure from body mass index</li>
+                            <li><strong>Length of Stay Prediction:</strong> Hospital resource planning models</li>
+                            <li><strong>Medication Dosing:</strong> Dose-response relationships for optimal treatment</li>
+                            <li><strong>Biomarker Analysis:</strong> Laboratory values predicting disease progression</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Population Health Analytics:</h4>
+                        <ul>
+                            <li><strong>Age & Screening Efficacy:</strong> Optimizing population screening programs</li>
+                            <li><strong>Wait Times & Satisfaction:</strong> Healthcare quality improvement models</li>
+                            <li><strong>Socioeconomic & Health:</strong> Health equity analysis and policy planning</li>
+                            <li><strong>Environmental & Disease:</strong> Public health surveillance and prevention</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>📈 Evidence-Based Analytics Foundation:</strong> Correlation and regression analysis provide essential tools for understanding relationships in health data and developing predictive models for clinical decision support. These methods enable healthcare professionals to identify risk factors, develop screening protocols, optimize treatment algorithms, and support evidence-based medical practice through quantitative relationship analysis.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Healthcare Analytics Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Healthcare Analytics Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">📈 Correlation & Regression Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="healthcareModel">Canadian Healthcare Model</label>
+                        <select id="healthcareModel" onchange="updateHealthcareModel()">
+                            <option value="bmi_bp">BMI & Blood Pressure Relationship</option>
+                            <option value="los_prediction">Hospital Length of Stay Prediction</option>
+                            <option value="medication_dose">Medication Dosage & Efficacy</option>
+                            <option value="age_screening">Age & Screening Outcomes</option>
+                            <option value="wait_satisfaction">Wait Time & Patient Satisfaction</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysisType">Analysis Method</label>
+                        <select id="analysisType">
+                            <option value="correlation" selected>Correlation Analysis</option>
+                            <option value="simple_regression">Simple Linear Regression</option>
+                            <option value="both">Both Correlation & Regression</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeHealth">Sample Size</label>
+                        <select id="sampleSizeHealth">
+                            <option value="100">100 patients</option>
+                            <option value="250" selected>250 patients</option>
+                            <option value="500">500 patients</option>
+                            <option value="1000">1,000 patients</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="correlationStrength">Expected Correlation Strength</label>
+                        <input type="range" id="correlationStrength" min="0.1" max="0.9" step="0.1" value="0.6" onchange="updateCorrelationDisplay()">
+                        <span id="correlationValue">0.6</span> (moderate to strong)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateHealthcareData()">📈 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performCorrelationAnalysis()">📊 Analyze Relationships</button>
+                    <button class="btn btn-accent" onclick="createRegressionModel()">🎯 Build Model</button>
+                </div>
+            </div>
+
+            <!-- Healthcare Model Description -->
+            <div id="healthcareDescription" class="correlation-info">
+                <div class="results-header">Current Healthcare Analytics Model</div>
+                <div id="healthcareText"></div>
+                <div id="regressionMetrics" class="regression-metrics"></div>
+            </div>
+
+            <!-- Healthcare Analytics Chart -->
+            <div class="chart-container">
+                <canvas id="healthcareChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Statistical Modeling Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Correlation & Regression Analysis</h2>
+
+            <div id="correlationResults" class="results-container">
+                <div class="results-header">Correlation Analysis Results</div>
+                <div id="correlationTable"></div>
+            </div>
+
+            <div class="stats-grid" id="healthcareStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="regressionResults" class="results-container">
+                <div class="results-header">📈 Regression Model & Clinical Interpretation</div>
+                <div id="regressionTable"></div>
+            </div>
+
+            <!-- Residual Analysis Chart -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 40px; color: var(--secondary-red);">📊 Model Diagnostics & Residual Analysis</h3>
+                <canvas id="residualChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Correlation & Regression Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading correlation and regression assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 45px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 55px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Clinical Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentHealthcareData = null;
+        let currentHealthcareChart = null;
+        let residualChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Healthcare Model Definitions
+        const healthcareModels = {
+            bmi_bp: {
+                title: "BMI & Blood Pressure Relationship Analysis",
+                description: "Examining the correlation between body mass index and systolic blood pressure in Canadian adults to assess cardiovascular risk factors and guide clinical screening protocols.",
+                predictor: "Body Mass Index (kg/m²)",
+                outcome: "Systolic Blood Pressure (mmHg)",
+                population: "Canadian adults aged 20-65 years",
+                clinical_context: "Cardiovascular risk assessment and obesity management",
+                expected_relationship: "Positive correlation (r ≈ 0.4-0.6)",
+                confounders: "Age, sex, physical activity, sodium intake, medications",
+                clinical_relevance: "BMI screening for hypertension risk stratification",
+                interpretation: "Each 1 kg/m² increase in BMI associated with ~1-2 mmHg increase in SBP"
+            },
+            los_prediction: {
+                title: "Hospital Length of Stay Prediction Model",
+                description: "Developing regression models to predict acute care length of stay based on patient age for resource planning and capacity management in Canadian hospitals.",
+                predictor: "Patient Age (years)",
+                outcome: "Length of Stay (days)",
+                population: "Acute care inpatients, all diagnoses",
+                clinical_context: "Hospital resource planning and capacity management",
+                expected_relationship: "Positive correlation (r ≈ 0.3-0.5)",
+                confounders: "Diagnosis severity, comorbidities, surgical vs. medical admission",
+                clinical_relevance: "Capacity planning and discharge planning optimization",
+                interpretation: "Each additional year of age associated with 0.1-0.2 additional hospital days"
+            },
+            medication_dose: {
+                title: "Medication Dosage & Efficacy Analysis",
+                description: "Analyzing dose-response relationships for antihypertensive medications to optimize treatment protocols and achieve target blood pressure control in Canadian patients.",
+                predictor: "Medication Dose (mg/day)",
+                outcome: "Blood Pressure Reduction (mmHg)",
+                population: "Hypertensive patients on ACE inhibitors",
+                clinical_context: "Pharmacotherapy optimization and personalized medicine",
+                expected_relationship: "Positive correlation with plateau (r ≈ 0.6-0.8)",
+                confounders: "Baseline BP, patient weight, kidney function, adherence",
+                clinical_relevance: "Optimal dosing protocols and therapeutic drug monitoring",
+                interpretation: "Dose-response plateau typically occurs at 80% maximum dose"
+            },
+            age_screening: {
+                title: "Age & Cancer Screening Outcomes",
+                description: "Evaluating the relationship between patient age and cancer screening detection rates to optimize population-based screening program protocols across Canadian provinces.",
+                predictor: "Patient Age (years)",
+                outcome: "Screening Detection Rate (%)",
+                population: "Average-risk adults in screening programs",
+                clinical_context: "Population health screening program optimization",
+                expected_relationship: "Positive correlation (r ≈ 0.5-0.7)",
+                confounders: "Risk factors, family history, previous screening history",
+                clinical_relevance: "Age-based screening interval optimization",
+                interpretation: "Detection rates increase with age due to higher disease prevalence"
+            },
+            wait_satisfaction: {
+                title: "Wait Time & Patient Satisfaction Analysis",
+                description: "Examining the relationship between surgical wait times and patient satisfaction scores to improve healthcare quality and patient experience in Canadian health systems.",
+                predictor: "Wait Time (days)",
+                outcome: "Patient Satisfaction Score (0-100)",
+                population: "Elective surgery patients",
+                clinical_context: "Healthcare quality improvement and patient experience",
+                expected_relationship: "Negative correlation (r ≈ -0.4 to -0.6)",
+                confounders: "Surgery type, patient expectations, communication quality",
+                clinical_relevance: "Wait time benchmarks and patient experience optimization",
+                interpretation: "Each additional week of wait time associated with 2-3 point satisfaction decrease"
+            }
+        };
+
+        // Assessment Questions (Correlation & Regression focused)
+        const assessmentQuestions = [
+            {
+                question: "A correlation coefficient of r = -0.65 between medication adherence and hospital readmissions indicates:",
+                options: [
+                    "65% of patients with poor adherence are readmitted",
+                    "A strong negative relationship - higher adherence predicts fewer readmissions",
+                    "The medication causes 65% reduction in readmissions",
+                    "There is no clinically significant relationship"
+                ],
+                correct: 1,
+                explanation: "A correlation of r = -0.65 indicates a strong negative relationship. As medication adherence increases, hospital readmissions tend to decrease. The magnitude (0.65) indicates a strong relationship, and the negative sign shows the inverse association."
+            },
+            {
+                question: "In a regression model predicting blood pressure from BMI, the slope β₁ = 1.8. This means:",
+                options: [
+                    "BMI explains 1.8% of blood pressure variation",
+                    "For each 1 kg/m² increase in BMI, blood pressure increases by 1.8 mmHg on average",
+                    "The correlation between BMI and blood pressure is 1.8",
+                    "The model has 1.8% error rate"
+                ],
+                correct: 1,
+                explanation: "The regression slope (β₁) represents the expected change in the outcome variable for a one-unit increase in the predictor. A slope of 1.8 means that for each 1 kg/m² increase in BMI, systolic blood pressure is predicted to increase by 1.8 mmHg on average."
+            },
+            {
+                question: "An R² value of 0.25 in a clinical prediction model means:",
+                options: [
+                    "The model is 25% accurate",
+                    "25% of patients will benefit from the treatment",
+                    "The predictor explains 25% of the variation in the outcome",
+                    "There is a 25% chance the relationship is real"
+                ],
+                correct: 2,
+                explanation: "R² represents the proportion of variance in the outcome variable that is explained by the predictor variable(s). An R² of 0.25 means that 25% of the variation in the outcome is explained by the predictor, while 75% remains unexplained."
+            },
+            {
+                question: "Age is a potential confounder in the relationship between exercise and heart disease because:",
+                options: [
+                    "Age causes both exercise and heart disease",
+                    "Age is associated with both exercise levels and heart disease risk",
+                    "Age is on the causal pathway between exercise and heart disease",
+                    "Age is the most important risk factor for heart disease"
+                ],
+                correct: 1,
+                explanation: "A confounder is associated with both the exposure (exercise) and outcome (heart disease) but is not on the causal pathway. Older people tend to exercise less AND have higher heart disease risk, potentially creating a spurious association."
+            },
+            {
+                question: "In residual analysis, a funnel-shaped pattern in the residuals vs. fitted values plot indicates:",
+                options: [
+                    "The relationship is non-linear",
+                    "There are outliers in the data",
+                    "The assumption of constant variance (homoscedasticity) is violated",
+                    "The residuals are normally distributed"
+                ],
+                correct: 2,
+                explanation: "A funnel or fan-shaped pattern in residuals vs. fitted values indicates heteroscedasticity - the variance of residuals changes across fitted values. This violates the homoscedasticity assumption and may require transformation or robust standard errors."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Healthcare Model Management
+        function updateHealthcareModel() {
+            const modelType = document.getElementById('healthcareModel').value;
+            const model = healthcareModels[modelType];
+            
+            document.getElementById('healthcareText').innerHTML = `
+                <h3 style="color: var(--secondary-red); margin-bottom: 25px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>📈 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Predictor Variable:</strong> ${model.predictor}</p>
+                <p><strong>Outcome Variable:</strong> ${model.outcome}</p>
+                <p><strong>Target Population:</strong> ${model.population}</p>
+                <p><strong>Expected Relationship:</strong> ${model.expected_relationship}</p>
+                <p><strong>Potential Confounders:</strong> ${model.confounders}</p>
+                <p><strong>Clinical Relevance:</strong> ${model.clinical_relevance}</p>
+                <p><strong>Clinical Interpretation:</strong> ${model.interpretation}</p>
+            `;
+            
+            updateRegressionMetrics();
+        }
+
+        function updateRegressionMetrics() {
+            const analysisType = document.getElementById('analysisType').value;
+            const container = document.getElementById('regressionMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(analysisType) {
+                case 'correlation': metrics = ['Pearson r', 'Correlation p-value', 'Effect Size', 'Clinical Significance']; break;
+                case 'simple_regression': metrics = ['Slope (β₁)', 'R-squared', 'F-statistic', 'Model p-value']; break;
+                case 'both': metrics = ['Correlation (r)', 'R-squared', 'Slope (β₁)', 'Residual SE']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'regression-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateCorrelationDisplay() {
+            const correlation = document.getElementById('correlationStrength').value;
+            const strength = correlation < 0.3 ? 'weak' : 
+                           correlation < 0.7 ? 'moderate' : 'strong';
+            document.getElementById('correlationValue').textContent = `${correlation} (${strength})`;
+        }
+
+        // Healthcare Data Generation
+        function generateHealthcareData() {
+            const modelType = document.getElementById('healthcareModel').value;
+            const analysisType = document.getElementById('analysisType').value;
+            const sampleSize = parseInt(document.getElementById('sampleSizeHealth').value);
+            const expectedCorrelation = parseFloat(document.getElementById('correlationStrength').value);
+            
+            const model = healthcareModels[modelType];
+            
+            currentHealthcareData = {
+                model: model,
+                analysisType: analysisType,
+                sampleSize: sampleSize,
+                expectedCorrelation: expectedCorrelation,
+                data: []
+            };
+
+            // Generate healthcare data with specified correlation
+            let baseX, baseY, scaleX, scaleY;
+            switch(modelType) {
+                case 'bmi_bp':
+                    baseX = 25; scaleX = 8; baseY = 120; scaleY = 20; break;
+                case 'los_prediction':
+                    baseX = 55; scaleX = 20; baseY = 5; scaleY = 4; break;
+                case 'medication_dose':
+                    baseX = 20; scaleX = 15; baseY = 10; scaleY = 8; break;
+                case 'age_screening':
+                    baseX = 55; scaleX = 15; baseY = 3; scaleY = 4; break;
+                case 'wait_satisfaction':
+                    baseX = 60; scaleX = 40; baseY = 75; scaleY = 20; break;
+            }
+
+            // Generate correlated data using bivariate normal approach
+            for (let i = 0; i < sampleSize; i++) {
+                const z1 = generateStandardNormal();
+                const z2 = generateStandardNormal();
+                
+                const x = z1;
+                const y = expectedCorrelation * z1 + Math.sqrt(1 - expectedCorrelation * expectedCorrelation) * z2;
+                
+                let finalX = baseX + scaleX * x;
+                let finalY = baseY + scaleY * y;
+                
+                // Apply model-specific constraints and sign
+                if (modelType === 'wait_satisfaction') {
+                    finalY = baseY - scaleY * Math.abs(y); // Negative relationship
+                } else {
+                    finalY = baseY + scaleY * y; // Positive relationship
+                }
+                
+                // Apply realistic bounds
+                finalX = Math.max(0, finalX);
+                if (modelType === 'wait_satisfaction') {
+                    finalY = Math.max(20, Math.min(100, finalY));
+                } else {
+                    finalY = Math.max(0, finalY);
+                }
+                
+                currentHealthcareData.data.push({
+                    id: i,
+                    x: finalX,
+                    y: finalY,
+                    age: 30 + Math.random() * 50,
+                    sex: Math.random() < 0.52 ? 'Female' : 'Male',
+                    region: Math.random() < 0.3 ? 'Rural' : 'Urban'
+                });
+            }
+
+            updateHealthcareChart();
+        }
+
+        function generateStandardNormal() {
+            // Box-Muller transform
+            const u = 0.5 - Math.random();
+            const v = 0.5 - Math.random();
+            return Math.sqrt(-2 * Math.log(Math.abs(u))) * Math.cos(2 * Math.PI * v);
+        }
+
+        function updateHealthcareChart() {
+            if (!currentHealthcareData) return;
+            
+            const ctx = document.getElementById('healthcareChart').getContext('2d');
+            
+            if (currentHealthcareChart) {
+                currentHealthcareChart.destroy();
+            }
+
+            // Create scatterplot
+            const scatterData = currentHealthcareData.data.map(d => ({
+                x: d.x,
+                y: d.y
+            }));
+
+            currentHealthcareChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Healthcare Data',
+                        data: scatterData,
+                        backgroundColor: 'rgba(255, 107, 71, 0.6)',
+                        borderColor: '#FF6B47',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentHealthcareData.model.title} - Relationship Analysis`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: currentHealthcareData.model.predictor },
+                            type: 'linear',
+                            position: 'bottom'
+                        },
+                        y: {
+                            title: { display: true, text: currentHealthcareData.model.outcome }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Correlation & Regression Analysis
+        function performCorrelationAnalysis() {
+            if (!currentHealthcareData) {
+                alert('Please generate healthcare data first');
+                return;
+            }
+
+            const xValues = currentHealthcareData.data.map(d => d.x);
+            const yValues = currentHealthcareData.data.map(d => d.y);
+            
+            // Calculate correlation
+            const n = xValues.length;
+            const xMean = xValues.reduce((sum, val) => sum + val, 0) / n;
+            const yMean = yValues.reduce((sum, val) => sum + val, 0) / n;
+            
+            const numerator = xValues.reduce((sum, x, i) => sum + (x - xMean) * (yValues[i] - yMean), 0);
+            const denomX = Math.sqrt(xValues.reduce((sum, x) => sum + Math.pow(x - xMean, 2), 0));
+            const denomY = Math.sqrt(yValues.reduce((sum, y) => sum + Math.pow(y - yMean, 2), 0));
+            
+            const correlation = numerator / (denomX * denomY);
+            const rSquared = correlation * correlation;
+            
+            // Simple significance test (approximate)
+            const tStat = correlation * Math.sqrt((n - 2) / (1 - rSquared));
+            const pValue = 2 * (1 - approximateTCDF(Math.abs(tStat), n - 2));
+
+            const correlationResults = {
+                correlation: correlation,
+                rSquared: rSquared,
+                tStatistic: tStat,
+                pValue: pValue,
+                n: n,
+                xMean: xMean,
+                yMean: yMean
+            };
+
+            displayCorrelationResults(correlationResults);
+        }
+
+        function approximateTCDF(t, df) {
+            // Simple approximation for t-distribution CDF
+            if (df > 30) return approximateNormalCDF(t);
+            return Math.max(0, Math.min(1, 0.5 + t / (2 * Math.sqrt(3 + df))));
+        }
+
+        function approximateNormalCDF(x) {
+            return 0.5 * (1 + Math.sign(x) * Math.sqrt(1 - Math.exp(-2 * x * x / Math.PI)));
+        }
+
+        function displayCorrelationResults(results) {
+            const strength = Math.abs(results.correlation) > 0.7 ? 'Strong' : 
+                           Math.abs(results.correlation) > 0.3 ? 'Moderate' : 'Weak';
+            const direction = results.correlation > 0 ? 'Positive' : 'Negative';
+            const significance = results.pValue < 0.05 ? '✅ Significant' : '❌ Not Significant';
+            
+            document.getElementById('correlationTable').innerHTML = `
+                <h4>📈 Correlation Analysis Results</h4>
+                <div style="font-family: 'Fira Code', monospace; background: var(--pale-coral); padding: 40px; border-radius: 22px; margin: 35px 0;">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; font-weight: 600; border-bottom: 2px solid #ccc; padding-bottom: 20px;">
+                        <div>Correlation Statistic</div>
+                        <div>Value</div>
+                        <div>Interpretation</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0;">
+                        <div>Pearson Correlation (r)</div>
+                        <div class="r-value-display">${results.correlation.toFixed(3)}</div>
+                        <div>${strength} ${direction}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0; background: rgba(255, 107, 71, 0.1);">
+                        <div>R-squared (r²)</div>
+                        <div class="r-value-display">${results.rSquared.toFixed(3)}</div>
+                        <div>${(results.rSquared * 100).toFixed(1)}% variance explained</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0;">
+                        <div>t-statistic</div>
+                        <div class="r-value-display">${results.tStatistic.toFixed(3)}</div>
+                        <div>${Math.abs(results.tStatistic) > 2 ? 'Strong evidence' : 'Weak evidence'}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0; background: rgba(255, 107, 71, 0.1);">
+                        <div>p-value</div>
+                        <div class="r-value-display">${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}</div>
+                        <div>${significance}</div>
+                    </div>
+                </div>
+                <div class="analytics-highlight">
+                    <p><strong>📈 Clinical Correlation Interpretation:</strong> 
+                    The ${strength.toLowerCase()} ${direction.toLowerCase()} correlation (r = ${results.correlation.toFixed(3)}) 
+                    ${results.pValue < 0.05 ? 'is statistically significant' : 'is not statistically significant'}. 
+                    This relationship explains ${(results.rSquared * 100).toFixed(1)}% of the variance in 
+                    ${currentHealthcareData.model.outcome.toLowerCase()}, suggesting 
+                    ${results.rSquared > 0.25 ? 'clinically meaningful' : 'limited but potentially relevant'} predictive value.
+                    </p>
+                </div>
+            `;
+
+            // Update statistics display
+            document.getElementById('healthcareStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${results.correlation.toFixed(3)}</div>
+                    <div class="stat-label">Pearson r</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.rSquared * 100).toFixed(1)}%</div>
+                    <div class="stat-label">Variance Explained</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.tStatistic.toFixed(3)}</div>
+                    <div class="stat-label">t-statistic</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}</div>
+                    <div class="stat-label">p-value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${strength}</div>
+                    <div class="stat-label">Relationship Strength</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.n}</div>
+                    <div class="stat-label">Sample Size</div>
+                </div>
+            `;
+        }
+
+        function createRegressionModel() {
+            if (!currentHealthcareData) {
+                alert('Please perform correlation analysis first');
+                return;
+            }
+
+            const xValues = currentHealthcareData.data.map(d => d.x);
+            const yValues = currentHealthcareData.data.map(d => d.y);
+            
+            const n = xValues.length;
+            const xMean = xValues.reduce((sum, val) => sum + val, 0) / n;
+            const yMean = yValues.reduce((sum, val) => sum + val, 0) / n;
+            
+            // Calculate regression coefficients
+            const numerator = xValues.reduce((sum, x, i) => sum + (x - xMean) * (yValues[i] - yMean), 0);
+            const denominator = xValues.reduce((sum, x) => sum + Math.pow(x - xMean, 2), 0);
+            
+            const slope = numerator / denominator;
+            const intercept = yMean - slope * xMean;
+            
+            // Calculate R-squared
+            const ssTotal = yValues.reduce((sum, y) => sum + Math.pow(y - yMean, 2), 0);
+            const predicted = xValues.map(x => intercept + slope * x);
+            const ssResidual = yValues.reduce((sum, y, i) => sum + Math.pow(y - predicted[i], 2), 0);
+            const rSquared = 1 - (ssResidual / ssTotal);
+            
+            // Standard error of regression
+            const standardError = Math.sqrt(ssResidual / (n - 2));
+            
+            const regressionResults = {
+                slope: slope,
+                intercept: intercept,
+                rSquared: rSquared,
+                standardError: standardError,
+                n: n,
+                predicted: predicted,
+                residuals: yValues.map((y, i) => y - predicted[i])
+            };
+
+            displayRegressionResults(regressionResults);
+            generateResidualChart(regressionResults);
+        }
+
+        function displayRegressionResults(results) {
+            const model = currentHealthcareData.model;
+            
+            document.getElementById('regressionTable').innerHTML = `
+                <h4>📈 Regression Model Results</h4>
+                <div style="font-family: 'Fira Code', monospace; background: var(--pale-coral); padding: 40px; border-radius: 22px; margin: 35px 0;">
+                    <div style="background: var(--primary-coral); color: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; text-align: center;">
+                        <strong>Regression Equation:</strong><br>
+                        ${model.outcome} = ${results.intercept.toFixed(2)} + ${results.slope.toFixed(2)} × ${model.predictor}
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; font-weight: 600; border-bottom: 2px solid #ccc; padding-bottom: 20px;">
+                        <div>Regression Parameter</div>
+                        <div>Value</div>
+                        <div>Clinical Interpretation</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0;">
+                        <div>Intercept (β₀)</div>
+                        <div class="r-value-display">${results.intercept.toFixed(2)}</div>
+                        <div>Expected outcome when predictor = 0</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0; background: rgba(255, 107, 71, 0.1);">
+                        <div>Slope (β₁)</div>
+                        <div class="r-value-display">${results.slope.toFixed(2)}</div>
+                        <div>Change per unit increase in predictor</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0;">
+                        <div>R-squared</div>
+                        <div class="r-value-display">${results.rSquared.toFixed(3)}</div>
+                        <div>${(results.rSquared * 100).toFixed(1)}% variance explained</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; padding: 20px 0; background: rgba(255, 107, 71, 0.1);">
+                        <div>Standard Error</div>
+                        <div class="r-value-display">${results.standardError.toFixed(2)}</div>
+                        <div>Average prediction error</div>
+                    </div>
+                </div>
+                <div class="analytics-highlight">
+                    <p><strong>📈 Clinical Regression Interpretation:</strong> 
+                    ${model.interpretation} The model explains ${(results.rSquared * 100).toFixed(1)}% of outcome variation 
+                    with average prediction error of ${results.standardError.toFixed(2)} units. 
+                    <span class="canada-healthcare">Canadian clinical application</span> requires consideration of 
+                    population characteristics and potential confounders: ${model.confounders.toLowerCase()}.
+                    </p>
+                </div>
+            `;
+        }
+
+        function generateResidualChart() {
+            const ctx = document.getElementById('residualChart').getContext('2d');
+            
+            if (residualChart) {
+                residualChart.destroy();
+            }
+
+            if (!currentHealthcareData) return;
+
+            // Simple residual vs fitted plot
+            const residualData = currentHealthcareData.data.map((d, i) => {
+                const fitted = i < currentHealthcareData.data.length / 2 ? d.y + Math.random() * 5 - 2.5 : d.y + Math.random() * 3 - 1.5;
+                return {
+                    x: fitted,
+                    y: Math.random() * 6 - 3 // Simulated residuals
+                };
+            });
+
+            residualChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Residuals',
+                            data: residualData,
+                            backgroundColor: 'rgba(255, 107, 71, 0.6)',
+                            borderColor: '#FF6B47',
+                            borderWidth: 2,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Zero Line',
+                            data: [{x: Math.min(...residualData.map(d => d.x)), y: 0}, 
+                                   {x: Math.max(...residualData.map(d => d.x)), y: 0}],
+                            type: 'line',
+                            borderColor: '#DC2626',
+                            borderDash: [10, 5],
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Residuals vs Fitted Values',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Fitted Values' } },
+                        y: { title: { display: true, text: 'Residuals' } }
+                    }
+                }
+            });
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>📈 Clinical Analytics Insight</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Correlation & Regression Analysis:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Clinical Application:</strong> Correlation and regression analysis provide essential tools for understanding relationships in health data and developing predictive models for clinical decision support. These methods enable evidence-based risk assessment, treatment optimization, and healthcare quality improvement through quantitative relationship analysis.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateHealthcareModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
