@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundation Series: Multiple Regression in Healthcare & Advanced Medical Modeling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;600;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-green: #228B22;
+            --secondary-red: #DC2626;
+            --light-green: #9ACD32;
+            --pale-green: #F0FFF0;
+            --forest-green: #006400;
+            --sage-green: #87A96B;
+            --mint-green: #98FB98;
+            --clinical-blue: #4682B4;
+            --medical-orange: #FF8C00;
+            --health-purple: #8A2BE2;
+            --silver: #C0C0C0;
+            --charcoal: #2F4F2F;
+            --slate: #708090;
+            --cream: #F8FFF8;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F5FFFA 50%, var(--pale-green) 100%);
+            color: var(--charcoal);
+            line-height: 1.65;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Medical Modeling Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -75%;
+            left: -75%;
+            width: 250%;
+            height: 250%;
+            background: 
+                radial-gradient(ellipse at 25% 25%, rgba(34, 139, 34, 0.06) 0%, transparent 65%),
+                radial-gradient(ellipse at 75% 75%, rgba(154, 205, 50, 0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 90% 15%, rgba(70, 130, 180, 0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 15% 85%, rgba(255, 140, 0, 0.04) 0%, transparent 50%);
+            animation: modelingFlow 48s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes modelingFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.75; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.1) translate(20px, -20px); 
+                opacity: 0.95; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.9) translate(-15px, 15px); 
+                opacity: 0.8; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.05) translate(10px, -8px); 
+                opacity: 0.9; 
+            }
+        }
+
+        /* Multiple Regression Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(30deg, 
+                    transparent 0px, 
+                    rgba(34, 139, 34, 0.025) 1px, 
+                    transparent 2px, 
+                    transparent 75px),
+                repeating-linear-gradient(-60deg, 
+                    transparent 0px, 
+                    rgba(154, 205, 50, 0.02) 1px, 
+                    transparent 2px, 
+                    transparent 95px);
+            z-index: -1;
+            animation: regressionGrid 32s linear infinite;
+        }
+
+        @keyframes regressionGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(75px) translateY(95px); }
+        }
+
+        .container {
+            max-width: 1850px;
+            margin: 25px auto;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 
+                0 0 85px rgba(34, 139, 34, 0.12),
+                0 25px 70px rgba(154, 205, 50, 0.1),
+                0 15px 35px rgba(70, 130, 180, 0.08);
+            border-radius: 40px;
+            overflow: hidden;
+            backdrop-filter: blur(18px);
+            animation: multipleEntry 2.7s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(34, 139, 34, 0.15);
+        }
+
+        @keyframes multipleEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.88) translateY(70px) rotateX(18deg);
+                filter: blur(18px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Advanced Medical Modeling Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-green) 35%, var(--forest-green) 70%, #004000 100%);
+            color: white;
+            padding: 65px 55px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(75deg, 
+                transparent 0%, 
+                rgba(154, 205, 50, 0.14) 12%, 
+                transparent 28%, 
+                rgba(70, 130, 180, 0.11) 42%, 
+                transparent 58%, 
+                rgba(255, 140, 0, 0.09) 72%, 
+                transparent 88%);
+            animation: advancedHeader 15s ease-in-out infinite;
+        }
+
+        @keyframes advancedHeader {
+            0%, 100% { 
+                transform: translateX(-100px) scaleY(1) rotate(0deg); 
+                opacity: 0.85; 
+            }
+            33% { 
+                transform: translateX(60px) scaleY(1.15) rotate(1deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-35px) scaleY(0.9) rotate(-0.5deg); 
+                opacity: 0.92; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 4.3em;
+            font-weight: 900;
+            margin-bottom: 28px;
+            text-shadow: 3px 5px 15px rgba(0,0,0,0.55);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--mint-green) 35%, #ADFF2F 65%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleMultiple 4.3s ease-in-out infinite alternate;
+            letter-spacing: -2.1px;
+        }
+
+        @keyframes titleMultiple {
+            from { 
+                filter: drop-shadow(0 0 18px rgba(154, 205, 50, 0.65)); 
+                text-shadow: 0 0 35px rgba(70, 130, 180, 0.45);
+            }
+            to { 
+                filter: drop-shadow(0 0 28px rgba(34, 139, 34, 0.75)); 
+                text-shadow: 0 0 45px rgba(255, 140, 0, 0.55);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 1.8em;
+            font-weight: 400;
+            opacity: 0.93;
+            position: relative;
+            z-index: 2;
+            color: var(--mint-green);
+            text-shadow: 2px 3px 12px rgba(0,0,0,0.45);
+            letter-spacing: 1.1px;
+            font-style: italic;
+        }
+
+        /* Advanced Medical Modeling Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-green) 0%, var(--clinical-blue) 20%, var(--medical-orange) 40%, var(--sage-green) 60%, var(--forest-green) 80%, var(--primary-green) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 5px 0 rgba(154, 205, 50, 0.6);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(154, 205, 50, 0.18) 50%, 
+                rgba(255,255,255,0.1) 100%);
+            transform: translateX(-150%);
+            animation: advancedNav 9.8s ease-in-out infinite;
+        }
+
+        @keyframes advancedNav {
+            0%, 100% { transform: translateX(-150%); }
+            50% { transform: translateX(400%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 32px 36px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 6px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 0.7px;
+        }
+
+        .tab-button:hover {
+            background: rgba(154, 205, 50, 0.22);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(154, 205, 50, 0.32);
+            border-bottom-color: var(--medical-orange);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -6px 0 var(--medical-orange);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 65px;
+            animation: advancedSlide 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes advancedSlide {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.97);
+                filter: blur(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 3.6em;
+            color: var(--secondary-red);
+            margin-bottom: 55px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 2px 3px 12px rgba(0,0,0,0.14);
+            letter-spacing: -1.8px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                var(--mint-green) 0%, 
+                var(--clinical-blue) 16%, 
+                var(--medical-orange) 32%, 
+                var(--sage-green) 48%, 
+                var(--forest-green) 64%, 
+                var(--primary-green) 80%, 
+                var(--mint-green) 100%);
+            border-radius: 4px;
+            animation: advancedUnderline 5.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes advancedUnderline {
+            from { width: 180px; opacity: 0.8; }
+            to { width: 260px; opacity: 1; }
+        }
+
+        /* Medical Green/Sage Boxes - Foundation Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 45px;
+            margin-bottom: 65px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 50%, var(--white) 100%);
+            padding: 50px;
+            border-radius: 28px;
+            border: 4px solid var(--light-green);
+            box-shadow: 
+                0 18px 55px rgba(34, 139, 34, 0.1),
+                0 8px 25px rgba(154, 205, 50, 0.12);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, 
+                rgba(154, 205, 50, 0.1) 0%, 
+                rgba(34, 139, 34, 0.08) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardMultiple 9s ease-in-out infinite;
+        }
+
+        @keyframes cardMultiple {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.9; 
+            }
+            25% { 
+                transform: scale(1.15) translateX(25px) translateY(-25px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.85) translateX(-15px) translateY(15px) rotate(180deg); 
+                opacity: 0.85; 
+            }
+            75% { 
+                transform: scale(1.1) translateX(15px) translateY(-10px) rotate(270deg); 
+                opacity: 0.95; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 
+                0 30px 75px rgba(34, 139, 34, 0.15),
+                0 12px 35px rgba(154, 205, 50, 0.18);
+            border-color: var(--primary-green);
+        }
+
+        .theory-card h3 {
+            font-family: 'Inter Tight', sans-serif;
+            color: var(--secondary-red);
+            margin-bottom: 30px;
+            font-size: 2.0em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.6px;
+        }
+
+        .theory-card p {
+            font-size: 1.2em;
+            line-height: 1.85;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Advanced Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-green) 50%, var(--forest-green) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 22px;
+            margin: 35px 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.25em;
+            box-shadow: 
+                inset 0 4px 25px rgba(0,0,0,0.5), 
+                0 15px 40px rgba(34, 139, 34, 0.3);
+            overflow-x: auto;
+            border: 4px solid rgba(154, 205, 50, 0.5);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--mint-green) 18%, 
+                var(--clinical-blue) 34%, 
+                var(--medical-orange) 50%, 
+                var(--sage-green) 66%, 
+                var(--forest-green) 82%, 
+                transparent 100%);
+            animation: formulaMultiple 4.6s ease-in-out infinite;
+        }
+
+        @keyframes formulaMultiple {
+            0%, 100% { opacity: 0.7; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(1.4); }
+        }
+
+        /* Medical Green Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 50%, var(--white) 100%);
+            padding: 55px;
+            border-radius: 32px;
+            margin: 55px 0;
+            border: 5px solid var(--light-green);
+            box-shadow: 
+                0 22px 65px rgba(154, 205, 50, 0.18),
+                inset 0 1px 0 rgba(255,255,255,0.98);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -90%;
+            left: -90%;
+            width: 280%;
+            height: 280%;
+            background: conic-gradient(from 50deg at 50% 50%, 
+                transparent 0%, 
+                rgba(154, 205, 50, 0.05) 22%, 
+                transparent 44%, 
+                rgba(34, 139, 34, 0.04) 66%, 
+                transparent 88%);
+            animation: controlMultiple 22s linear infinite;
+        }
+
+        @keyframes controlMultiple {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Inter Tight', sans-serif;
+            color: var(--secondary-red);
+            font-size: 2.7em;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.6px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+            gap: 38px;
+            margin-bottom: 45px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--charcoal);
+            font-size: 1.15em;
+            letter-spacing: 0.4px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 22px;
+            border: 2px solid #E5E7EB;
+            border-radius: 15px;
+            font-size: 1.1em;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 5px 16px rgba(0,0,0,0.06);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 
+                0 0 25px rgba(34, 139, 34, 0.3),
+                0 0 0 3px rgba(154, 205, 50, 0.18);
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        /* Advanced Medical Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 28px;
+            margin-top: 45px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 24px 48px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 50%, 
+                transparent 100%);
+            transition: left 0.8s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--forest-green) 100%);
+            color: white;
+            box-shadow: 0 10px 28px rgba(34, 139, 34, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--primary-green) 100%);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 45px rgba(34, 139, 34, 0.45);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--clinical-blue) 0%, #4169E1 100%);
+            color: white;
+            box-shadow: 0 10px 28px rgba(70, 130, 180, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #4169E1 0%, var(--clinical-blue) 100%);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 45px rgba(70, 130, 180, 0.45);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--medical-orange) 0%, #FF7F00 100%);
+            color: white;
+            box-shadow: 0 10px 28px rgba(255, 140, 0, 0.4);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #FF7F00 0%, var(--medical-orange) 100%);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 45px rgba(255, 140, 0, 0.45);
+        }
+
+        /* Medical Green Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 100%);
+            border: 5px solid var(--light-green);
+            border-radius: 30px;
+            padding: 55px;
+            margin: 55px 0;
+            box-shadow: 
+                0 25px 75px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.98);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--mint-green) 0%, 
+                var(--clinical-blue) 14%, 
+                var(--medical-orange) 28%, 
+                var(--sage-green) 42%, 
+                var(--forest-green) 56%, 
+                var(--primary-green) 70%, 
+                var(--light-green) 84%, 
+                var(--mint-green) 100%);
+            animation: advancedResults 4.6s ease-in-out infinite;
+        }
+
+        @keyframes advancedResults {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 2.8em;
+            color: var(--secondary-red);
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+        }
+
+        /* Medical Green Chart Container */
+        .chart-container {
+            position: relative;
+            height: 600px;
+            margin: 55px 0;
+            background: linear-gradient(135deg, var(--pale-green) 0%, var(--white) 100%);
+            border-radius: 25px;
+            padding: 45px;
+            box-shadow: 0 18px 55px rgba(0,0,0,0.12);
+            border: 4px solid var(--light-green);
+        }
+
+        /* Statistics Grid - Medical Green Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 38px;
+            margin: 50px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-green) 0%, var(--white) 100%);
+            padding: 38px;
+            border-radius: 20px;
+            text-align: center;
+            border: 4px solid var(--light-green);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mint-green) 0%, var(--primary-green) 50%, var(--clinical-blue) 100%);
+            transform: scaleX(0);
+            transition: transform 0.6s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.1em;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 1.05em;
+            color: var(--slate);
+            font-weight: 500;
+        }
+
+        /* Multiple Regression-Specific Elements */
+        .regression-info {
+            background: linear-gradient(135deg, var(--pale-green) 0%, #F0F8FF 100%);
+            border: 4px solid var(--light-green);
+            border-radius: 18px;
+            padding: 35px;
+            margin: 35px 0;
+        }
+
+        .model-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin: 32px 0;
+        }
+
+        .model-metric-card {
+            background: var(--primary-green);
+            color: white;
+            padding: 25px 18px;
+            border-radius: 15px;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.0em;
+            font-weight: 600;
+        }
+
+        .model-metric-card:nth-child(1) { background: var(--clinical-blue); }
+        .model-metric-card:nth-child(2) { background: var(--medical-orange); }
+        .model-metric-card:nth-child(3) { background: var(--primary-green); }
+        .model-metric-card:nth-child(4) { background: var(--sage-green); }
+
+        /* Decision Framework - Medical Green */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-green) 0%, rgba(154, 205, 50, 0.25) 100%);
+            border: 5px solid var(--light-green);
+            border-radius: 28px;
+            padding: 45px;
+            margin: 45px 0;
+        }
+
+        .decision-question {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 1.5em;
+            margin-bottom: 35px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -0.4px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
+        }
+
+        .decision-option {
+            padding: 28px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--clinical-blue);
+            background: #F0F8FF;
+            transform: translateY(-5px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-green);
+            background: var(--pale-green);
+            box-shadow: 0 0 30px rgba(34, 139, 34, 0.4);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 38px;
+            border-radius: 20px;
+            margin: 38px 0;
+            font-weight: 500;
+            font-size: 1.15em;
+        }
+
+        .feedback-success {
+            background: var(--pale-green);
+            border: 4px solid var(--light-green);
+            color: var(--forest-green);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 4px solid var(--medical-orange);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 4px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                border-radius: 30px;
+            }
+
+            .header-title {
+                font-size: 3.0em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .model-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Green */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-green) 0%, #F0F8FF 100%);
+            padding: 35px;
+            border-radius: 16px;
+            margin: 35px 0;
+            border-left: 7px solid var(--primary-green);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '🧮';
+            position: absolute;
+            top: 35px;
+            left: 30px;
+            font-size: 1.4em;
+        }
+
+        .research-note p {
+            margin-left: 45px;
+            line-height: 1.9;
+        }
+
+        /* Advanced Visual Effects */
+        .modeling-highlight {
+            background: rgba(34, 139, 34, 0.12);
+            border-left: 6px solid var(--primary-green);
+            padding: 22px;
+            margin: 22px 0;
+            border-radius: 12px;
+        }
+
+        .coefficient-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--primary-green) 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            margin: 0 10px;
+            font-size: 1.0em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-advanced {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 18px;
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        /* Confounding Variables Visualization */
+        .confounding-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--pale-green);
+            padding: 28px;
+            border-radius: 16px;
+            margin: 28px 0;
+        }
+
+        .confounding-variable {
+            background: var(--primary-green);
+            color: white;
+            padding: 16px 22px;
+            border-radius: 12px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .confounding-variable:first-child {
+            background: var(--clinical-blue);
+        }
+
+        .confounding-variable:nth-child(2) {
+            background: var(--medical-orange);
+        }
+
+        .confounding-variable:last-child {
+            background: var(--sage-green);
+        }
+
+        /* Model Building Steps */
+        .model-steps {
+            background: var(--pale-green);
+            padding: 30px;
+            border-radius: 18px;
+            margin: 30px 0;
+            border: 3px solid var(--light-green);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .step-number {
+            background: var(--primary-green);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Multiple Regression in Healthcare & Advanced Medical Modeling</h1>
+            <p class="header-subtitle">Foundation Series: Advanced Statistical Modeling for Medical Research</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">🧮 Multiple Regression Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Advanced Medical Models</button>
+            <button class="tab-button" onclick="showSection('analysis')">📊 Model Building</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Multiple Regression Framework for Healthcare</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>🧮 Multiple Regression Theory</h3>
+                    <p><strong>Advanced Predictive Modeling:</strong> Multiple regression extends simple regression to simultaneously analyze multiple predictors, enabling comprehensive medical risk assessment and outcome prediction.</p>
+                    <div class="formula-display">
+                        Multiple Regression Model:<br>
+                        Y = β₀ + β₁X₁ + β₂X₂ + ... + βₖXₖ + ε<br><br>
+                        Matrix Form: Y = Xβ + ε<br>
+                        Solution: β̂ = (X'X)⁻¹X'Y<br><br>
+                        Each βᵢ represents change in Y per unit change in Xᵢ,<br>
+                        holding all other variables constant
+                    </div>
+                    <p><em>Clinical insight: Multiple regression reveals the independent effect of each predictor while controlling for confounders</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⚠️ Confounding Variables in Medical Research</h3>
+                    <p><strong>Bias Control:</strong> Confounding occurs when an unmeasured variable affects both the exposure and outcome, creating spurious associations that can mislead clinical decisions.</p>
+                    <div class="formula-display">
+                        Confounding Criteria:<br>
+                        1. Associated with exposure (X)<br>
+                        2. Associated with outcome (Y)<br>
+                        3. Not on causal pathway between X and Y<br><br>
+                        Control Methods:<br>
+                        • Include in regression model<br>
+                        • Stratified analysis<br>
+                        • Matching<br>
+                        • Randomization (RCTs)
+                    </div>
+                    <p><strong>Example:</strong> Age confounds exercise-heart disease relationship - older patients exercise less AND have more heart disease</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔍 Model Selection & Building</h3>
+                    <p><strong>Variable Selection:</strong> Systematic approaches to selecting predictors balance model complexity with predictive accuracy while avoiding overfitting in medical models.</p>
+                    <div class="formula-display">
+                        Selection Methods:<br>
+                        • Forward: Start empty, add variables<br>
+                        • Backward: Start full, remove variables<br>
+                        • Stepwise: Combine forward/backward<br><br>
+                        Criteria:<br>
+                        AIC = 2k - 2ln(L)<br>
+                        BIC = k×ln(n) - 2ln(L)<br>
+                        Adjusted R² = 1 - [(1-R²)(n-1)/(n-p-1)]
+                    </div>
+                    <p><strong>Clinical Application:</strong> Balance statistical fit with clinical relevance and interpretability for practical medical use</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔗 Interaction Terms in Medicine</h3>
+                    <p><strong>Effect Modification:</strong> Interactions occur when the effect of one variable depends on the level of another, crucial for personalized medicine and subgroup analysis.</p>
+                    <div class="formula-display">
+                        Interaction Model:<br>
+                        Y = β₀ + β₁X₁ + β₂X₂ + β₃(X₁×X₂) + ε<br><br>
+                        Interpretation:<br>
+                        • β₁: Effect of X₁ when X₂ = 0<br>
+                        • β₃: Change in X₁ effect per unit of X₂<br><br>
+                        Clinical Example: Drug effect varies by age<br>
+                        Treatment effect = β₁ + β₃×Age
+                    </div>
+                    <p><strong>Medical Relevance:</strong> Identifies patient subgroups with differential treatment responses for precision medicine</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📐 Multicollinearity Detection</h3>
+                    <p><strong>Predictor Independence:</strong> Multicollinearity occurs when predictors are highly correlated, leading to unstable coefficient estimates and interpretation difficulties.</p>
+                    <div class="formula-display">
+                        Detection Methods:<br>
+                        • Correlation Matrix: |r| > 0.8<br>
+                        • VIF = 1/(1 - R²ⱼ)<br>
+                        • VIF > 5 (moderate), VIF > 10 (severe)<br>
+                        • Condition Index > 30<br><br>
+                        Solutions:<br>
+                        • Remove redundant variables<br>
+                        • Principal components analysis<br>
+                        • Ridge regression
+                    </div>
+                    <p><strong>Clinical Impact:</strong> High multicollinearity makes it difficult to determine which factors are truly important for patient outcomes</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔬 Advanced Model Diagnostics</h3>
+                    <p><strong>Assumption Validation:</strong> Comprehensive residual analysis ensures model validity and reliability for medical decision-making and clinical prediction.</p>
+                    <div class="formula-display">
+                        Diagnostic Checks:<br>
+                        • Residuals vs. Fitted: Homoscedasticity<br>
+                        • Q-Q Plot: Normality of residuals<br>
+                        • Cook's Distance: Influential outliers<br>
+                        • Leverage: High-leverage points<br><br>
+                        Assumptions:<br>
+                        1. Linearity 2. Independence<br>
+                        3. Homoscedasticity 4. Normality
+                    </div>
+                    <p><strong>Clinical Validation:</strong> Model diagnostics ensure predictions are reliable for clinical use and patient safety</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Advanced Medical Modeling Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 45px; margin-top: 35px;">
+                    <div>
+                        <h4>🏥 Clinical Risk Prediction:</h4>
+                        <ul>
+                            <li><strong>Cardiovascular Risk Models:</strong> Multiple risk factors for CAD prediction</li>
+                            <li><strong>Hospital Readmission:</strong> Patient complexity and social determinants</li>
+                            <li><strong>Cancer Prognosis:</strong> Staging, treatment, and patient factors</li>
+                            <li><strong>Surgical Risk Assessment:</strong> Comorbidity-adjusted outcome prediction</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Health System Analytics:</h4>
+                        <ul>
+                            <li><strong>Healthcare Cost Modeling:</strong> Patient, provider, and system factors</li>
+                            <li><strong>Quality of Care Assessment:</strong> Case-mix adjusted outcomes</li>
+                            <li><strong>Resource Utilization:</strong> Demand prediction with multiple drivers</li>
+                            <li><strong>Health Equity Analysis:</strong> Social determinants and access barriers</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="model-steps" style="margin-top: 40px;">
+                    <h4 style="color: var(--secondary-red); margin-bottom: 25px; text-align: center;">🧮 Multiple Regression Modeling Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Problem Definition:</strong> Define clinical question and identify relevant predictors</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Data Preparation:</strong> Clean data, handle missing values, create dummy variables</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Exploratory Analysis:</strong> Examine relationships, correlations, and potential confounders</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Model Building:</strong> Select variables using clinical knowledge and statistical criteria</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Diagnostics:</strong> Check assumptions, identify outliers, assess fit</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Validation:</strong> Test model performance on independent data</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Clinical Implementation:</strong> Translate model for practical medical use</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>🧮 Advanced Medical Modeling Foundation:</strong> Multiple regression provides the statistical foundation for sophisticated medical prediction models and clinical decision support systems. These techniques enable healthcare professionals to understand complex relationships between multiple risk factors, control for confounding variables, and develop evidence-based tools for personalized patient care. Mastery of multiple regression is essential for modern clinical research and evidence-based medical practice.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Advanced Medical Models Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Advanced Medical Modeling Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">🧮 Multiple Regression Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="medicalModel">Canadian Medical Prediction Model</label>
+                        <select id="medicalModel" onchange="updateMedicalModel()">
+                            <option value="cardiovascular_risk">Cardiovascular Risk Prediction Model</option>
+                            <option value="readmission_model">Hospital Readmission Risk Model</option>
+                            <option value="cancer_survival">Cancer Survival Prediction Model</option>
+                            <option value="healthcare_costs">Healthcare Cost Prediction Model</option>
+                            <option value="quality_assessment">Quality of Care Assessment Model</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modelComplexity">Model Complexity</label>
+                        <select id="modelComplexity">
+                            <option value="simple">Simple Model (3-4 predictors)</option>
+                            <option value="moderate" selected>Moderate Model (5-7 predictors)</option>
+                            <option value="complex">Complex Model (8-10 predictors)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeAdvanced">Sample Size</label>
+                        <select id="sampleSizeAdvanced">
+                            <option value="200">200 patients</option>
+                            <option value="500" selected>500 patients</option>
+                            <option value="1000">1,000 patients</option>
+                            <option value="2500">2,500 patients</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="multicollinearity">Multicollinearity Level</label>
+                        <input type="range" id="multicollinearity" min="0.1" max="0.8" step="0.1" value="0.3" onchange="updateMulticollinearityDisplay()">
+                        <span id="multicollinearityValue">0.3</span> (predictor correlation)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateMedicalModel()">🧮 Generate Model</button>
+                    <button class="btn btn-secondary" onclick="performMultipleRegression()">📊 Build Regression</button>
+                    <button class="btn btn-accent" onclick="validateModel()">🔍 Model Validation</button>
+                </div>
+            </div>
+
+            <!-- Medical Model Description -->
+            <div id="medicalDescription" class="regression-info">
+                <div class="results-header">Current Advanced Medical Model</div>
+                <div id="medicalText"></div>
+                <div id="modelMetrics" class="model-metrics"></div>
+            </div>
+
+            <!-- Advanced Medical Chart -->
+            <div class="chart-container">
+                <canvas id="medicalModelChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Model Building Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Multiple Regression Analysis</h2>
+
+            <div id="regressionResults" class="results-container">
+                <div class="results-header">Multiple Regression Model Results</div>
+                <div id="regressionTable"></div>
+            </div>
+
+            <div class="stats-grid" id="advancedStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="diagnosticsResults" class="results-container">
+                <div class="results-header">🧮 Model Diagnostics & Clinical Interpretation</div>
+                <div id="diagnosticsTable"></div>
+            </div>
+
+            <!-- Model Diagnostics Chart -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 35px; color: var(--secondary-red);">📊 Advanced Model Diagnostics & Validation</h3>
+                <canvas id="diagnosticsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Multiple Regression Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading multiple regression assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 40px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 50px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Advanced Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentMedicalModel = null;
+        let currentModelChart = null;
+        let diagnosticsChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Advanced Medical Model Definitions
+        const medicalModels = {
+            cardiovascular_risk: {
+                title: "Cardiovascular Risk Prediction Model (Framingham-Based)",
+                description: "Multi-variable risk prediction model for 10-year cardiovascular disease risk in Canadian adults, incorporating traditional risk factors and social determinants of health.",
+                outcome: "10-Year CVD Risk (%)",
+                predictors: ["Age", "Systolic BP", "Total Cholesterol", "HDL Cholesterol", "Smoking Status", "Diabetes Status", "BMI"],
+                population: "Canadian adults aged 30-79 years without known CVD",
+                clinical_context: "Primary prevention and risk stratification for cardiovascular disease",
+                confounders: "Family history, income, education, geographic region, ethnic background",
+                expected_r2: "0.65-0.75",
+                interactions: "Age × Sex, Diabetes × Hypertension, Smoking × Age",
+                validation: "C-statistic 0.72-0.78, Hosmer-Lemeshow p > 0.05",
+                clinical_application: "Risk-based statin therapy, lifestyle counseling, screening intervals"
+            },
+            readmission_model: {
+                title: "Hospital Readmission Risk Model (30-Day)",
+                description: "Predictive model for 30-day hospital readmission risk using patient clinical data, social determinants, and healthcare utilization patterns from Canadian administrative databases.",
+                outcome: "30-Day Readmission Probability",
+                predictors: ["Age", "Comorbidity Score", "LOS", "Discharge Destination", "Rural/Urban", "Income Quintile", "Previous Admissions"],
+                population: "Adult inpatients discharged from acute care hospitals",
+                clinical_context: "Discharge planning and resource allocation",
+                confounders: "Hospital volume, physician experience, seasonal effects, coding practices",
+                expected_r2: "0.15-0.25",
+                interactions: "Age × Comorbidities, Rural × Income, LOS × Discharge Destination",
+                validation: "C-statistic 0.62-0.68, calibration across risk deciles",
+                clinical_application: "Targeted discharge planning, post-acute care services, quality improvement"
+            },
+            cancer_survival: {
+                title: "Cancer Survival Prediction Model (5-Year)",
+                description: "Comprehensive survival prediction model integrating tumor characteristics, treatment factors, and patient demographics using Canadian cancer registry data.",
+                outcome: "5-Year Overall Survival (%)",
+                predictors: ["Stage", "Grade", "Age at Diagnosis", "Treatment Type", "Comorbidities", "Hospital Volume", "Socioeconomic Status"],
+                population: "Cancer patients in Canadian cancer registries",
+                clinical_context: "Prognosis communication and treatment planning",
+                confounders: "Treatment era, geographic access to care, screening effects",
+                expected_r2: "0.45-0.60",
+                interactions: "Stage × Treatment, Age × Comorbidities, Volume × Stage",
+                validation: "C-statistic 0.75-0.82, time-dependent ROC analysis",
+                clinical_application: "Informed consent, treatment selection, palliative care referral"
+            },
+            healthcare_costs: {
+                title: "Healthcare Cost Prediction Model (Annual)",
+                description: "Predictive model for annual healthcare costs using patient characteristics, utilization patterns, and health system factors from Canadian administrative data.",
+                outcome: "Annual Healthcare Costs (CAD)",
+                predictors: ["Age", "Sex", "Morbidity Burden", "Prior Costs", "Rural/Urban", "Provider Characteristics", "Chronic Conditions"],
+                population: "All residents with provincial health coverage",
+                clinical_context: "Resource planning and budget allocation",
+                confounders: "Regional funding models, provider supply, policy changes",
+                expected_r2: "0.35-0.50",
+                interactions: "Age × Morbidity, Rural × Chronic Conditions, Prior Costs × Age",
+                validation: "MAE within 20% of actual costs, cross-validation",
+                clinical_application: "Capitation payments, high-cost case management, resource allocation"
+            },
+            quality_assessment: {
+                title: "Quality of Care Assessment Model (Risk-Adjusted)",
+                description: "Case-mix adjusted quality assessment model for hospital performance evaluation, controlling for patient complexity and institutional factors.",
+                outcome: "Risk-Adjusted Mortality Rate",
+                predictors: ["Patient Age", "Comorbidity Index", "Severity Score", "Hospital Characteristics", "Procedure Volume", "Teaching Status"],
+                population: "Hospitalized patients for quality assessment",
+                clinical_context: "Hospital performance evaluation and public reporting",
+                confounders: "Referral patterns, coding intensity, patient selection",
+                expected_r2: "0.25-0.40",
+                interactions: "Volume × Complexity, Teaching × Severity, Age × Comorbidities",
+                validation: "Risk-standardized mortality ratios, inter-hospital comparison",
+                clinical_application: "Quality improvement, public reporting, accreditation, benchmarking"
+            }
+        };
+
+        // Assessment Questions (Multiple Regression focused)
+        const assessmentQuestions = [
+            {
+                question: "In a cardiovascular risk model, the coefficient for smoking is 1.2. This means:",
+                options: [
+                    "Smokers have 1.2 times higher risk than non-smokers",
+                    "Smoking increases risk by 1.2%, holding other factors constant",
+                    "Smoking explains 1.2% of the variation in cardiovascular risk",
+                    "There is a 1.2% chance that smoking causes cardiovascular disease"
+                ],
+                correct: 1,
+                explanation: "In multiple regression, coefficients represent the change in the outcome variable for a one-unit change in the predictor, holding all other variables constant. A coefficient of 1.2 for smoking means that being a smoker increases cardiovascular risk by 1.2% compared to being a non-smoker, controlling for all other variables in the model."
+            },
+            {
+                question: "A VIF (Variance Inflation Factor) of 8.5 for age in a medical prediction model indicates:",
+                options: [
+                    "Age explains 85% of the outcome variance",
+                    "Age has moderate to high multicollinearity with other predictors",
+                    "The age coefficient is statistically significant",
+                    "Age should be removed from the model immediately"
+                ],
+                correct: 1,
+                explanation: "VIF measures how much the variance of a coefficient increases due to multicollinearity. VIF = 8.5 indicates moderate to high multicollinearity (VIF > 5), meaning age is substantially correlated with other predictors, making its coefficient estimate less reliable."
+            },
+            {
+                question: "In a hospital readmission model, an interaction term Age × Comorbidities has a coefficient of 0.05. This suggests:",
+                options: [
+                    "Age and comorbidities are independent risk factors",
+                    "The effect of comorbidities on readmission increases with age",
+                    "Age causes comorbidities to develop",
+                    "The model should include only main effects"
+                ],
+                correct: 1,
+                explanation: "A positive interaction coefficient means the effect of one variable depends on the level of another. With Age × Comorbidities = 0.05, the effect of comorbidities on readmission risk increases by 0.05 for each additional year of age, indicating that comorbidities become more predictive in older patients."
+            },
+            {
+                question: "When building a clinical prediction model with limited sample size, which approach is most appropriate?",
+                options: [
+                    "Include all possible predictors to maximize predictive power",
+                    "Use stepwise selection to find the optimal model automatically",
+                    "Limit predictors to 1 per 10-15 outcome events to avoid overfitting",
+                    "Always use forward selection starting with the strongest predictor"
+                ],
+                correct: 2,
+                explanation: "The 'rule of thumb' for multiple regression is to have at least 10-15 events (cases) per predictor variable to avoid overfitting. This ensures adequate sample size for stable coefficient estimates and reliable model performance."
+            },
+            {
+                question: "Age confounds the relationship between exercise and heart disease because:",
+                options: [
+                    "Age causes both decreased exercise and increased heart disease risk",
+                    "Age is associated with both exercise levels and heart disease, but is not on the causal pathway",
+                    "Age is the most important risk factor for heart disease",
+                    "Older people cannot exercise effectively"
+                ],
+                correct: 1,
+                explanation: "Age is a confounder because it's associated with both the exposure (exercise - older people tend to exercise less) and the outcome (heart disease - risk increases with age), but age is not on the direct causal pathway between exercise and heart disease. Controlling for age reveals the true effect of exercise."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Medical Model Management
+        function updateMedicalModel() {
+            const modelType = document.getElementById('medicalModel').value;
+            const model = medicalModels[modelType];
+            
+            document.getElementById('medicalText').innerHTML = `
+                <h3 style="color: var(--secondary-red); margin-bottom: 22px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>🧮 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Outcome Variable:</strong> ${model.outcome}</p>
+                <p><strong>Key Predictors:</strong> ${model.predictors.join(', ')}</p>
+                <p><strong>Target Population:</strong> ${model.population}</p>
+                <p><strong>Expected R²:</strong> ${model.expected_r2}</p>
+                <p><strong>Potential Confounders:</strong> ${model.confounders}</p>
+                <p><strong>Key Interactions:</strong> ${model.interactions}</p>
+                <p><strong>Model Validation:</strong> ${model.validation}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateModelMetrics();
+        }
+
+        function updateModelMetrics() {
+            const complexity = document.getElementById('modelComplexity').value;
+            const container = document.getElementById('modelMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(complexity) {
+                case 'simple': metrics = ['R² = 0.45', 'Adjusted R² = 0.42', 'F-statistic = 28.5', 'RMSE = 4.2']; break;
+                case 'moderate': metrics = ['R² = 0.62', 'Adjusted R² = 0.58', 'F-statistic = 45.3', 'RMSE = 3.1']; break;
+                case 'complex': metrics = ['R² = 0.78', 'Adjusted R² = 0.72', 'F-statistic = 67.8', 'RMSE = 2.4']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'model-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateMulticollinearityDisplay() {
+            const multicollinearity = document.getElementById('multicollinearity').value;
+            const level = multicollinearity < 0.3 ? 'low' : 
+                         multicollinearity < 0.6 ? 'moderate' : 'high';
+            document.getElementById('multicollinearityValue').textContent = `${multicollinearity} (${level})`;
+        }
+
+        // Medical Model Generation
+        function generateMedicalModel() {
+            const modelType = document.getElementById('medicalModel').value;
+            const complexity = document.getElementById('modelComplexity').value;
+            const sampleSize = parseInt(document.getElementById('sampleSizeAdvanced').value);
+            const multicollinearity = parseFloat(document.getElementById('multicollinearity').value);
+            
+            const model = medicalModels[modelType];
+            
+            currentMedicalModel = {
+                model: model,
+                complexity: complexity,
+                sampleSize: sampleSize,
+                multicollinearity: multicollinearity,
+                data: []
+            };
+
+            // Generate medical data for multiple regression
+            const numPredictors = complexity === 'simple' ? 4 : complexity === 'moderate' ? 6 : 9;
+            
+            for (let i = 0; i < sampleSize; i++) {
+                const patient = { id: i };
+                const predictors = [];
+                
+                // Generate correlated predictors based on multicollinearity setting
+                for (let j = 0; j < numPredictors; j++) {
+                    if (j === 0) {
+                        predictors.push(generateStandardNormal());
+                    } else {
+                        // Create correlation with first predictor
+                        const independent = generateStandardNormal();
+                        const correlated = multicollinearity * predictors[0] + 
+                                         Math.sqrt(1 - multicollinearity * multicollinearity) * independent;
+                        predictors.push(correlated);
+                    }
+                }
+                
+                // Generate outcome based on predictors with realistic coefficients
+                const trueCoefficients = [0.5, 0.3, -0.2, 0.4, 0.1, -0.15, 0.25, 0.08, -0.12].slice(0, numPredictors);
+                const linearCombination = predictors.reduce((sum, pred, idx) => sum + pred * trueCoefficients[idx], 0);
+                const outcome = 50 + 10 * linearCombination + generateStandardNormal() * 5;
+                
+                patient.predictors = predictors;
+                patient.outcome = Math.max(0, outcome);
+                patient.age = 45 + Math.random() * 30;
+                patient.sex = Math.random() < 0.52 ? 'Female' : 'Male';
+                
+                currentMedicalModel.data.push(patient);
+            }
+
+            updateMedicalModelChart();
+        }
+
+        function generateStandardNormal() {
+            // Box-Muller transform
+            const u = 0.5 - Math.random();
+            const v = 0.5 - Math.random();
+            return Math.sqrt(-2 * Math.log(Math.abs(u))) * Math.cos(2 * Math.PI * v);
+        }
+
+        function updateMedicalModelChart() {
+            if (!currentMedicalModel) return;
+            
+            const ctx = document.getElementById('medicalModelChart').getContext('2d');
+            
+            if (currentModelChart) {
+                currentModelChart.destroy();
+            }
+
+            // Create scatterplot of first predictor vs outcome
+            const scatterData = currentMedicalModel.data.map(d => ({
+                x: d.predictors[0],
+                y: d.outcome
+            }));
+
+            currentModelChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Patient Data',
+                        data: scatterData,
+                        backgroundColor: 'rgba(34, 139, 34, 0.6)',
+                        borderColor: '#228B22',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentMedicalModel.model.title} - Primary Predictor Relationship`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Primary Risk Factor (Standardized)' },
+                            type: 'linear',
+                            position: 'bottom'
+                        },
+                        y: {
+                            title: { display: true, text: currentMedicalModel.model.outcome }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Multiple Regression Analysis
+        function performMultipleRegression() {
+            if (!currentMedicalModel) {
+                alert('Please generate medical model data first');
+                return;
+            }
+
+            // Simplified multiple regression analysis
+            const data = currentMedicalModel.data;
+            const outcomes = data.map(d => d.outcome);
+            const numPredictors = data[0].predictors.length;
+            
+            // Calculate means
+            const outcomeMean = outcomes.reduce((sum, val) => sum + val, 0) / outcomes.length;
+            const predictorMeans = [];
+            for (let i = 0; i < numPredictors; i++) {
+                const mean = data.reduce((sum, d) => sum + d.predictors[i], 0) / data.length;
+                predictorMeans.push(mean);
+            }
+            
+            // Simplified coefficient calculation (assuming orthogonal predictors for demonstration)
+            const coefficients = [];
+            let rSquared = 0;
+            
+            for (let i = 0; i < numPredictors; i++) {
+                const predictor = data.map(d => d.predictors[i]);
+                const correlation = calculateCorrelation(predictor, outcomes);
+                const coefficient = correlation * Math.sqrt(calculateVariance(outcomes) / calculateVariance(predictor));
+                coefficients.push(coefficient);
+                rSquared += correlation * correlation * 0.15; // Simplified
+            }
+            
+            rSquared = Math.min(0.85, rSquared); // Cap at reasonable value
+            const adjustedRSquared = 1 - ((1 - rSquared) * (data.length - 1)) / (data.length - numPredictors - 1);
+            const residualSE = Math.sqrt((1 - rSquared) * calculateVariance(outcomes));
+            
+            const regressionResults = {
+                coefficients: coefficients,
+                rSquared: rSquared,
+                adjustedRSquared: adjustedRSquared,
+                residualSE: residualSE,
+                numPredictors: numPredictors,
+                sampleSize: data.length,
+                predictorNames: currentMedicalModel.model.predictors.slice(0, numPredictors)
+            };
+
+            displayRegressionResults(regressionResults);
+        }
+
+        function calculateCorrelation(x, y) {
+            const n = x.length;
+            const xMean = x.reduce((sum, val) => sum + val, 0) / n;
+            const yMean = y.reduce((sum, val) => sum + val, 0) / n;
+            
+            const numerator = x.reduce((sum, val, i) => sum + (val - xMean) * (y[i] - yMean), 0);
+            const denomX = Math.sqrt(x.reduce((sum, val) => sum + Math.pow(val - xMean, 2), 0));
+            const denomY = Math.sqrt(y.reduce((sum, val) => sum + Math.pow(val - yMean, 2), 0));
+            
+            return numerator / (denomX * denomY);
+        }
+
+        function calculateVariance(arr) {
+            const mean = arr.reduce((sum, val) => sum + val, 0) / arr.length;
+            return arr.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (arr.length - 1);
+        }
+
+        function displayRegressionResults(results) {
+            const complexity = results.numPredictors <= 4 ? 'Simple' : 
+                              results.numPredictors <= 6 ? 'Moderate' : 'Complex';
+            
+            let coefficientTable = '';
+            results.predictorNames.forEach((name, index) => {
+                const coeff = results.coefficients[index];
+                const significance = Math.abs(coeff) > 0.2 ? '✅ Significant' : '❌ Not Significant';
+                coefficientTable += `
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; padding: 15px 0; ${index % 2 === 1 ? 'background: rgba(34, 139, 34, 0.1);' : ''}">
+                        <div>${name}</div>
+                        <div class="coefficient-display">${coeff.toFixed(3)}</div>
+                        <div>${significance}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('regressionTable').innerHTML = `
+                <h4>🧮 Multiple Regression Model Results</h4>
+                <div style="background: var(--primary-green); color: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; text-align: center;">
+                    <strong>${complexity} Medical Prediction Model</strong><br>
+                    ${currentMedicalModel.model.outcome} = β₀ + β₁X₁ + β₂X₂ + ... + β${results.numPredictors}X${results.numPredictors} + ε
+                </div>
+                <div style="font-family: 'Space Mono', monospace; background: var(--pale-green); padding: 35px; border-radius: 18px; margin: 30px 0;">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; font-weight: 600; border-bottom: 2px solid #ccc; padding-bottom: 18px;">
+                        <div>Predictor Variable</div>
+                        <div>Coefficient (β)</div>
+                        <div>Significance</div>
+                    </div>
+                    ${coefficientTable}
+                </div>
+                <div class="modeling-highlight">
+                    <p><strong>🧮 Clinical Multiple Regression Interpretation:</strong> 
+                    This ${complexity.toLowerCase()} model explains ${(results.rSquared * 100).toFixed(1)}% of variation in 
+                    ${currentMedicalModel.model.outcome.toLowerCase()} using ${results.numPredictors} predictors. 
+                    Each coefficient represents the change in outcome per unit change in that predictor, 
+                    holding all other variables constant. <span class="canada-advanced">Canadian clinical validation</span> 
+                    requires external validation and assessment of clinical utility in practice settings.
+                    </p>
+                </div>
+            `;
+
+            // Update advanced statistics display
+            document.getElementById('advancedStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${(results.rSquared * 100).toFixed(1)}%</div>
+                    <div class="stat-label">R-squared</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.adjustedRSquared * 100).toFixed(1)}%</div>
+                    <div class="stat-label">Adjusted R²</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.residualSE.toFixed(2)}</div>
+                    <div class="stat-label">Residual SE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.numPredictors}</div>
+                    <div class="stat-label">Predictors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.sampleSize}</div>
+                    <div class="stat-label">Sample Size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.sampleSize / results.numPredictors).toFixed(0)}:1</div>
+                    <div class="stat-label">Cases per Predictor</div>
+                </div>
+            `;
+        }
+
+        function validateModel() {
+            if (!currentMedicalModel) {
+                alert('Please build multiple regression model first');
+                return;
+            }
+
+            generateDiagnosticsChart();
+            displayDiagnostics();
+        }
+
+        function generateDiagnosticsChart() {
+            const ctx = document.getElementById('diagnosticsChart').getContext('2d');
+            
+            if (diagnosticsChart) {
+                diagnosticsChart.destroy();
+            }
+
+            // Generate simulated residuals for diagnostics
+            const residualData = currentMedicalModel.data.map((d, i) => {
+                const fitted = 50 + Math.random() * 30;
+                const residual = (Math.random() - 0.5) * 10; // Simulated residuals
+                return { x: fitted, y: residual };
+            });
+
+            diagnosticsChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Residuals',
+                            data: residualData,
+                            backgroundColor: 'rgba(34, 139, 34, 0.6)',
+                            borderColor: '#228B22',
+                            borderWidth: 2,
+                            pointRadius: 3
+                        },
+                        {
+                            label: 'Zero Line',
+                            data: [{x: Math.min(...residualData.map(d => d.x)), y: 0}, 
+                                   {x: Math.max(...residualData.map(d => d.x)), y: 0}],
+                            type: 'line',
+                            borderColor: '#DC2626',
+                            borderDash: [10, 5],
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Model Diagnostics: Residuals vs Fitted Values',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Fitted Values' } },
+                        y: { title: { display: true, text: 'Residuals' } }
+                    }
+                }
+            });
+        }
+
+        function displayDiagnostics() {
+            const model = currentMedicalModel.model;
+            const complexity = currentMedicalModel.complexity;
+            const multicollinearity = currentMedicalModel.multicollinearity;
+            
+            // Simulate diagnostic results
+            const maxVIF = multicollinearity > 0.6 ? 8.5 : multicollinearity > 0.4 ? 4.2 : 2.1;
+            const normality = complexity === 'complex' ? 'Questionable' : 'Acceptable';
+            const homoscedasticity = 'Good';
+            const cookDistance = 'No influential outliers';
+            
+            document.getElementById('diagnosticsTable').innerHTML = `
+                <h4>🧮 Advanced Model Diagnostics & Validation</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 35px; margin: 35px 0;">
+                    <div class="stat-card" style="padding: 30px;">
+                        <h5>Model Assumptions</h5>
+                        <div class="confounding-info">
+                            <div class="confounding-variable">Linearity<br>✅ Good</div>
+                            <div class="confounding-variable">Independence<br>✅ Met</div>
+                            <div class="confounding-variable">Homoscedasticity<br>✅ ${homoscedasticity}</div>
+                        </div>
+                        <p><strong>Normality:</strong> ${normality}</p>
+                        <p><strong>Max VIF:</strong> ${maxVIF.toFixed(1)} ${maxVIF > 5 ? '⚠️ High' : '✅ Acceptable'}</p>
+                    </div>
+                    <div class="stat-card" style="padding: 30px;">
+                        <h5>Clinical Validation</h5>
+                        <p><strong>Model Validation:</strong> ${model.validation}</p>
+                        <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+                        <p><strong>Key Interactions:</strong> ${model.interactions}</p>
+                        <p><strong>Confounders:</strong> Consider ${model.confounders.split(',')[0]} and related factors</p>
+                    </div>
+                </div>
+                <div class="modeling-highlight">
+                    <p><strong>🧮 Advanced Diagnostic Interpretation:</strong> 
+                    Model diagnostics indicate ${maxVIF > 5 ? 'potential multicollinearity issues requiring attention' : 'acceptable statistical properties'}. 
+                    The ${complexity} model structure balances complexity with interpretability for clinical use. 
+                    <span class="canada-advanced">Canadian healthcare implementation</span> requires external validation, 
+                    impact assessment, and integration with clinical workflows for optimal patient benefit.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>🧮 Advanced Multiple Regression Analysis</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Multiple Regression Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Clinical Application:</strong> Multiple regression provides the statistical foundation for sophisticated medical prediction models and clinical decision support systems. Understanding coefficients, interactions, multicollinearity, and model validation is essential for developing reliable tools for evidence-based patient care and clinical research.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateMedicalModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
