@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intermediate Series: Logistic Regression in Healthcare & Medical Classification Models</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-purple: #7B1FA2;
+            --secondary-red: #DC2626;
+            --light-purple: #BA68C8;
+            --pale-purple: #F3E5F5;
+            --deep-purple: #4A148C;
+            --violet: #9C27B0;
+            --lavender: #E1BEE7;
+            --medical-indigo: #3F51B5;
+            --clinical-amber: #FFB300;
+            --health-teal: #00ACC1;
+            --silver: #E0E0E0;
+            --charcoal: #37474F;
+            --slate: #607D8B;
+            --cream: #FAFAFA;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Libre Baskerville', serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #FCE4EC 50%, var(--pale-purple) 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Medical Classification Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -80%;
+            left: -80%;
+            width: 260%;
+            height: 260%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(123, 31, 162, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 70%, rgba(186, 104, 200, 0.07) 0%, transparent 65%),
+                radial-gradient(ellipse at 95% 10%, rgba(63, 81, 181, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 10% 90%, rgba(255, 179, 0, 0.04) 0%, transparent 55%);
+            animation: classificationFlow 52s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes classificationFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.8; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.12) translate(30px, -30px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.88) translate(-25px, 25px); 
+                opacity: 0.85; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.08) translate(20px, -15px); 
+                opacity: 0.95; 
+            }
+        }
+
+        /* Logistic Regression Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(45deg, 
+                    transparent 0px, 
+                    rgba(123, 31, 162, 0.028) 1px, 
+                    transparent 2px, 
+                    transparent 85px),
+                repeating-linear-gradient(-45deg, 
+                    transparent 0px, 
+                    rgba(186, 104, 200, 0.022) 1px, 
+                    transparent 2px, 
+                    transparent 105px);
+            z-index: -1;
+            animation: logisticGrid 38s linear infinite;
+        }
+
+        @keyframes logisticGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(85px) translateY(105px); }
+        }
+
+        .container {
+            max-width: 1900px;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 
+                0 0 90px rgba(123, 31, 162, 0.14),
+                0 30px 80px rgba(186, 104, 200, 0.12),
+                0 20px 40px rgba(63, 81, 181, 0.1);
+            border-radius: 45px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            animation: logisticEntry 3.0s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(123, 31, 162, 0.18);
+        }
+
+        @keyframes logisticEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.85) translateY(80px) rotateX(20deg);
+                filter: blur(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Medical Classification Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-purple) 35%, var(--deep-purple) 70%, #1A237E 100%);
+            color: white;
+            padding: 70px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(80deg, 
+                transparent 0%, 
+                rgba(186, 104, 200, 0.16) 10%, 
+                transparent 25%, 
+                rgba(63, 81, 181, 0.13) 40%, 
+                transparent 55%, 
+                rgba(255, 179, 0, 0.11) 70%, 
+                transparent 85%);
+            animation: classificationHeader 17s ease-in-out infinite;
+        }
+
+        @keyframes classificationHeader {
+            0%, 100% { 
+                transform: translateX(-120px) scaleY(1) rotate(0deg); 
+                opacity: 0.85; 
+            }
+            33% { 
+                transform: translateX(75px) scaleY(1.25) rotate(1.5deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-45px) scaleY(0.8) rotate(-1deg); 
+                opacity: 0.9; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4.7em;
+            font-weight: 900;
+            margin-bottom: 35px;
+            text-shadow: 4px 6px 18px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--lavender) 30%, #DDA0DD 60%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleLogistic 4.8s ease-in-out infinite alternate;
+            letter-spacing: -2.8px;
+        }
+
+        @keyframes titleLogistic {
+            from { 
+                filter: drop-shadow(0 0 22px rgba(186, 104, 200, 0.7)); 
+                text-shadow: 0 0 50px rgba(123, 31, 162, 0.5);
+            }
+            to { 
+                filter: drop-shadow(0 0 35px rgba(123, 31, 162, 0.85)); 
+                text-shadow: 0 0 60px rgba(74, 20, 140, 0.6);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 2.1em;
+            font-weight: 400;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            color: var(--lavender);
+            text-shadow: 3px 4px 15px rgba(0,0,0,0.5);
+            letter-spacing: 1.4px;
+            font-style: italic;
+        }
+
+        /* Medical Classification Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-purple) 0%, var(--medical-indigo) 18%, var(--clinical-amber) 36%, var(--health-teal) 54%, var(--violet) 72%, var(--primary-purple) 90%, var(--deep-purple) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 6px 0 rgba(186, 104, 200, 0.7);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.12) 0%, 
+                rgba(186, 104, 200, 0.22) 50%, 
+                rgba(255,255,255,0.12) 100%);
+            transform: translateX(-200%);
+            animation: classificationNav 12s ease-in-out infinite;
+        }
+
+        @keyframes classificationNav {
+            0%, 100% { transform: translateX(-200%); }
+            50% { transform: translateX(500%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 38px 44px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.25em;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 7px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 0.9px;
+        }
+
+        .tab-button:hover {
+            background: rgba(186, 104, 200, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(186, 104, 200, 0.35);
+            border-bottom-color: var(--clinical-amber);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -7px 0 var(--clinical-amber);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 75px;
+            animation: classificationSlide 1.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes classificationSlide {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.95);
+                filter: blur(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4.2em;
+            color: var(--secondary-red);
+            margin-bottom: 65px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 3px 4px 15px rgba(0,0,0,0.16);
+            letter-spacing: -2.4px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--lavender) 0%, 
+                var(--medical-indigo) 14%, 
+                var(--clinical-amber) 28%, 
+                var(--health-teal) 42%, 
+                var(--violet) 56%, 
+                var(--primary-purple) 70%, 
+                var(--light-purple) 84%, 
+                var(--lavender) 100%);
+            border-radius: 5px;
+            animation: classificationUnderline 6.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes classificationUnderline {
+            from { width: 240px; opacity: 0.8; }
+            to { width: 340px; opacity: 1; }
+        }
+
+        /* Medical Purple/Violet Boxes - Intermediate Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
+            gap: 55px;
+            margin-bottom: 75px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, #FCE4EC 50%, var(--white) 100%);
+            padding: 60px;
+            border-radius: 35px;
+            border: 5px solid var(--light-purple);
+            box-shadow: 
+                0 25px 70px rgba(123, 31, 162, 0.12),
+                0 12px 35px rgba(186, 104, 200, 0.14);
+            transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, 
+                rgba(186, 104, 200, 0.12) 0%, 
+                rgba(123, 31, 162, 0.1) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardLogistic 10s ease-in-out infinite;
+        }
+
+        @keyframes cardLogistic {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.9; 
+            }
+            25% { 
+                transform: scale(1.2) translateX(30px) translateY(-30px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.8) translateX(-20px) translateY(20px) rotate(180deg); 
+                opacity: 0.85; 
+            }
+            75% { 
+                transform: scale(1.15) translateX(20px) translateY(-12px) rotate(270deg); 
+                opacity: 0.95; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-18px);
+            box-shadow: 
+                0 35px 90px rgba(123, 31, 162, 0.18),
+                0 18px 45px rgba(186, 104, 200, 0.22);
+            border-color: var(--primary-purple);
+        }
+
+        .theory-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--secondary-red);
+            margin-bottom: 35px;
+            font-size: 2.3em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.9px;
+        }
+
+        .theory-card p {
+            font-size: 1.3em;
+            line-height: 1.9;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Classification Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-purple) 50%, var(--deep-purple) 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 28px;
+            margin: 42px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35em;
+            box-shadow: 
+                inset 0 5px 30px rgba(0,0,0,0.6), 
+                0 20px 55px rgba(123, 31, 162, 0.35);
+            overflow-x: auto;
+            border: 5px solid rgba(186, 104, 200, 0.6);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--lavender) 15%, 
+                var(--medical-indigo) 30%, 
+                var(--clinical-amber) 45%, 
+                var(--health-teal) 60%, 
+                var(--violet) 75%, 
+                transparent 100%);
+            animation: formulaLogistic 5.5s ease-in-out infinite;
+        }
+
+        @keyframes formulaLogistic {
+            0%, 100% { opacity: 0.7; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(1.8); }
+        }
+
+        /* Medical Purple Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, #FCE4EC 50%, var(--white) 100%);
+            padding: 65px;
+            border-radius: 40px;
+            margin: 65px 0;
+            border: 6px solid var(--light-purple);
+            box-shadow: 
+                0 35px 90px rgba(186, 104, 200, 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -110%;
+            left: -110%;
+            width: 320%;
+            height: 320%;
+            background: conic-gradient(from 65deg at 50% 50%, 
+                transparent 0%, 
+                rgba(186, 104, 200, 0.07) 20%, 
+                transparent 40%, 
+                rgba(123, 31, 162, 0.05) 60%, 
+                transparent 80%);
+            animation: controlLogistic 25s linear infinite;
+        }
+
+        @keyframes controlLogistic {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--secondary-red);
+            font-size: 3.4em;
+            margin-bottom: 50px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.9px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 45px;
+            margin-bottom: 55px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--charcoal);
+            font-size: 1.25em;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 28px;
+            border: 2px solid #E5E7EB;
+            border-radius: 20px;
+            font-size: 1.2em;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 6px 22px rgba(0,0,0,0.07);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 
+                0 0 35px rgba(123, 31, 162, 0.35),
+                0 0 0 5px rgba(186, 104, 200, 0.2);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        /* Medical Classification Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 35px;
+            margin-top: 55px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 32px 65px;
+            border: none;
+            border-radius: 22px;
+            font-weight: 600;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2.2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.7) 50%, 
+                transparent 100%);
+            transition: left 1.0s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--deep-purple) 100%);
+            color: white;
+            box-shadow: 0 14px 40px rgba(123, 31, 162, 0.48);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--deep-purple) 0%, var(--primary-purple) 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(123, 31, 162, 0.55);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--medical-indigo) 0%, #1976D2 100%);
+            color: white;
+            box-shadow: 0 14px 40px rgba(63, 81, 181, 0.48);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #1976D2 0%, var(--medical-indigo) 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(63, 81, 181, 0.55);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--clinical-amber) 0%, #FFA000 100%);
+            color: white;
+            box-shadow: 0 14px 40px rgba(255, 179, 0, 0.48);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #FFA000 0%, var(--clinical-amber) 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 179, 0, 0.55);
+        }
+
+        /* Medical Purple Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, #FCE4EC 100%);
+            border: 6px solid var(--light-purple);
+            border-radius: 38px;
+            padding: 65px;
+            margin: 65px 0;
+            box-shadow: 
+                0 35px 100px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 7px;
+            background: linear-gradient(90deg, 
+                var(--lavender) 0%, 
+                var(--medical-indigo) 12%, 
+                var(--clinical-amber) 24%, 
+                var(--health-teal) 36%, 
+                var(--violet) 48%, 
+                var(--primary-purple) 60%, 
+                var(--light-purple) 72%, 
+                var(--deep-purple) 84%, 
+                var(--lavender) 100%);
+            animation: classificationResults 5.5s ease-in-out infinite;
+        }
+
+        @keyframes classificationResults {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5em;
+            color: var(--secondary-red);
+            margin-bottom: 50px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.9px;
+        }
+
+        /* Medical Purple Chart Container */
+        .chart-container {
+            position: relative;
+            height: 720px;
+            margin: 65px 0;
+            background: linear-gradient(135deg, var(--pale-purple) 0%, var(--white) 100%);
+            border-radius: 32px;
+            padding: 55px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.16);
+            border: 5px solid var(--light-purple);
+        }
+
+        /* Statistics Grid - Medical Purple Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 45px;
+            margin: 58px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, var(--white) 100%);
+            padding: 45px;
+            border-radius: 26px;
+            text-align: center;
+            border: 5px solid var(--light-purple);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--lavender) 0%, var(--primary-purple) 50%, var(--medical-indigo) 100%);
+            transform: scaleX(0);
+            transition: transform 0.7s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) scale(1.04);
+            box-shadow: 0 30px 75px rgba(0,0,0,0.18);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 18px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            color: var(--slate);
+            font-weight: 500;
+        }
+
+        /* Logistic Regression-Specific Elements */
+        .logistic-info {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, #F0F8FF 100%);
+            border: 5px solid var(--light-purple);
+            border-radius: 25px;
+            padding: 45px;
+            margin: 45px 0;
+        }
+
+        .odds-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 28px;
+            margin: 38px 0;
+        }
+
+        .odds-metric-card {
+            background: var(--primary-purple);
+            color: white;
+            padding: 28px 20px;
+            border-radius: 18px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .odds-metric-card:nth-child(1) { background: var(--medical-indigo); }
+        .odds-metric-card:nth-child(2) { background: var(--clinical-amber); }
+        .odds-metric-card:nth-child(3) { background: var(--primary-purple); }
+        .odds-metric-card:nth-child(4) { background: var(--health-teal); }
+
+        /* Decision Framework - Medical Purple */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, rgba(186, 104, 200, 0.3) 100%);
+            border: 6px solid var(--light-purple);
+            border-radius: 35px;
+            padding: 55px;
+            margin: 55px 0;
+        }
+
+        .decision-question {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.7em;
+            margin-bottom: 45px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 35px;
+        }
+
+        .decision-option {
+            padding: 35px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 22px;
+            cursor: pointer;
+            transition: all 0.7s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.2em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--medical-indigo);
+            background: #E3F2FD;
+            transform: translateY(-6px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-purple);
+            background: var(--pale-purple);
+            box-shadow: 0 0 40px rgba(123, 31, 162, 0.45);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 45px;
+            border-radius: 26px;
+            margin: 45px 0;
+            font-weight: 500;
+            font-size: 1.3em;
+        }
+
+        .feedback-success {
+            background: var(--pale-purple);
+            border: 5px solid var(--light-purple);
+            color: var(--deep-purple);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 5px solid var(--clinical-amber);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 5px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 25px;
+                border-radius: 38px;
+            }
+
+            .header-title {
+                font-size: 3.6em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .odds-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Purple */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-purple) 0%, #F0F8FF 100%);
+            padding: 45px;
+            border-radius: 22px;
+            margin: 45px 0;
+            border-left: 10px solid var(--primary-purple);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '🔮';
+            position: absolute;
+            top: 45px;
+            left: 38px;
+            font-size: 1.7em;
+        }
+
+        .research-note p {
+            margin-left: 55px;
+            line-height: 2.0;
+        }
+
+        /* Advanced Visual Effects */
+        .classification-highlight {
+            background: rgba(123, 31, 162, 0.14);
+            border-left: 8px solid var(--primary-purple);
+            padding: 26px;
+            margin: 26px 0;
+            border-radius: 14px;
+        }
+
+        .odds-ratio-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-purple) 0%, var(--primary-purple) 100%);
+            color: white;
+            padding: 14px 26px;
+            border-radius: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            margin: 0 14px;
+            font-size: 1.1em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-classification {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.92em;
+            display: inline-block;
+            margin: 0 12px;
+        }
+
+        /* ROC Curve Visualization */
+        .roc-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--pale-purple);
+            padding: 30px;
+            border-radius: 18px;
+            margin: 30px 0;
+        }
+
+        .roc-metric {
+            background: var(--primary-purple);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 14px;
+            text-align: center;
+            flex: 1;
+            margin: 0 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.0em;
+        }
+
+        .roc-metric:first-child {
+            background: var(--medical-indigo);
+        }
+
+        .roc-metric:nth-child(2) {
+            background: var(--clinical-amber);
+        }
+
+        .roc-metric:last-child {
+            background: var(--health-teal);
+        }
+
+        /* Binary Classification Steps */
+        .classification-steps {
+            background: var(--pale-purple);
+            padding: 35px;
+            border-radius: 20px;
+            margin: 35px 0;
+            border: 4px solid var(--light-purple);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 18px 0;
+            padding: 18px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .step-number {
+            background: var(--primary-purple);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 18px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Logistic Regression in Healthcare & Medical Classification Models</h1>
+            <p class="header-subtitle">Intermediate Series: Advanced Binary Classification for Medical Research</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">🔮 Logistic Regression Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Medical Classification</button>
+            <button class="tab-button" onclick="showSection('analysis')">📊 Model Performance</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Logistic Regression Framework for Healthcare</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>🔮 Logistic Regression Theory</h3>
+                    <p><strong>Binary Classification:</strong> Logistic regression models the probability of binary medical outcomes (disease/healthy, treatment success/failure) using the logistic function to ensure probabilities stay between 0 and 1.</p>
+                    <div class="formula-display">
+                        Logistic Function:<br>
+                        P(Y = 1|X) = 1 / (1 + e^(-(β₀ + β₁X₁ + ... + βₖXₖ)))<br><br>
+                        Logit (Log-Odds):<br>
+                        ln(P/(1-P)) = β₀ + β₁X₁ + ... + βₖXₖ<br><br>
+                        Odds Ratio: OR = e^βᵢ<br>
+                        (Change in odds per unit increase in Xᵢ)
+                    </div>
+                    <p><em>Clinical insight: Logistic regression transforms linear predictors into probabilities bounded between 0 and 1</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📊 Odds Ratios in Medicine</h3>
+                    <p><strong>Risk Interpretation:</strong> Odds ratios quantify the strength of association between risk factors and medical outcomes, providing intuitive measures for clinical decision-making.</p>
+                    <div class="formula-display">
+                        Odds = P(Event) / P(No Event)<br>
+                        OR = Odds(Exposed) / Odds(Unexposed)<br><br>
+                        Interpretation:<br>
+                        OR = 1: No association<br>
+                        OR > 1: Increased risk<br>
+                        OR < 1: Protective effect<br><br>
+                        Example: OR = 2.5 means 2.5× higher odds<br>
+                        with exposure vs. without
+                    </div>
+                    <p><strong>Clinical Application:</strong> OR = 3.2 for smoking and lung cancer means smokers have 3.2 times the odds of developing lung cancer</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎯 Maximum Likelihood Estimation</h3>
+                    <p><strong>Parameter Estimation:</strong> Unlike linear regression, logistic regression uses maximum likelihood estimation to find coefficients that best explain the observed binary outcomes.</p>
+                    <div class="formula-display">
+                        Likelihood Function:<br>
+                        L(β) = ∏ᵢ P(yᵢ|xᵢ)^yᵢ × (1-P(yᵢ|xᵢ))^(1-yᵢ)<br><br>
+                        Log-Likelihood:<br>
+                        LL(β) = Σᵢ [yᵢ ln(Pᵢ) + (1-yᵢ) ln(1-Pᵢ)]<br><br>
+                        No closed-form solution:<br>
+                        Iterative methods (Newton-Raphson)
+                    </div>
+                    <p><strong>Medical Significance:</strong> MLE provides unbiased, efficient estimates for clinical prediction models when sample sizes are adequate</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🏥 Model Performance Metrics</h3>
+                    <p><strong>Classification Accuracy:</strong> Medical classification models require comprehensive evaluation using sensitivity, specificity, and ROC analysis to assess clinical utility.</p>
+                    <div class="formula-display">
+                        Sensitivity = TP / (TP + FN)<br>
+                        Specificity = TN / (TN + FP)<br>
+                        PPV = TP / (TP + FP)<br>
+                        NPV = TN / (TN + FN)<br><br>
+                        AUC-ROC: Area Under Curve<br>
+                        AUC = 0.5: Random classifier<br>
+                        AUC = 1.0: Perfect classifier<br>
+                        AUC > 0.8: Good performance
+                    </div>
+                    <p><strong>Clinical Trade-offs:</strong> Balance sensitivity (catch all cases) vs specificity (avoid false alarms) based on clinical consequences</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔍 Model Diagnostics for Binary Outcomes</h3>
+                    <p><strong>Goodness-of-Fit:</strong> Logistic regression models require specialized diagnostic tests to assess model adequacy and calibration for clinical use.</p>
+                    <div class="formula-display">
+                        Hosmer-Lemeshow Test:<br>
+                        H₀: Model fits well<br>
+                        χ² = Σᵢ [(Oᵢ - Eᵢ)² / Eᵢ]<br>
+                        p > 0.05 indicates good fit<br><br>
+                        Pseudo R²:<br>
+                        McFadden's R² = 1 - (LL₁/LL₀)<br>
+                        Nagelkerke R² ∈ [0,1]
+                    </div>
+                    <p><strong>Clinical Validation:</strong> Model calibration ensures predicted probabilities match observed outcomes across risk groups</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎲 Assumptions & Limitations</h3>
+                    <p><strong>Model Requirements:</strong> Logistic regression assumes independence, linear relationship between predictors and log-odds, and absence of influential outliers.</p>
+                    <div class="formula-display">
+                        Key Assumptions:<br>
+                        1. Independence of observations<br>
+                        2. Linear relationship with log-odds<br>
+                        3. No severe multicollinearity<br>
+                        4. Large sample size (≥10 events per predictor)<br><br>
+                        Limitations:<br>
+                        • Sensitive to outliers<br>
+                        • Requires large samples<br>
+                        • Complete separation issues
+                    </div>
+                    <p><strong>Clinical Considerations:</strong> Violations can lead to unreliable confidence intervals and poor generalizability to new patient populations</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Medical Classification Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 40px;">
+                    <div>
+                        <h4>🏥 Clinical Risk Assessment:</h4>
+                        <ul>
+                            <li><strong>Diabetes Risk Prediction:</strong> BMI, age, family history classification</li>
+                            <li><strong>Surgical Complication Models:</strong> Pre-operative risk stratification</li>
+                            <li><strong>Cancer Screening Effectiveness:</strong> Binary outcome optimization</li>
+                            <li><strong>Medication Adherence:</strong> Patient compliance prediction models</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Healthcare System Analytics:</h4>
+                        <ul>
+                            <li><strong>Hospital Readmission Classification:</strong> 30-day binary outcomes</li>
+                            <li><strong>Treatment Response Prediction:</strong> Success/failure modeling</li>
+                            <li><strong>Emergency Department Outcomes:</strong> Admission/discharge decisions</li>
+                            <li><strong>Diagnostic Test Performance:</strong> Positive/negative classification</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classification-steps" style="margin-top: 40px;">
+                    <h4 style="color: var(--secondary-red); margin-bottom: 25px; text-align: center;">🔮 Logistic Regression Modeling Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Binary Outcome Definition:</strong> Clearly define success/failure or presence/absence</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Predictor Selection:</strong> Choose clinically relevant risk factors and confounders</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Sample Size Planning:</strong> Ensure ≥10 events per predictor variable</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Model Fitting:</strong> Use maximum likelihood estimation for coefficients</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Performance Assessment:</strong> Evaluate ROC, calibration, and discrimination</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Clinical Validation:</strong> Test model performance in independent samples</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Implementation:</strong> Integrate into clinical decision support systems</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>🔮 Medical Classification Foundation:</strong> Logistic regression provides the essential framework for binary medical outcome prediction and risk assessment. These models enable healthcare professionals to quantify disease risk, evaluate treatment effectiveness, and develop evidence-based clinical decision tools. Understanding odds ratios, model performance metrics, and diagnostic procedures is crucial for implementing reliable classification systems in clinical practice and medical research.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Medical Classification Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Medical Classification Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">🔮 Logistic Regression Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="classificationModel">Canadian Medical Classification Model</label>
+                        <select id="classificationModel" onchange="updateClassificationModel()">
+                            <option value="diabetes_risk">Diabetes Risk Prediction Model</option>
+                            <option value="surgical_complications">Surgical Complication Risk Model</option>
+                            <option value="cancer_screening">Cancer Screening Effectiveness Model</option>
+                            <option value="medication_adherence">Medication Adherence Prediction Model</option>
+                            <option value="hospital_readmission">Hospital Readmission Classification Model</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modelType">Classification Approach</label>
+                        <select id="modelType">
+                            <option value="simple_logistic">Simple Logistic Regression</option>
+                            <option value="multiple_logistic" selected>Multiple Logistic Regression</option>
+                            <option value="stepwise_selection">Stepwise Variable Selection</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeClassification">Sample Size</label>
+                        <select id="sampleSizeClassification">
+                            <option value="300">300 patients</option>
+                            <option value="750" selected>750 patients</option>
+                            <option value="1500">1,500 patients</option>
+                            <option value="3000">3,000 patients</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="effectSize">Effect Strength (Odds Ratios)</label>
+                        <input type="range" id="effectSize" min="0.2" max="2.0" step="0.2" value="1.0" onchange="updateEffectSizeDisplay()">
+                        <span id="effectSizeValue">1.0</span> (moderate effects)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateClassificationData()">🔮 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performLogisticRegression()">📊 Build Model</button>
+                    <button class="btn btn-accent" onclick="evaluatePerformance()">🎯 Evaluate Performance</button>
+                </div>
+            </div>
+
+            <!-- Medical Model Description -->
+            <div id="classificationDescription" class="logistic-info">
+                <div class="results-header">Current Medical Classification Model</div>
+                <div id="classificationText"></div>
+                <div id="oddsMetrics" class="odds-metrics"></div>
+            </div>
+
+            <!-- Medical Classification Chart -->
+            <div class="chart-container">
+                <canvas id="classificationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Model Performance Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Logistic Regression Analysis</h2>
+
+            <div id="logisticResults" class="results-container">
+                <div class="results-header">Logistic Regression Model Results</div>
+                <div id="logisticTable"></div>
+            </div>
+
+            <div class="stats-grid" id="classificationStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="performanceResults" class="results-container">
+                <div class="results-header">🔮 Model Performance & Clinical Metrics</div>
+                <div id="performanceTable"></div>
+            </div>
+
+            <!-- ROC Curve Chart -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 40px; color: var(--secondary-red);">📊 ROC Curve & Performance Analysis</h3>
+                <canvas id="rocChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Logistic Regression Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading logistic regression assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 45px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 55px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Classification Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentClassificationModel = null;
+        let currentClassificationChart = null;
+        let rocChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Medical Classification Model Definitions
+        const classificationModels = {
+            diabetes_risk: {
+                title: "Diabetes Risk Prediction Model (Type 2)",
+                description: "Binary classification model predicting 5-year Type 2 diabetes risk in Canadian adults using clinical risk factors and lifestyle variables from population health surveys.",
+                outcome: "Type 2 Diabetes Development (Yes/No)",
+                predictors: ["Age", "BMI", "Family History", "Hypertension", "Physical Activity", "Waist Circumference", "Ethnicity"],
+                population: "Canadian adults aged 30-64 years without diabetes",
+                clinical_context: "Primary prevention and early intervention targeting",
+                prevalence: "8.1% (Canadian baseline prevalence)",
+                expected_auc: "0.75-0.82",
+                key_or: "BMI ≥30: OR 3.2, Family History: OR 2.8, Age per decade: OR 1.5",
+                validation: "External validation in provincial cohorts, calibration testing",
+                clinical_application: "Risk-based screening intervals, lifestyle intervention targeting, pre-diabetes identification"
+            },
+            surgical_complications: {
+                title: "Surgical Complication Risk Model (Major Surgery)",
+                description: "Pre-operative risk assessment model for major complications within 30 days of elective surgery using patient characteristics and procedure factors.",
+                outcome: "Major Complications within 30 days (Yes/No)",
+                predictors: ["Age", "ASA Score", "BMI", "Comorbidity Count", "Surgery Type", "Duration", "Emergency Status"],
+                population: "Adult patients undergoing elective major surgery",
+                clinical_context: "Pre-operative counseling and risk stratification",
+                prevalence: "12.5% (major complication rate)",
+                expected_auc: "0.68-0.76",
+                key_or: "ASA ≥3: OR 4.1, Age ≥70: OR 2.3, Emergency: OR 3.8",
+                validation: "Multi-center validation, NSQIP comparison",
+                clinical_application: "Informed consent, resource planning, patient selection, optimization protocols"
+            },
+            cancer_screening: {
+                title: "Cancer Screening Effectiveness Model (Colorectal)",
+                description: "Binary outcome model predicting positive screening results for colorectal cancer using patient risk factors and screening history data from provincial programs.",
+                outcome: "Positive Screening Test (Yes/No)",
+                predictors: ["Age", "Sex", "Family History", "Previous Screening", "BMI", "Smoking", "Inflammatory Bowel Disease"],
+                population: "Adults aged 50-74 in provincial screening programs",
+                clinical_context: "Screening optimization and risk stratification",
+                prevalence: "6.2% (positive screening rate)",
+                expected_auc: "0.72-0.78",
+                key_or: "Family History: OR 2.5, Age ≥65: OR 1.8, IBD: OR 4.2",
+                validation: "Population-based validation, sensitivity/specificity analysis",
+                clinical_application: "Personalized screening intervals, risk-based protocols, resource allocation"
+            },
+            medication_adherence: {
+                title: "Medication Adherence Prediction Model (Chronic Disease)",
+                description: "Classification model predicting poor medication adherence in patients with chronic conditions using pharmacy data and patient characteristics from Canadian health databases.",
+                outcome: "Poor Adherence (<80% PDC) (Yes/No)",
+                predictors: ["Age", "Polypharmacy", "Income", "Rural/Urban", "Mental Health", "Side Effects", "Cost Coverage"],
+                population: "Adults with chronic conditions requiring long-term medication",
+                clinical_context: "Adherence intervention targeting and pharmacy counseling",
+                prevalence: "35.7% (poor adherence rate)",
+                expected_auc: "0.65-0.73",
+                key_or: "Polypharmacy ≥5: OR 2.1, Low Income: OR 1.7, Rural: OR 1.4",
+                validation: "Pharmacy validation, patient-reported outcomes correlation",
+                clinical_application: "Targeted counseling, adherence monitoring, intervention programs"
+            },
+            hospital_readmission: {
+                title: "Hospital Readmission Classification Model (30-Day)",
+                description: "Binary classification model for 30-day hospital readmission risk using discharge data, patient complexity, and social factors from Canadian hospital databases.",
+                outcome: "30-Day Readmission (Yes/No)",
+                predictors: ["Age", "LOS", "Discharge Destination", "Comorbidities", "Previous Admissions", "Mental Health", "Social Support"],
+                population: "Adult patients discharged from acute care hospitals",
+                clinical_context: "Discharge planning and transition care optimization",
+                prevalence: "11.8% (30-day readmission rate)",
+                expected_auc: "0.62-0.70",
+                key_or: "LOS ≥7 days: OR 1.9, Home Care: OR 0.6, Mental Health: OR 1.8",
+                validation: "Multi-hospital validation, administrative data verification",
+                clinical_application: "Discharge planning, transitional care programs, resource allocation"
+            }
+        };
+
+        // Assessment Questions (Logistic Regression focused)
+        const assessmentQuestions = [
+            {
+                question: "In a diabetes risk model, the odds ratio for BMI ≥30 is 2.5. This means:",
+                options: [
+                    "25% of obese patients will develop diabetes",
+                    "Obese patients have 2.5 times higher odds of developing diabetes",
+                    "BMI explains 25% of diabetes risk",
+                    "The probability of diabetes increases by 2.5% with obesity"
+                ],
+                correct: 1,
+                explanation: "An odds ratio of 2.5 means that patients with BMI ≥30 have 2.5 times higher odds of developing diabetes compared to patients with BMI <30. This is a multiplicative effect on the odds, not the probability or percentage risk."
+            },
+            {
+                question: "A logistic regression model for surgical complications has AUC = 0.78. This indicates:",
+                options: [
+                    "78% of patients will have complications",
+                    "The model correctly classifies 78% of patients",
+                    "Good discriminative ability to separate high-risk from low-risk patients",
+                    "The model explains 78% of complication variance"
+                ],
+                correct: 2,
+                explanation: "AUC (Area Under the ROC Curve) of 0.78 indicates good discriminative ability. AUC represents the probability that the model will rank a randomly chosen patient with complications higher than a randomly chosen patient without complications. AUC >0.7 is generally considered good performance."
+            },
+            {
+                question: "The Hosmer-Lemeshow test for a medical prediction model yields p = 0.02. This suggests:",
+                options: [
+                    "The model has excellent fit to the data",
+                    "The model has poor calibration and may not fit well",
+                    "The model has 98% accuracy",
+                    "The model should be used for clinical decisions"
+                ],
+                correct: 1,
+                explanation: "The Hosmer-Lemeshow test assesses goodness-of-fit for logistic regression. The null hypothesis is that the model fits well. A p-value of 0.02 (<0.05) suggests rejecting the null hypothesis, indicating the model may have poor calibration and doesn't fit the data well."
+            },
+            {
+                question: "In logistic regression, why can't we use linear regression for binary outcomes?",
+                options: [
+                    "Binary outcomes are too complex for linear models",
+                    "Linear regression can produce predicted probabilities outside [0,1]",
+                    "Logistic regression is always more accurate",
+                    "Binary data violates the normality assumption only"
+                ],
+                correct: 1,
+                explanation: "Linear regression can produce predicted probabilities less than 0 or greater than 1, which are impossible for probabilities. Logistic regression uses the logistic function to ensure all predicted probabilities remain between 0 and 1, making it appropriate for binary outcomes."
+            },
+            {
+                question: "For a screening test model, maximizing sensitivity means:",
+                options: [
+                    "Minimizing false positive rates",
+                    "Maximizing the detection of all true positive cases",
+                    "Optimizing overall accuracy",
+                    "Balancing sensitivity and specificity equally"
+                ],
+                correct: 1,
+                explanation: "Sensitivity is the true positive rate (TP/(TP+FN)). Maximizing sensitivity means detecting as many true positive cases as possible, minimizing false negatives. This is crucial for screening tests where missing a case (false negative) has serious consequences."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Classification Model Management
+        function updateClassificationModel() {
+            const modelType = document.getElementById('classificationModel').value;
+            const model = classificationModels[modelType];
+            
+            document.getElementById('classificationText').innerHTML = `
+                <h3 style="color: var(--secondary-red); margin-bottom: 25px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>🔮 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Binary Outcome:</strong> ${model.outcome}</p>
+                <p><strong>Key Predictors:</strong> ${model.predictors.join(', ')}</p>
+                <p><strong>Target Population:</strong> ${model.population}</p>
+                <p><strong>Baseline Prevalence:</strong> ${model.prevalence}</p>
+                <p><strong>Expected AUC:</strong> ${model.expected_auc}</p>
+                <p><strong>Key Odds Ratios:</strong> ${model.key_or}</p>
+                <p><strong>Model Validation:</strong> ${model.validation}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateOddsMetrics();
+        }
+
+        function updateOddsMetrics() {
+            const modelType = document.getElementById('modelType').value;
+            const container = document.getElementById('oddsMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(modelType) {
+                case 'simple_logistic': metrics = ['Odds Ratio', 'Confidence Interval', 'p-value', 'AUC']; break;
+                case 'multiple_logistic': metrics = ['Multiple ORs', 'Model AUC', 'Pseudo R²', 'Hosmer-Lemeshow']; break;
+                case 'stepwise_selection': metrics = ['Selected Variables', 'Final AUC', 'AIC/BIC', 'Cross-Validation']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'odds-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateEffectSizeDisplay() {
+            const effectSize = document.getElementById('effectSize').value;
+            const strength = effectSize < 0.6 ? 'weak' : 
+                           effectSize < 1.2 ? 'moderate' : 'strong';
+            document.getElementById('effectSizeValue').textContent = `${effectSize} (${strength} effects)`;
+        }
+
+        // Classification Data Generation
+        function generateClassificationData() {
+            const modelType = document.getElementById('classificationModel').value;
+            const analysisType = document.getElementById('modelType').value;
+            const sampleSize = parseInt(document.getElementById('sampleSizeClassification').value);
+            const effectSize = parseFloat(document.getElementById('effectSize').value);
+            
+            const model = classificationModels[modelType];
+            
+            currentClassificationModel = {
+                model: model,
+                analysisType: analysisType,
+                sampleSize: sampleSize,
+                effectSize: effectSize,
+                data: []
+            };
+
+            // Generate medical classification data
+            const numPredictors = model.predictors.length;
+            const baselinePrevalence = parseFloat(model.prevalence.split('%')[0]) / 100;
+            
+            for (let i = 0; i < sampleSize; i++) {
+                const patient = { id: i };
+                const predictors = [];
+                
+                // Generate predictors
+                for (let j = 0; j < numPredictors; j++) {
+                    predictors.push(generateStandardNormal());
+                }
+                
+                // Generate realistic coefficients based on effect size
+                const coefficients = [0.8, 0.6, 1.2, 0.4, -0.3, 0.5, 0.7, 0.9].slice(0, numPredictors);
+                const scaledCoeffs = coefficients.map(c => c * effectSize);
+                
+                // Calculate linear combination
+                const linearCombination = predictors.reduce((sum, pred, idx) => sum + pred * scaledCoeffs[idx], 0);
+                
+                // Convert to probability using logistic function
+                const logOdds = Math.log(baselinePrevalence / (1 - baselinePrevalence)) + linearCombination;
+                const probability = 1 / (1 + Math.exp(-logOdds));
+                
+                // Generate binary outcome
+                const outcome = Math.random() < probability ? 1 : 0;
+                
+                patient.predictors = predictors;
+                patient.probability = probability;
+                patient.outcome = outcome;
+                patient.age = 45 + Math.random() * 30;
+                patient.sex = Math.random() < 0.52 ? 'Female' : 'Male';
+                
+                currentClassificationModel.data.push(patient);
+            }
+
+            updateClassificationChart();
+        }
+
+        function generateStandardNormal() {
+            // Box-Muller transform
+            const u = 0.5 - Math.random();
+            const v = 0.5 - Math.random();
+            return Math.sqrt(-2 * Math.log(Math.abs(u))) * Math.cos(2 * Math.PI * v);
+        }
+
+        function updateClassificationChart() {
+            if (!currentClassificationModel) return;
+            
+            const ctx = document.getElementById('classificationChart').getContext('2d');
+            
+            if (currentClassificationChart) {
+                currentClassificationChart.destroy();
+            }
+
+            // Create probability distribution by outcome
+            const outcomes0 = currentClassificationModel.data.filter(d => d.outcome === 0).map(d => d.probability);
+            const outcomes1 = currentClassificationModel.data.filter(d => d.outcome === 1).map(d => d.probability);
+
+            // Create histogram data
+            const bins = 20;
+            const hist0 = createHistogram(outcomes0, bins);
+            const hist1 = createHistogram(outcomes1, bins);
+
+            currentClassificationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hist0.labels,
+                    datasets: [
+                        {
+                            label: 'No Event (0)',
+                            data: hist0.counts,
+                            backgroundColor: 'rgba(123, 31, 162, 0.6)',
+                            borderColor: '#7B1FA2',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Event (1)',
+                            data: hist1.counts,
+                            backgroundColor: 'rgba(255, 179, 0, 0.6)',
+                            borderColor: '#FFB300',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentClassificationModel.model.title} - Predicted Probability Distribution`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Predicted Probability' } },
+                        y: { title: { display: true, text: 'Frequency' } }
+                    }
+                }
+            });
+        }
+
+        function createHistogram(data, bins) {
+            const min = 0;
+            const max = 1;
+            const binWidth = (max - min) / bins;
+            const counts = new Array(bins).fill(0);
+            const labels = [];
+            
+            for (let i = 0; i < bins; i++) {
+                labels.push((min + i * binWidth).toFixed(2));
+            }
+            
+            data.forEach(value => {
+                const binIndex = Math.min(Math.floor((value - min) / binWidth), bins - 1);
+                counts[binIndex]++;
+            });
+            
+            return { labels, counts };
+        }
+
+        // Logistic Regression Analysis
+        function performLogisticRegression() {
+            if (!currentClassificationModel) {
+                alert('Please generate classification data first');
+                return;
+            }
+
+            const data = currentClassificationModel.data;
+            const outcomes = data.map(d => d.outcome);
+            const numPredictors = data[0].predictors.length;
+            
+            // Simplified logistic regression analysis
+            const positiveOutcomes = outcomes.filter(y => y === 1).length;
+            const negativeOutcomes = outcomes.length - positiveOutcomes;
+            const prevalence = positiveOutcomes / outcomes.length;
+            
+            // Simulate odds ratios for each predictor
+            const oddsRatios = [];
+            const pValues = [];
+            const confidenceIntervals = [];
+            
+            for (let i = 0; i < numPredictors; i++) {
+                // Simulate realistic odds ratios based on effect size
+                const baseOR = 1.5 + Math.random() * (currentClassificationModel.effectSize * 2);
+                const or = Math.random() < 0.3 ? 1 / baseOR : baseOR; // Some protective effects
+                const pValue = Math.random() < 0.7 ? Math.random() * 0.05 : Math.random() * 0.3; // Most significant
+                const ciLower = or * (0.7 + Math.random() * 0.2);
+                const ciUpper = or * (1.1 + Math.random() * 0.4);
+                
+                oddsRatios.push(or);
+                pValues.push(pValue);
+                confidenceIntervals.push([ciLower, ciUpper]);
+            }
+            
+            // Simulate model performance metrics
+            const auc = 0.65 + Math.random() * 0.2 + (currentClassificationModel.effectSize - 1) * 0.1;
+            const pseudoR2 = Math.max(0.05, Math.min(0.45, (auc - 0.5) * 0.8));
+            const hlTest = Math.random() < 0.7 ? 0.1 + Math.random() * 0.4 : Math.random() * 0.05; // Most models fit well
+            
+            const logisticResults = {
+                oddsRatios: oddsRatios,
+                pValues: pValues,
+                confidenceIntervals: confidenceIntervals,
+                prevalence: prevalence,
+                auc: auc,
+                pseudoR2: pseudoR2,
+                hlTest: hlTest,
+                numPredictors: numPredictors,
+                sampleSize: data.length,
+                predictorNames: currentClassificationModel.model.predictors.slice(0, numPredictors)
+            };
+
+            displayLogisticResults(logisticResults);
+        }
+
+        function displayLogisticResults(results) {
+            const model = currentClassificationModel.model;
+            const analysisType = currentClassificationModel.analysisType;
+            
+            let coefficientTable = '';
+            results.predictorNames.forEach((name, index) => {
+                const or = results.oddsRatios[index];
+                const pVal = results.pValues[index];
+                const ciLower = results.confidenceIntervals[index][0];
+                const ciUpper = results.confidenceIntervals[index][1];
+                const significance = pVal < 0.05 ? '✅ Significant' : '❌ Not Significant';
+                
+                coefficientTable += `
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr 1fr; gap: 20px; padding: 12px 0; ${index % 2 === 1 ? 'background: rgba(123, 31, 162, 0.1);' : ''}">
+                        <div>${name}</div>
+                        <div class="odds-ratio-display">${or.toFixed(2)}</div>
+                        <div>${ciLower.toFixed(2)} - ${ciUpper.toFixed(2)}</div>
+                        <div>${significance}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('logisticTable').innerHTML = `
+                <h4>🔮 Logistic Regression Model Results</h4>
+                <div style="background: var(--primary-purple); color: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; text-align: center;">
+                    <strong>${analysisType.replace('_', ' ').toUpperCase()}</strong><br>
+                    Binary Outcome: ${model.outcome}<br>
+                    Prevalence: ${(results.prevalence * 100).toFixed(1)}%
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; background: var(--pale-purple); padding: 30px; border-radius: 18px; margin: 25px 0;">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr 1fr; gap: 20px; font-weight: 600; border-bottom: 2px solid #ccc; padding-bottom: 15px;">
+                        <div>Predictor Variable</div>
+                        <div>Odds Ratio</div>
+                        <div>95% CI</div>
+                        <div>Significance</div>
+                    </div>
+                    ${coefficientTable}
+                </div>
+                <div class="classification-highlight">
+                    <p><strong>🔮 Clinical Logistic Regression Interpretation:</strong> 
+                    This model identifies significant risk factors for ${model.outcome.toLowerCase()} with AUC = ${results.auc.toFixed(3)} 
+                    indicating ${results.auc > 0.8 ? 'excellent' : results.auc > 0.7 ? 'good' : 'fair'} discriminative ability. 
+                    Each odds ratio represents the multiplicative change in odds per unit increase in that predictor. 
+                    <span class="canada-classification">Canadian clinical validation</span> 
+                    requires external validation and assessment of calibration across diverse populations.
+                    </p>
+                </div>
+            `;
+
+            // Update classification statistics display
+            document.getElementById('classificationStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${results.auc.toFixed(3)}</div>
+                    <div class="stat-label">AUC-ROC</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.pseudoR2 * 100).toFixed(1)}%</div>
+                    <div class="stat-label">Pseudo R²</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.prevalence * 100).toFixed(1)}%</div>
+                    <div class="stat-label">Prevalence</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.hlTest.toFixed(3)}</div>
+                    <div class="stat-label">H-L p-value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.sampleSize}</div>
+                    <div class="stat-label">Sample Size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.round(results.sampleSize * results.prevalence / results.numPredictors)}</div>
+                    <div class="stat-label">Events per Predictor</div>
+                </div>
+            `;
+        }
+
+        function evaluatePerformance() {
+            if (!currentClassificationModel) {
+                alert('Please build logistic regression model first');
+                return;
+            }
+
+            generateROCChart();
+            displayPerformanceMetrics();
+        }
+
+        function generateROCChart() {
+            const ctx = document.getElementById('rocChart').getContext('2d');
+            
+            if (rocChart) {
+                rocChart.destroy();
+            }
+
+            // Generate ROC curve data
+            const rocData = [];
+            const aucValue = 0.65 + Math.random() * 0.2 + (currentClassificationModel.effectSize - 1) * 0.1;
+            
+            for (let i = 0; i <= 100; i++) {
+                const fpr = i / 100;
+                // Approximate ROC curve based on AUC
+                let tpr;
+                if (aucValue > 0.5) {
+                    tpr = Math.min(1, fpr + (aucValue - 0.5) * 2 * Math.sqrt(fpr * (1 - fpr)));
+                } else {
+                    tpr = fpr;
+                }
+                rocData.push({ x: fpr, y: tpr });
+            }
+
+            rocChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: `ROC Curve (AUC = ${aucValue.toFixed(3)})`,
+                            data: rocData,
+                            borderColor: '#7B1FA2',
+                            backgroundColor: 'rgba(123, 31, 162, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            fill: true
+                        },
+                        {
+                            label: 'Random Classifier',
+                            data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+                            borderColor: '#E0E0E0',
+                            borderDash: [10, 5],
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Receiver Operating Characteristic (ROC) Curve',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'False Positive Rate (1 - Specificity)' },
+                            min: 0, 
+                            max: 1 
+                        },
+                        y: { 
+                            title: { display: true, text: 'True Positive Rate (Sensitivity)' },
+                            min: 0, 
+                            max: 1 
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayPerformanceMetrics() {
+            const model = currentClassificationModel.model;
+            const effectSize = currentClassificationModel.effectSize;
+            
+            // Simulate performance metrics
+            const auc = 0.65 + Math.random() * 0.2 + (effectSize - 1) * 0.1;
+            const sensitivity = 0.65 + Math.random() * 0.25;
+            const specificity = 0.7 + Math.random() * 0.25;
+            const ppv = 0.3 + Math.random() * 0.4;
+            const npv = 0.85 + Math.random() * 0.1;
+            const accuracy = (sensitivity + specificity) / 2 + (Math.random() - 0.5) * 0.1;
+            
+            document.getElementById('performanceTable').innerHTML = `
+                <h4>🔮 Model Performance & Clinical Metrics</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 35px 0;">
+                    <div class="stat-card" style="padding: 35px;">
+                        <h5>Discrimination Metrics</h5>
+                        <div class="roc-info">
+                            <div class="roc-metric">AUC-ROC<br>${auc.toFixed(3)}</div>
+                            <div class="roc-metric">Accuracy<br>${(accuracy * 100).toFixed(1)}%</div>
+                            <div class="roc-metric">C-Statistic<br>${auc.toFixed(3)}</div>
+                        </div>
+                        <p><strong>Performance:</strong> ${auc > 0.8 ? 'Excellent' : auc > 0.7 ? 'Good' : 'Fair'} discriminative ability</p>
+                    </div>
+                    <div class="stat-card" style="padding: 35px;">
+                        <h5>Classification Metrics</h5>
+                        <p><strong>Sensitivity:</strong> ${(sensitivity * 100).toFixed(1)}% (True Positive Rate)</p>
+                        <p><strong>Specificity:</strong> ${(specificity * 100).toFixed(1)}% (True Negative Rate)</p>
+                        <p><strong>PPV:</strong> ${(ppv * 100).toFixed(1)}% (Positive Predictive Value)</p>
+                        <p><strong>NPV:</strong> ${(npv * 100).toFixed(1)}% (Negative Predictive Value)</p>
+                    </div>
+                </div>
+                <div class="classification-highlight">
+                    <p><strong>🔮 Clinical Performance Interpretation:</strong> 
+                    The model demonstrates ${auc > 0.75 ? 'good clinical utility' : 'moderate performance'} 
+                    with balanced sensitivity (${(sensitivity * 100).toFixed(0)}%) and specificity (${(specificity * 100).toFixed(0)}%). 
+                    For ${model.clinical_context.toLowerCase()}, this performance suggests 
+                    ${auc > 0.75 ? 'readiness for clinical implementation with appropriate validation' : 'need for model improvement or additional predictors'}. 
+                    <span class="canada-classification">Canadian healthcare deployment</span> requires 
+                    external validation, impact studies, and integration with clinical workflows.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>🔮 Advanced Logistic Regression Analysis</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Logistic Regression Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Clinical Application:</strong> Logistic regression provides essential tools for binary medical classification and risk prediction. Understanding odds ratios, model performance metrics, and diagnostic procedures is crucial for developing reliable classification systems in clinical practice. These models enable evidence-based risk assessment, treatment selection, and clinical decision support across diverse healthcare applications.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateClassificationModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
