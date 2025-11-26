@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Series: Longitudinal Data Analysis in Healthcare & Repeated Measures Modeling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Fira+Code:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-plum: #8B5A96;
+            --secondary-red: #DC2626;
+            --light-plum: #E1D4F0;
+            --pale-plum: #F5F2F8;
+            --deep-plum: #6B1F87;
+            --clinical-plum: #9146FF;
+            --sophisticated-violet: #8A2BE2;
+            --medical-gold: #FFB300;
+            --clinical-silver: #B0BEC5;
+            --health-amber: #FFC107;
+            --charcoal: #374151;
+            --steel: #64748B;
+            --cream: #F9FAFB;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F8F5FF 50%, var(--pale-plum) 100%);
+            color: var(--charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Longitudinal Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(ellipse at 35% 25%, rgba(139, 90, 150, 0.08) 0%, transparent 85%),
+                radial-gradient(ellipse at 65% 75%, rgba(145, 70, 255, 0.09) 0%, transparent 80%),
+                radial-gradient(ellipse at 85% 10%, rgba(255, 179, 0, 0.06) 0%, transparent 75%),
+                radial-gradient(ellipse at 15% 85%, rgba(176, 190, 197, 0.05) 0%, transparent 70%);
+            animation: longitudinalFlow 72s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes longitudinalFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.85; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.3) translate(60px, -40px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.8) translate(-50px, 50px); 
+                opacity: 0.9; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.25) translate(45px, -30px); 
+                opacity: 0.95; 
+            }
+        }
+
+        /* Repeated Measures Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(125deg, 
+                    transparent 0px, 
+                    rgba(139, 90, 150, 0.025) 1px, 
+                    transparent 2px, 
+                    transparent 115px),
+                repeating-linear-gradient(-15deg, 
+                    transparent 0px, 
+                    rgba(145, 70, 255, 0.02) 1px, 
+                    transparent 2px, 
+                    transparent 135px);
+            z-index: -1;
+            animation: longitudinalGrid 56s linear infinite;
+        }
+
+        @keyframes longitudinalGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(115px) translateY(135px); }
+        }
+
+        .container {
+            max-width: 2150px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 
+                0 0 120px rgba(139, 90, 150, 0.2),
+                0 55px 110px rgba(145, 70, 255, 0.18),
+                0 45px 70px rgba(255, 179, 0, 0.16);
+            border-radius: 68px;
+            overflow: hidden;
+            backdrop-filter: blur(35px);
+            animation: longitudinalEntry 4.8s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(139, 90, 150, 0.3);
+        }
+
+        @keyframes longitudinalEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.78) translateY(115px) rotateX(35deg);
+                filter: blur(35px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Longitudinal Analysis Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-plum) 35%, var(--deep-plum) 70%, var(--clinical-plum) 100%);
+            color: white;
+            padding: 100px 90px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(105deg, 
+                transparent 0%, 
+                rgba(145, 70, 255, 0.28) 4%, 
+                transparent 18%, 
+                rgba(255, 179, 0, 0.22) 35%, 
+                transparent 50%, 
+                rgba(176, 190, 197, 0.2) 65%, 
+                transparent 80%);
+            animation: longitudinalHeader 28s ease-in-out infinite;
+        }
+
+        @keyframes longitudinalHeader {
+            0%, 100% { 
+                transform: translateX(-180px) scaleY(1) rotate(0deg); 
+                opacity: 0.88; 
+            }
+            33% { 
+                transform: translateX(130px) scaleY(1.75) rotate(3deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-100px) scaleY(0.65) rotate(-2.5deg); 
+                opacity: 0.92; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 7.0em;
+            font-weight: 700;
+            margin-bottom: 55px;
+            text-shadow: 9px 11px 35px rgba(0,0,0,0.85);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--light-plum) 15%, #E8B7FF 45%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleLongitudinal 7.2s ease-in-out infinite alternate;
+            letter-spacing: -5.2px;
+        }
+
+        @keyframes titleLongitudinal {
+            from { 
+                filter: drop-shadow(0 0 40px rgba(145, 70, 255, 0.95)); 
+                text-shadow: 0 0 90px rgba(139, 90, 150, 0.75);
+            }
+            to { 
+                filter: drop-shadow(0 0 60px rgba(139, 90, 150, 1.0)); 
+                text-shadow: 0 0 110px rgba(107, 31, 135, 0.85);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 3.6em;
+            font-weight: 400;
+            opacity: 0.97;
+            position: relative;
+            z-index: 2;
+            color: var(--light-plum);
+            text-shadow: 8px 9px 30px rgba(0,0,0,0.75);
+            letter-spacing: 2.6px;
+            font-style: italic;
+        }
+
+        /* Advanced Longitudinal Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-plum) 0%, var(--medical-gold) 8%, var(--clinical-silver) 16%, var(--sophisticated-violet) 24%, var(--deep-plum) 32%, var(--clinical-plum) 40%, var(--primary-plum) 48%, var(--sophisticated-violet) 56%, var(--deep-plum) 64%, var(--medical-gold) 72%, var(--primary-plum) 80%, var(--clinical-plum) 88%, var(--primary-plum) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 11px 0 rgba(145, 70, 255, 0.98);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 95%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.25) 0%, 
+                rgba(145, 70, 255, 0.4) 50%, 
+                rgba(255,255,255,0.25) 100%);
+            transform: translateX(-450%);
+            animation: longitudinalNav 22s ease-in-out infinite;
+        }
+
+        @keyframes longitudinalNav {
+            0%, 100% { transform: translateX(-450%); }
+            50% { transform: translateX(950%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 60px 65px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.7em;
+            cursor: pointer;
+            transition: all 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 12px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 1.9px;
+        }
+
+        .tab-button:hover {
+            background: rgba(145, 70, 255, 0.42);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(145, 70, 255, 0.55);
+            border-bottom-color: var(--medical-gold);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -12px 0 var(--medical-gold);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 125px;
+            animation: longitudinalSlide 2.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes longitudinalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(110px) scale(0.9);
+                filter: blur(22px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 7.0em;
+            color: var(--secondary-red);
+            margin-bottom: 115px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 8px 9px 30px rgba(0,0,0,0.28);
+            letter-spacing: -4.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 450px;
+            height: 11px;
+            background: linear-gradient(90deg, 
+                var(--light-plum) 0%, 
+                var(--medical-gold) 6%, 
+                var(--clinical-silver) 12%, 
+                var(--sophisticated-violet) 18%, 
+                var(--deep-plum) 24%, 
+                var(--primary-plum) 30%, 
+                var(--clinical-plum) 36%, 
+                var(--sophisticated-violet) 42%, 
+                var(--deep-plum) 48%, 
+                var(--medical-gold) 54%, 
+                var(--clinical-silver) 60%, 
+                var(--light-plum) 100%);
+            border-radius: 10px;
+            animation: longitudinalUnderline 11.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes longitudinalUnderline {
+            from { width: 450px; opacity: 0.85; }
+            to { width: 650px; opacity: 1; }
+        }
+
+        /* Medical Plum/Eggplant Boxes - Advanced Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 105px;
+            margin-bottom: 125px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, #F8F5FF 50%, var(--white) 100%);
+            padding: 90px;
+            border-radius: 55px;
+            border: 10px solid var(--light-plum);
+            box-shadow: 
+                0 50px 135px rgba(139, 90, 150, 0.22),
+                0 30px 65px rgba(145, 70, 255, 0.24);
+            transition: all 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -75px;
+            right: -75px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, 
+                rgba(145, 70, 255, 0.22) 0%, 
+                rgba(139, 90, 150, 0.2) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardLongitudinal 15s ease-in-out infinite;
+        }
+
+        @keyframes cardLongitudinal {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.92; 
+            }
+            25% { 
+                transform: scale(1.45) translateX(55px) translateY(-55px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.65) translateX(-45px) translateY(45px) rotate(180deg); 
+                opacity: 0.88; 
+            }
+            75% { 
+                transform: scale(1.4) translateX(45px) translateY(-25px) rotate(270deg); 
+                opacity: 0.98; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-35px);
+            box-shadow: 
+                0 65px 180px rgba(139, 90, 150, 0.3),
+                0 40px 90px rgba(145, 70, 255, 0.38);
+            border-color: var(--primary-plum);
+        }
+
+        .theory-card h3 {
+            font-family: 'Libre Baskerville', serif;
+            color: var(--secondary-red);
+            margin-bottom: 60px;
+            font-size: 3.8em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.2px;
+        }
+
+        .theory-card p {
+            font-size: 1.8em;
+            line-height: 2.4;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Longitudinal Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-plum) 50%, var(--deep-plum) 100%);
+            color: white;
+            padding: 75px;
+            border-radius: 50px;
+            margin: 65px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.8em;
+            box-shadow: 
+                inset 0 10px 55px rgba(0,0,0,0.9), 
+                0 45px 100px rgba(139, 90, 150, 0.6);
+            overflow-x: auto;
+            border: 10px solid rgba(145, 70, 255, 1.0);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--light-plum) 6%, 
+                var(--medical-gold) 12%, 
+                var(--clinical-silver) 18%, 
+                var(--sophisticated-violet) 24%, 
+                var(--deep-plum) 30%, 
+                var(--clinical-plum) 36%, 
+                var(--sophisticated-violet) 42%, 
+                transparent 100%);
+            animation: formulaLongitudinal 8.0s ease-in-out infinite;
+        }
+
+        @keyframes formulaLongitudinal {
+            0%, 100% { opacity: 0.75; transform: scaleX(0.65); }
+            50% { opacity: 1; transform: scaleX(2.8); }
+        }
+
+        /* Medical Plum Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, #F8F5FF 50%, var(--white) 100%);
+            padding: 115px;
+            border-radius: 65px;
+            margin: 115px 0;
+            border: 11px solid var(--light-plum);
+            box-shadow: 
+                0 60px 175px rgba(145, 70, 255, 0.35),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -200%;
+            left: -200%;
+            width: 500%;
+            height: 500%;
+            background: conic-gradient(from 125deg at 50% 50%, 
+                transparent 0%, 
+                rgba(145, 70, 255, 0.13) 12%, 
+                transparent 22%, 
+                rgba(139, 90, 150, 0.11) 48%, 
+                transparent 58%);
+            animation: controlLongitudinal 44s linear infinite;
+        }
+
+        @keyframes controlLongitudinal {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Libre Baskerville', serif;
+            color: var(--secondary-red);
+            font-size: 5.5em;
+            margin-bottom: 95px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.2px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+            gap: 75px;
+            margin-bottom: 105px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 45px;
+            color: var(--charcoal);
+            font-size: 1.7em;
+            letter-spacing: 1.0px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 50px;
+            border: 2px solid #E5E7EB;
+            border-radius: 45px;
+            font-size: 1.65em;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 16px 45px rgba(0,0,0,0.14);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-plum);
+            box-shadow: 
+                0 0 60px rgba(139, 90, 150, 0.6),
+                0 0 0 10px rgba(145, 70, 255, 0.35);
+            transform: translateY(-8px) scale(1.08);
+        }
+
+        /* Advanced Longitudinal Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 60px;
+            margin-top: 105px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 52px 115px;
+            border: none;
+            border-radius: 45px;
+            font-weight: 600;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: all 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 4.0px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,1.0) 50%, 
+                transparent 100%);
+            transition: left 2.0s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-plum) 0%, var(--deep-plum) 100%);
+            color: white;
+            box-shadow: 0 25px 80px rgba(139, 90, 150, 0.7);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--deep-plum) 0%, var(--primary-plum) 100%);
+            transform: translateY(-18px);
+            box-shadow: 0 40px 115px rgba(139, 90, 150, 0.8);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--medical-gold) 0%, #FF8F00 100%);
+            color: white;
+            box-shadow: 0 25px 80px rgba(255, 179, 0, 0.7);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #FF8F00 0%, var(--medical-gold) 100%);
+            transform: translateY(-18px);
+            box-shadow: 0 40px 115px rgba(255, 179, 0, 0.8);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--clinical-silver) 0%, #607D8B 100%);
+            color: white;
+            box-shadow: 0 25px 80px rgba(176, 190, 197, 0.7);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #607D8B 0%, var(--clinical-silver) 100%);
+            transform: translateY(-18px);
+            box-shadow: 0 40px 115px rgba(176, 190, 197, 0.8);
+        }
+
+        /* Medical Plum Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, #F8F5FF 100%);
+            border: 11px solid var(--light-plum);
+            border-radius: 62px;
+            padding: 115px;
+            margin: 115px 0;
+            box-shadow: 
+                0 60px 190px rgba(0,0,0,0.28),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, 
+                var(--light-plum) 0%, 
+                var(--medical-gold) 5%, 
+                var(--clinical-silver) 10%, 
+                var(--sophisticated-violet) 15%, 
+                var(--deep-plum) 20%, 
+                var(--primary-plum) 25%, 
+                var(--clinical-plum) 30%, 
+                var(--sophisticated-violet) 35%, 
+                var(--deep-plum) 40%, 
+                var(--medical-gold) 45%, 
+                var(--clinical-silver) 50%, 
+                var(--primary-plum) 55%, 
+                var(--light-plum) 100%);
+            animation: longitudinalResults 8.0s ease-in-out infinite;
+        }
+
+        @keyframes longitudinalResults {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 6.0em;
+            color: var(--secondary-red);
+            margin-bottom: 95px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -2.2px;
+        }
+
+        /* Medical Plum Chart Container */
+        .chart-container {
+            position: relative;
+            height: 1000px;
+            margin: 115px 0;
+            background: linear-gradient(135deg, var(--pale-plum) 0%, var(--white) 100%);
+            border-radius: 55px;
+            padding: 105px;
+            box-shadow: 0 50px 150px rgba(0,0,0,0.28);
+            border: 10px solid var(--light-plum);
+        }
+
+        /* Statistics Grid - Medical Plum Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+            gap: 95px;
+            margin: 108px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, var(--white) 100%);
+            padding: 75px;
+            border-radius: 50px;
+            text-align: center;
+            border: 10px solid var(--light-plum);
+            transition: all 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--light-plum) 0%, var(--primary-plum) 50%, var(--medical-gold) 100%);
+            transform: scaleX(0);
+            transition: transform 1.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-28px) scale(1.09);
+            box-shadow: 0 55px 155px rgba(0,0,0,0.35);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 4.3em;
+            font-weight: 700;
+            color: var(--primary-plum);
+            margin-bottom: 35px;
+        }
+
+        .stat-label {
+            font-size: 1.7em;
+            color: var(--steel);
+            font-weight: 500;
+        }
+
+        /* Longitudinal-Specific Elements */
+        .longitudinal-info {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, #F0F8FF 100%);
+            border: 10px solid var(--light-plum);
+            border-radius: 45px;
+            padding: 75px;
+            margin: 75px 0;
+        }
+
+        .longitudinal-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+            gap: 50px;
+            margin: 60px 0;
+        }
+
+        .longitudinal-metric-card {
+            background: var(--primary-plum);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 35px;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+        .longitudinal-metric-card:nth-child(1) { background: var(--medical-gold); }
+        .longitudinal-metric-card:nth-child(2) { background: var(--clinical-silver); }
+        .longitudinal-metric-card:nth-child(3) { background: var(--primary-plum); }
+        .longitudinal-metric-card:nth-child(4) { background: var(--sophisticated-violet); }
+
+        /* Decision Framework - Medical Plum */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, rgba(145, 70, 255, 0.5) 100%);
+            border: 11px solid var(--light-plum);
+            border-radius: 60px;
+            padding: 105px;
+            margin: 105px 0;
+        }
+
+        .decision-question {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 600;
+            font-size: 2.7em;
+            margin-bottom: 80px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -1.0px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+            gap: 60px;
+        }
+
+        .decision-option {
+            padding: 60px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 45px;
+            cursor: pointer;
+            transition: all 1.2s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.7em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--medical-gold);
+            background: #F5F2F8;
+            transform: translateY(-16px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-plum);
+            background: var(--pale-plum);
+            box-shadow: 0 0 85px rgba(139, 90, 150, 0.7);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 75px;
+            border-radius: 50px;
+            margin: 75px 0;
+            font-weight: 500;
+            font-size: 1.8em;
+        }
+
+        .feedback-success {
+            background: var(--pale-plum);
+            border: 10px solid var(--light-plum);
+            color: var(--deep-plum);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 10px solid var(--medical-gold);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 10px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 50px;
+                border-radius: 62px;
+            }
+
+            .header-title {
+                font-size: 6.0em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .longitudinal-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Plum */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-plum) 0%, #F0F8FF 100%);
+            padding: 75px;
+            border-radius: 45px;
+            margin: 75px 0;
+            border-left: 22px solid var(--primary-plum);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '📊';
+            position: absolute;
+            top: 75px;
+            left: 60px;
+            font-size: 2.8em;
+        }
+
+        .research-note p {
+            margin-left: 105px;
+            line-height: 2.5;
+        }
+
+        /* Advanced Visual Effects */
+        .longitudinal-highlight {
+            background: rgba(139, 90, 150, 0.25);
+            border-left: 18px solid var(--primary-plum);
+            padding: 50px;
+            margin: 50px 0;
+            border-radius: 25px;
+        }
+
+        .mixed-model-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-plum) 0%, var(--primary-plum) 100%);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 55px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            margin: 0 25px;
+            font-size: 1.6em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-longitudinal {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+            color: white;
+            padding: 22px 45px;
+            border-radius: 45px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 1.15em;
+            display: inline-block;
+            margin: 0 22px;
+        }
+
+        /* Growth Curve Visualization */
+        .growth-curve-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--pale-plum);
+            padding: 55px;
+            border-radius: 35px;
+            margin: 55px 0;
+        }
+
+        .gc-metric {
+            background: var(--primary-plum);
+            color: white;
+            padding: 35px 50px;
+            border-radius: 25px;
+            text-align: center;
+            flex: 1;
+            margin: 0 22px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+
+        .gc-metric:first-child {
+            background: var(--medical-gold);
+        }
+
+        .gc-metric:nth-child(2) {
+            background: var(--clinical-silver);
+        }
+
+        .gc-metric:last-child {
+            background: var(--sophisticated-violet);
+        }
+
+        /* Longitudinal Steps */
+        .longitudinal-steps {
+            background: var(--pale-plum);
+            padding: 60px;
+            border-radius: 40px;
+            margin: 60px 0;
+            border: 9px solid var(--light-plum);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 35px 0;
+            padding: 35px;
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 14px 35px rgba(0,0,0,0.14);
+        }
+
+        .step-number {
+            background: var(--primary-plum);
+            color: white;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 35px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        /* Longitudinal Table */
+        .longitudinal-table {
+            background: white;
+            border-radius: 28px;
+            padding: 50px;
+            margin: 50px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 4px solid var(--light-plum);
+        }
+
+        .longitudinal-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4em;
+        }
+
+        .longitudinal-table th,
+        .longitudinal-table td {
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--light-plum);
+        }
+
+        .longitudinal-table th {
+            background: var(--primary-plum);
+            color: white;
+            font-weight: 700;
+        }
+
+        .longitudinal-table .time-point {
+            background: rgba(139, 90, 150, 0.12);
+        }
+
+        .longitudinal-table .measurement {
+            background: rgba(145, 70, 255, 0.12);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Longitudinal Data Analysis in Healthcare & Repeated Measures Modeling</h1>
+            <p class="header-subtitle">Advanced Series: Sophisticated Methods for Time-Dependent Medical Research</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">📊 Longitudinal Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Repeated Measures</button>
+            <button class="tab-button" onclick="showSection('analysis')">🔍 Mixed Models</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Longitudinal Analysis Framework for Healthcare</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>📊 Repeated Measures ANOVA</h3>
+                    <p><strong>Within-Subject Comparisons:</strong> Repeated measures ANOVA analyzes changes within the same subjects across multiple time points, controlling for individual differences and increasing statistical power for detecting temporal effects.</p>
+                    <div class="formula-display">
+                        Repeated Measures ANOVA Model:<br><br>
+                        Y_ij = μ + α_i + β_j + (αβ)_ij + ε_ij<br><br>
+                        Where:<br>
+                        Y_ij = response for subject i at time j<br>
+                        μ = grand mean<br>
+                        α_i = subject effect (random)<br>
+                        β_j = time effect (fixed)<br>
+                        (αβ)_ij = interaction term<br>
+                        ε_ij = residual error<br><br>
+                        Sphericity Assumption:<br>
+                        Var(Y_ij - Y_ik) = σ² for all j ≠ k<br><br>
+                        Corrections: Greenhouse-Geisser, Huynh-Feldt<br>
+                        Multivariate Alternative: Hotelling's T²
+                    </div>
+                    <p><em>Clinical insight: Essential for clinical trials with multiple follow-up assessments and treatment monitoring studies</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔄 Mixed-Effects Models</h3>
+                    <p><strong>Random and Fixed Effects:</strong> Mixed-effects models accommodate both population-level trends (fixed effects) and individual variability (random effects), ideal for unbalanced longitudinal data with missing observations.</p>
+                    <div class="formula-display">
+                        Linear Mixed-Effects Model:<br><br>
+                        Y_ij = X_ij β + Z_ij b_i + ε_ij<br><br>
+                        Where:<br>
+                        Y_ij = response for subject i at time j<br>
+                        X_ij = design matrix for fixed effects<br>
+                        β = fixed effects coefficients<br>
+                        Z_ij = design matrix for random effects<br>
+                        b_i ~ N(0, G) = random effects for subject i<br>
+                        ε_ij ~ N(0, σ²I) = residual errors<br><br>
+                        Marginal Model:<br>
+                        Y_i ~ N(X_i β, V_i)<br>
+                        V_i = Z_i G Z_i' + σ²I<br><br>
+                        Estimation: REML or ML methods
+                    </div>
+                    <p><strong>Medical Example:</strong> Analyzing blood pressure changes over time accounting for patient-specific baselines and treatment responses</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📈 Growth Curve Modeling</h3>
+                    <p><strong>Individual Trajectories:</strong> Growth curve models characterize individual change patterns over time, allowing for person-specific intercepts and slopes to capture heterogeneity in temporal responses.</p>
+                    <div class="formula-display">
+                        Growth Curve Model:<br><br>
+                        Level 1 (Within-Person):<br>
+                        Y_ij = π_0i + π_1i × TIME_ij + ε_ij<br><br>
+                        Level 2 (Between-Person):<br>
+                        π_0i = β_00 + β_01 × COVARIATE_i + u_0i<br>
+                        π_1i = β_10 + β_11 × COVARIATE_i + u_1i<br><br>
+                        Combined Model:<br>
+                        Y_ij = β_00 + β_01×COV_i + β_10×TIME_ij + β_11×COV_i×TIME_ij + u_0i + u_1i×TIME_ij + ε_ij<br><br>
+                        Random Effects:<br>
+                        [u_0i, u_1i]' ~ N([0,0], [τ_00, τ_01; τ_01, τ_11])<br><br>
+                        Trajectory Types: Linear, quadratic, exponential, piecewise
+                    </div>
+                    <p><strong>Clinical Application:</strong> Modeling recovery trajectories post-surgery with patient-specific healing rates and baseline factors</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⏰ Time-Series Analysis in Healthcare</h3>
+                    <p><strong>Temporal Patterns and Trends:</strong> Time-series analysis identifies patterns, trends, and seasonal effects in healthcare data, essential for surveillance, forecasting, and intervention timing.</p>
+                    <div class="formula-display">
+                        ARIMA Model for Healthcare Time Series:<br><br>
+                        ARIMA(p,d,q):<br>
+                        (1 - φ_1L - φ_2L² - ... - φ_pL^p)(1-L)^d Y_t = (1 + θ_1L + θ_2L² + ... + θ_qL^q)ε_t<br><br>
+                        Components:<br>
+                        p = autoregressive order<br>
+                        d = differencing order<br>
+                        q = moving average order<br><br>
+                        Seasonal ARIMA:<br>
+                        ARIMA(p,d,q)(P,D,Q)_s<br><br>
+                        Intervention Analysis:<br>
+                        Y_t = μ + ω I_t + N_t<br>
+                        Where I_t = intervention indicator<br><br>
+                        Applications: Disease surveillance, quality metrics, resource planning
+                    </div>
+                    <p><strong>Medical Use:</strong> Monitoring infection rates, tracking quality indicators, and evaluating policy interventions over time</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎯 Missing Data in Longitudinal Studies</h3>
+                    <p><strong>Handling Dropout and Missingness:</strong> Missing data is common in longitudinal medical studies due to dropout, missed visits, or loss to follow-up. Appropriate methods depend on missingness mechanisms.</p>
+                    <div class="formula-display">
+                        Missing Data Mechanisms:<br><br>
+                        MCAR (Missing Completely at Random):<br>
+                        P(R|Y_obs, Y_mis, ψ) = P(R|ψ)<br><br>
+                        MAR (Missing at Random):<br>
+                        P(R|Y_obs, Y_mis, ψ) = P(R|Y_obs, ψ)<br><br>
+                        MNAR (Missing Not at Random):<br>
+                        P(R|Y_obs, Y_mis, ψ) depends on Y_mis<br><br>
+                        Methods:<br>
+                        • Complete Case Analysis (CCA)<br>
+                        • Last Observation Carried Forward (LOCF)<br>
+                        • Multiple Imputation (MI)<br>
+                        • Full Information Maximum Likelihood (FIML)<br>
+                        • Pattern Mixture Models<br><br>
+                        Sensitivity Analysis: Assess robustness to MNAR
+                    </div>
+                    <p><strong>Clinical Example:</strong> Handling patient dropout in clinical trials due to adverse events or lack of efficacy</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🏗️ Multilevel Modeling in Healthcare</h3>
+                    <p><strong>Hierarchical Data Structures:</strong> Healthcare data often has natural hierarchical structure (patients within providers within hospitals), requiring multilevel models to account for clustering and dependency.</p>
+                    <div class="formula-display">
+                        Three-Level Model (Patients/Providers/Hospitals):<br><br>
+                        Level 1 (Patient): Y_ijk = π_0jk + π_1jk×X_ijk + ε_ijk<br>
+                        Level 2 (Provider): π_0jk = β_00k + β_01k×W_jk + u_0jk<br>
+                                            π_1jk = β_10k + u_1jk<br>
+                        Level 3 (Hospital): β_00k = γ_000 + γ_001×V_k + v_00k<br>
+                                           β_01k = γ_010 + v_01k<br>
+                                           β_10k = γ_100<br><br>
+                        Variance Components:<br>
+                        σ²_ε = patient-level variance<br>
+                        τ_π = provider-level variance<br>
+                        τ_β = hospital-level variance<br><br>
+                        ICC = τ/(τ + σ²) = intracluster correlation
+                    </div>
+                    <p><strong>Medical Application:</strong> Analyzing patient outcomes accounting for provider and hospital effects in health services research</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Advanced Longitudinal Analysis Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 75px; margin-top: 65px;">
+                    <div>
+                        <h4>🏥 Clinical Research Applications:</h4>
+                        <ul>
+                            <li><strong>Patient Recovery Trajectories:</strong> Post-surgical outcome progression with individual healing patterns</li>
+                            <li><strong>Chronic Disease Monitoring:</strong> Disease progression and treatment response over time</li>
+                            <li><strong>Health Behavior Change:</strong> Lifestyle intervention effectiveness with sustained follow-up</li>
+                            <li><strong>Medication Adherence Patterns:</strong> Long-term compliance and persistence analysis</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Health System Analysis:</h4>
+                        <ul>
+                            <li><strong>Healthcare Quality Metrics:</strong> Hospital performance trends and improvement cycles</li>
+                            <li><strong>Population Health Surveillance:</strong> Public health indicators and intervention effects</li>
+                            <li><strong>Health Economic Outcomes:</strong> Cost trajectories and resource utilization patterns</li>
+                            <li><strong>Provider Performance Analysis:</strong> Learning curves and quality improvement over time</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="longitudinal-steps" style="margin-top: 65px;">
+                    <h4 style="color: var(--secondary-red); margin-bottom: 50px; text-align: center;">📊 Longitudinal Analysis Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Study Design:</strong> Define temporal structure, measurement occasions, and follow-up duration</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Data Structure:</strong> Organize in long format with subject, time, and outcome variables</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Exploratory Analysis:</strong> Examine individual trajectories and missing data patterns</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Model Selection:</strong> Choose appropriate method based on data structure and research questions</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Missing Data Strategy:</strong> Address dropout and intermittent missingness appropriately</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Model Fitting:</strong> Estimate parameters and assess model assumptions and fit</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Clinical Interpretation:</strong> Translate findings to clinical practice and policy recommendations</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>📊 Advanced Longitudinal Analysis Foundation:</strong> Longitudinal data analysis provides essential methodology for studying change and development in healthcare settings, from basic repeated measures ANOVA to sophisticated mixed-effects and growth curve models. Understanding within-subject correlation, missing data mechanisms, and hierarchical structures is crucial for clinical trials, cohort studies, and health services research. These advanced methods enable evidence-based evaluation of treatment effects over time and individual trajectory characterization across diverse medical applications.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Repeated Measures Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Repeated Measures Analysis Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">📊 Longitudinal Data Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="longitudinalModel">Canadian Medical Longitudinal Model</label>
+                        <select id="longitudinalModel" onchange="updateLongitudinalModel()">
+                            <option value="recovery_trajectories">Patient Recovery Trajectories</option>
+                            <option value="chronic_monitoring">Chronic Disease Monitoring</option>
+                            <option value="behavior_change">Health Behavior Change</option>
+                            <option value="quality_metrics">Healthcare Quality Metrics</option>
+                            <option value="population_surveillance">Population Health Surveillance</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysisMethod">Longitudinal Analysis Method</label>
+                        <select id="analysisMethod">
+                            <option value="repeated_anova" selected>Repeated Measures ANOVA</option>
+                            <option value="mixed_effects">Mixed-Effects Models</option>
+                            <option value="growth_curve">Growth Curve Modeling</option>
+                            <option value="time_series">Time-Series Analysis</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timePoints">Number of Time Points</label>
+                        <select id="timePoints">
+                            <option value="3">3 assessments</option>
+                            <option value="5" selected>5 assessments</option>
+                            <option value="8">8 assessments</option>
+                            <option value="12">12 assessments</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeLongitudinal">Study Population Size</label>
+                        <select id="sampleSizeLongitudinal">
+                            <option value="100">100 participants</option>
+                            <option value="250" selected>250 participants</option>
+                            <option value="500">500 participants</option>
+                            <option value="1000">1,000 participants</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeEffect">Time Effect Strength</label>
+                        <input type="range" id="timeEffect" min="0.0" max="1.5" step="0.1" value="0.8" onchange="updateTimeEffectDisplay()">
+                        <span id="timeEffectValue">0.8</span> (Large effect)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateLongitudinalData()">📊 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performLongitudinalAnalysis()">🔍 Run Analysis</button>
+                    <button class="btn btn-accent" onclick="performMixedModeling()">📈 Mixed Modeling</button>
+                </div>
+            </div>
+
+            <!-- Medical Model Description -->
+            <div id="longitudinalDescription" class="longitudinal-info">
+                <div class="results-header">Current Longitudinal Analysis Model</div>
+                <div id="longitudinalText"></div>
+                <div id="longitudinalModelMetrics" class="longitudinal-metrics"></div>
+            </div>
+
+            <!-- Longitudinal Analysis Chart -->
+            <div class="chart-container">
+                <canvas id="longitudinalChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Mixed Models Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Longitudinal Analysis & Results</h2>
+
+            <div id="longitudinalResults" class="results-container">
+                <div class="results-header">Longitudinal Analysis Results</div>
+                <div id="longitudinalTable"></div>
+            </div>
+
+            <div class="stats-grid" id="longitudinalStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="mixedResults" class="results-container">
+                <div class="results-header">📊 Mixed Models & Growth Curves</div>
+                <div id="mixedTable"></div>
+            </div>
+
+            <!-- Growth Curve Visualization -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 65px; color: var(--secondary-red);">🔍 Individual Trajectories & Population Trends</h3>
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Longitudinal Analysis Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading longitudinal analysis assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 75px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 105px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentLongitudinalModel = null;
+        let currentLongitudinalChart = null;
+        let growthChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Medical Longitudinal Model Definitions
+        const longitudinalModels = {
+            recovery_trajectories: {
+                title: "Patient Recovery Trajectories (Post-Surgical Outcome Progression)",
+                description: "Prospective cohort study following patients through post-surgical recovery, analyzing functional status, pain levels, and quality of life changes from baseline through 12-month follow-up with individual healing patterns.",
+                outcome: "Functional Recovery Score (0-100)",
+                groups: ["Standard Care", "Enhanced Recovery Protocol", "Personalized Rehabilitation"],
+                population: "Adult patients undergoing major orthopedic surgery",
+                clinical_context: "Surgical outcomes research and recovery optimization",
+                study_design: "Multi-center prospective cohort with repeated assessments",
+                expected_pattern: "Non-linear recovery with initial rapid improvement, plateau phase, gradual long-term gains",
+                clinical_application: "Recovery protocol development, patient counseling, resource planning"
+            },
+            chronic_monitoring: {
+                title: "Chronic Disease Monitoring (Diabetes Management Trajectories)",
+                description: "Longitudinal registry analysis tracking HbA1c levels, medication adherence, and complication rates in Type 2 diabetes patients receiving different management strategies over 5 years.",
+                outcome: "HbA1c Level (%) and Composite Health Score",
+                groups: ["Standard Therapy", "Intensive Management", "Technology-Enhanced Care"],
+                population: "Adults with Type 2 diabetes in primary care",
+                clinical_context: "Chronic disease management and long-term outcomes",
+                study_design: "Registry-based longitudinal cohort with quarterly assessments",
+                expected_pattern: "Initial improvement with treatment intensification, followed by gradual deterioration or maintenance",
+                clinical_application: "Clinical guidelines, treatment intensification protocols, quality improvement"
+            },
+            behavior_change: {
+                title: "Health Behavior Change (Lifestyle Intervention Effectiveness)",
+                description: "Randomized controlled trial evaluating lifestyle modification programs for cardiovascular risk reduction, tracking weight, physical activity, diet quality, and biomarkers over 24 months.",
+                outcome: "Cardiovascular Risk Score and Weight Loss (%)",
+                groups: ["Control", "Behavioral Counseling", "Digital Health Intervention", "Combined Approach"],
+                population: "Adults at high cardiovascular risk",
+                clinical_context: "Prevention medicine and behavior modification research",
+                study_design: "Multi-arm randomized controlled trial with monthly assessments",
+                expected_pattern: "Initial rapid behavior change with gradual regression to baseline without sustained support",
+                clinical_application: "Prevention programs, digital health tools, policy development"
+            },
+            quality_metrics: {
+                title: "Healthcare Quality Metrics (Hospital Performance Trends)",
+                description: "Administrative data analysis examining hospital quality indicators including readmission rates, infection rates, patient satisfaction, and safety metrics across multiple facilities over time.",
+                outcome: "Composite Quality Score (0-100) and Individual Metrics",
+                groups: ["Teaching Hospitals", "Community Hospitals", "Specialized Centers"],
+                population: "Acute care hospitals in provincial health system",
+                clinical_context: "Health services research and quality improvement",
+                study_design: "Retrospective time-series analysis using administrative data",
+                expected_pattern: "Seasonal variations with gradual improvement trends following quality initiatives",
+                clinical_application: "Quality improvement programs, benchmarking, regulatory oversight"
+            },
+            population_surveillance: {
+                title: "Population Health Surveillance (Immunization Coverage Trends)",
+                description: "Provincial surveillance system monitoring vaccination coverage rates across age groups, geographic regions, and demographic strata, analyzing trends and identifying coverage gaps over time.",
+                outcome: "Vaccination Coverage Rate (%) and Timeliness Score",
+                groups: ["Urban Regions", "Rural Regions", "Remote Communities"],
+                population: "Provincial population across all age groups",
+                clinical_context: "Public health surveillance and immunization programs",
+                study_design: "Population-based surveillance with monthly reporting",
+                expected_pattern: "Seasonal patterns with outbreak-related fluctuations and policy-driven changes",
+                clinical_application: "Public health planning, outbreak response, health equity initiatives"
+            }
+        };
+
+        // Assessment Questions (Longitudinal Analysis focused)
+        const assessmentQuestions = [
+            {
+                question: "What is the key advantage of repeated measures ANOVA over between-subjects ANOVA?",
+                options: [
+                    "It requires fewer participants and controls for individual differences",
+                    "It doesn't require any statistical assumptions",
+                    "It can handle unlimited amounts of missing data",
+                    "It works better with cross-sectional data"
+                ],
+                correct: 0,
+                explanation: "Repeated measures ANOVA has greater statistical power because it controls for individual differences (each participant serves as their own control), reducing error variance. This allows detection of smaller effects with fewer participants compared to between-subjects designs."
+            },
+            {
+                question: "In mixed-effects models, what do random effects represent?",
+                options: [
+                    "Measurement errors and residuals",
+                    "Individual differences in intercepts and slopes that vary across subjects",
+                    "Fixed treatment effects that are the same for all subjects",
+                    "Time points that are randomly selected"
+                ],
+                correct: 1,
+                explanation: "Random effects in mixed-effects models represent individual variability - they allow each subject to have their own intercept (baseline level) and slope (rate of change) that differs from the population average. This captures individual heterogeneity in responses over time."
+            },
+            {
+                question: "When is Last Observation Carried Forward (LOCF) most problematic for missing data?",
+                options: [
+                    "When data is missing completely at random (MCAR)",
+                    "When the outcome is changing over time and missingness is related to the outcome",
+                    "When the sample size is very large",
+                    "When there are only two time points"
+                ],
+                correct: 1,
+                explanation: "LOCF is most problematic when the outcome is changing over time and missingness is related to the outcome (MNAR - Missing Not at Random). For example, if patients drop out because they're getting worse, carrying forward their last (better) observation will bias results toward showing improvement when deterioration actually occurred."
+            },
+            {
+                question: "What does the sphericity assumption in repeated measures ANOVA require?",
+                options: [
+                    "Equal variances across all time points",
+                    "Equal covariances between all pairs of time points",
+                    "Normal distribution at each time point",
+                    "No missing data at any time point"
+                ],
+                correct: 1,
+                explanation: "The sphericity assumption requires that the variances of the differences between all pairs of time points are equal. This is more restrictive than compound symmetry (equal variances and covariances). When violated, it increases Type I error rate, requiring corrections like Greenhouse-Geisser or Huynh-Feldt adjustments."
+            },
+            {
+                question: "In growth curve modeling, what does allowing random slopes to vary across individuals capture?",
+                options: [
+                    "Measurement error at baseline only",
+                    "Different rates of change over time for different individuals",
+                    "The overall population trend",
+                    "Seasonal variations in the outcome"
+                ],
+                correct: 1,
+                explanation: "Random slopes in growth curve models allow individuals to have different rates of change over time. While the fixed slope represents the average rate of change in the population, random slopes capture individual heterogeneity - some people may improve faster or slower than the average trajectory."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Longitudinal Model Management
+        function updateLongitudinalModel() {
+            const modelType = document.getElementById('longitudinalModel').value;
+            const model = longitudinalModels[modelType];
+            
+            document.getElementById('longitudinalText').innerHTML = `
+                <h3 style="color: var(--secondary-red); margin-bottom: 50px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>📊 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Primary Outcome:</strong> ${model.outcome}</p>
+                <p><strong>Study Groups:</strong> ${model.groups.join(', ')}</p>
+                <p><strong>Target Population:</strong> ${model.population}</p>
+                <p><strong>Study Design:</strong> ${model.study_design}</p>
+                <p><strong>Expected Pattern:</strong> ${model.expected_pattern}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateLongitudinalMetrics();
+        }
+
+        function updateLongitudinalMetrics() {
+            const analysisMethod = document.getElementById('analysisMethod').value;
+            const container = document.getElementById('longitudinalModelMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(analysisMethod) {
+                case 'repeated_anova': metrics = ['F-statistic', 'Sphericity p', 'Effect Size η²', 'Power']; break;
+                case 'mixed_effects': metrics = ['Fixed Effects', 'Random Effects', 'ICC', 'AIC/BIC']; break;
+                case 'growth_curve': metrics = ['Intercept', 'Slope', 'Variance Components', 'Fit Indices']; break;
+                case 'time_series': metrics = ['Trend', 'Seasonality', 'Autocorrelation', 'Forecast']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'longitudinal-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateTimeEffectDisplay() {
+            const effect = document.getElementById('timeEffect').value;
+            let interpretation;
+            if (effect < 0.3) interpretation = 'Small effect';
+            else if (effect < 0.6) interpretation = 'Medium effect';
+            else interpretation = 'Large effect';
+            document.getElementById('timeEffectValue').textContent = `${effect} (${interpretation})`;
+        }
+
+        // Longitudinal Data Generation
+        function generateLongitudinalData() {
+            const modelType = document.getElementById('longitudinalModel').value;
+            const analysisMethod = document.getElementById('analysisMethod').value;
+            const timePoints = parseInt(document.getElementById('timePoints').value);
+            const sampleSize = parseInt(document.getElementById('sampleSizeLongitudinal').value);
+            const timeEffect = parseFloat(document.getElementById('timeEffect').value);
+            
+            const model = longitudinalModels[modelType];
+            
+            currentLongitudinalModel = {
+                model: model,
+                analysisMethod: analysisMethod,
+                timePoints: timePoints,
+                sampleSize: sampleSize,
+                timeEffect: timeEffect,
+                longitudinalData: []
+            };
+
+            // Generate longitudinal data with realistic medical patterns
+            generateRepeatedMeasuresData(sampleSize, timePoints, timeEffect, model.groups);
+            updateLongitudinalChart();
+        }
+
+        function generateRepeatedMeasuresData(n, timePoints, effectSize, groups) {
+            const data = [];
+            const numGroups = groups.length;
+            const participantsPerGroup = Math.floor(n / numGroups);
+            
+            for (let group = 0; group < numGroups; group++) {
+                for (let participant = 0; participant < participantsPerGroup; participant++) {
+                    // Individual-specific random effects
+                    const randomIntercept = (Math.random() - 0.5) * 20; // ±10 points
+                    const randomSlope = (Math.random() - 0.5) * effectSize; // Individual slope variation
+                    const baseline = 50 + randomIntercept + (group * 10); // Group differences at baseline
+                    
+                    for (let time = 0; time < timePoints; time++) {
+                        // Time effect with individual variation
+                        const timeEffect = effectSize * time * 5; // Base time trend
+                        const groupTimeEffect = group * effectSize * time * 2; // Group-specific time trends
+                        const individualTimeEffect = randomSlope * time * 3; // Individual trajectory
+                        
+                        // Add measurement error
+                        const error = (Math.random() - 0.5) * 10;
+                        
+                        const measurement = baseline + timeEffect + groupTimeEffect + individualTimeEffect + error;
+                        
+                        // Simulate some missing data (10% missing rate, higher at later time points)
+                        const missingProb = 0.05 + (time * 0.02);
+                        const isMissing = Math.random() < missingProb;
+                        
+                        const dataPoint = {
+                            participantId: `${group}-${participant}`,
+                            group: group,
+                            groupName: groups[group],
+                            timePoint: time,
+                            timeValue: time,
+                            measurement: isMissing ? null : Math.max(0, Math.min(100, measurement)),
+                            missing: isMissing
+                        };
+                        
+                        data.push(dataPoint);
+                    }
+                }
+            }
+            
+            currentLongitudinalModel.longitudinalData = data;
+        }
+
+        function updateLongitudinalChart() {
+            if (!currentLongitudinalModel) return;
+            
+            const ctx = document.getElementById('longitudinalChart').getContext('2d');
+            
+            if (currentLongitudinalChart) {
+                currentLongitudinalChart.destroy();
+            }
+
+            // Prepare data for trajectory plot
+            const data = currentLongitudinalModel.longitudinalData.filter(d => !d.missing);
+            const groups = [...new Set(data.map(d => d.groupName))];
+            const colors = ['#8B5A96', '#FFB300', '#B0BEC5', '#8A2BE2'];
+            
+            const datasets = groups.map((group, index) => {
+                const groupData = data.filter(d => d.groupName === group);
+                
+                // Calculate means by time point
+                const timePoints = [...new Set(groupData.map(d => d.timePoint))].sort();
+                const meanData = timePoints.map(tp => {
+                    const values = groupData.filter(d => d.timePoint === tp).map(d => d.measurement);
+                    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                    return { x: tp, y: mean };
+                });
+
+                return {
+                    label: group,
+                    data: meanData,
+                    borderColor: colors[index],
+                    backgroundColor: colors[index] + '20',
+                    borderWidth: 4,
+                    fill: false,
+                    tension: 0.3
+                };
+            });
+
+            currentLongitudinalChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentLongitudinalModel.model.title} - Mean Trajectories by Group`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Time Point' },
+                            type: 'linear'
+                        },
+                        y: { 
+                            title: { display: true, text: currentLongitudinalModel.model.outcome },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Longitudinal Analysis
+        function performLongitudinalAnalysis() {
+            if (!currentLongitudinalModel) {
+                alert('Please generate longitudinal data first');
+                return;
+            }
+
+            const data = currentLongitudinalModel.longitudinalData.filter(d => !d.missing);
+            const analysisMethod = currentLongitudinalModel.analysisMethod;
+            
+            let analysisResults;
+            switch(analysisMethod) {
+                case 'repeated_anova':
+                    analysisResults = performRepeatedANOVA(data);
+                    break;
+                case 'mixed_effects':
+                    analysisResults = performMixedEffects(data);
+                    break;
+                case 'growth_curve':
+                    analysisResults = performGrowthCurve(data);
+                    break;
+                case 'time_series':
+                    analysisResults = performTimeSeries(data);
+                    break;
+            }
+
+            displayLongitudinalResults(analysisResults);
+        }
+
+        function performRepeatedANOVA(data) {
+            // Simplified repeated measures ANOVA calculations
+            const groups = [...new Set(data.map(d => d.groupName))];
+            const timePoints = [...new Set(data.map(d => d.timePoint))].sort();
+            
+            // Calculate group means by time
+            let groupTimeMeans = {};
+            groups.forEach(group => {
+                groupTimeMeans[group] = {};
+                timePoints.forEach(tp => {
+                    const values = data.filter(d => d.groupName === group && d.timePoint === tp).map(d => d.measurement);
+                    groupTimeMeans[group][tp] = values.reduce((a, b) => a + b, 0) / values.length;
+                });
+            });
+            
+            // Calculate overall variance and effects
+            const allValues = data.map(d => d.measurement);
+            const grandMean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
+            const totalSS = allValues.reduce((sum, val) => sum + Math.pow(val - grandMean, 2), 0);
+            
+            // Simulate F-statistics
+            const timeF = 12.5 + Math.random() * 20; // Time effect
+            const groupF = 8.2 + Math.random() * 15; // Group effect
+            const interactionF = 3.1 + Math.random() * 8; // Time x Group
+            
+            const timePValue = timeF > 15 ? 0.001 : (timeF > 10 ? 0.01 : 0.05);
+            const groupPValue = groupF > 12 ? 0.001 : (groupF > 8 ? 0.01 : 0.05);
+            const interactionPValue = interactionF > 6 ? 0.01 : 0.1;
+            
+            // Effect sizes (eta-squared)
+            const timeEtaSquared = timeF / (timeF + 30); // Approximate
+            const groupEtaSquared = groupF / (groupF + 40);
+            const interactionEtaSquared = interactionF / (interactionF + 50);
+            
+            return {
+                analysisName: 'Repeated Measures ANOVA',
+                timeEffect: { F: timeF, p: timePValue, etaSquared: timeEtaSquared },
+                groupEffect: { F: groupF, p: groupPValue, etaSquared: groupEtaSquared },
+                interactionEffect: { F: interactionF, p: interactionPValue, etaSquared: interactionEtaSquared },
+                sphericity: { mauchlys: 0.85, greenhouseGeisser: 0.92 },
+                groups: groups,
+                timePoints: timePoints
+            };
+        }
+
+        function performMixedEffects(data) {
+            // Simplified mixed-effects model results
+            const groups = [...new Set(data.map(d => d.groupName))];
+            
+            // Fixed effects
+            const intercept = 45 + Math.random() * 20;
+            const timeEffect = currentLongitudinalModel.timeEffect * 4 + (Math.random() - 0.5);
+            const groupEffects = groups.slice(1).map(() => (Math.random() - 0.5) * 15);
+            
+            // Random effects variances
+            const interceptVariance = 100 + Math.random() * 50;
+            const slopeVariance = 4 + Math.random() * 6;
+            const residualVariance = 25 + Math.random() * 15;
+            
+            // ICC calculation
+            const icc = interceptVariance / (interceptVariance + residualVariance);
+            
+            // Model fit
+            const aic = 2800 + Math.random() * 400;
+            const bic = aic + 50;
+            
+            return {
+                analysisName: 'Linear Mixed-Effects Model',
+                fixedEffects: {
+                    intercept: { estimate: intercept, se: 2.1, p: 0.001 },
+                    time: { estimate: timeEffect, se: 0.8, p: timeEffect > 2 ? 0.01 : 0.1 },
+                    groups: groupEffects.map((eff, i) => ({ 
+                        group: groups[i+1], 
+                        estimate: eff, 
+                        se: 3.2, 
+                        p: Math.abs(eff) > 5 ? 0.05 : 0.2 
+                    }))
+                },
+                randomEffects: {
+                    interceptVar: interceptVariance,
+                    slopeVar: slopeVariance,
+                    residualVar: residualVariance,
+                    icc: icc
+                },
+                modelFit: { aic: aic, bic: bic }
+            };
+        }
+
+        function performGrowthCurve(data) {
+            // Simplified growth curve model
+            const participants = [...new Set(data.map(d => d.participantId))];
+            const avgIntercept = 50 + Math.random() * 15;
+            const avgSlope = currentLongitudinalModel.timeEffect * 3;
+            
+            // Individual trajectories
+            const individualTrajectories = participants.slice(0, 10).map(pid => {
+                const participantData = data.filter(d => d.participantId === pid);
+                const intercept = avgIntercept + (Math.random() - 0.5) * 20;
+                const slope = avgSlope + (Math.random() - 0.5) * 4;
+                return { participant: pid, intercept: intercept, slope: slope };
+            });
+            
+            return {
+                analysisName: 'Growth Curve Model',
+                populationParameters: {
+                    meanIntercept: avgIntercept,
+                    meanSlope: avgSlope,
+                    interceptVariance: 85,
+                    slopeVariance: 12,
+                    correlation: 0.35
+                },
+                individualTrajectories: individualTrajectories,
+                modelFit: { cfi: 0.95, rmsea: 0.06, srmr: 0.05 }
+            };
+        }
+
+        function performTimeSeries(data) {
+            // Simplified time-series analysis
+            const groupData = data.filter(d => d.groupName === data[0].groupName);
+            const timeMeans = {};
+            
+            [...new Set(groupData.map(d => d.timePoint))].sort().forEach(tp => {
+                const values = groupData.filter(d => d.timePoint === tp).map(d => d.measurement);
+                timeMeans[tp] = values.reduce((a, b) => a + b, 0) / values.length;
+            });
+            
+            const values = Object.values(timeMeans);
+            const trend = values[values.length-1] - values[0];
+            const autocorr = 0.3 + Math.random() * 0.4; // Simulated autocorrelation
+            
+            return {
+                analysisName: 'Time-Series Analysis',
+                trend: { estimate: trend, pValue: Math.abs(trend) > 10 ? 0.01 : 0.1 },
+                autocorrelation: autocorr,
+                seasonality: 0.15,
+                forecast: values[values.length-1] + trend * 0.5
+            };
+        }
+
+        function displayLongitudinalResults(results) {
+            const model = currentLongitudinalModel.model;
+            
+            let resultContent = `
+                <h4>📊 Longitudinal Analysis Results</h4>
+                <div style="background: var(--primary-plum); color: white; padding: 22px; border-radius: 16px; margin-bottom: 28px; text-align: center;">
+                    <strong>${results.analysisName.toUpperCase()}</strong><br>
+                    Study: ${model.title}<br>
+            `;
+            
+            if (results.timeEffect) {
+                resultContent += `Time Effect: F = ${results.timeEffect.F.toFixed(2)}, p = ${results.timeEffect.p < 0.001 ? '<0.001' : results.timeEffect.p.toFixed(3)}, η² = ${results.timeEffect.etaSquared.toFixed(3)}`;
+            } else if (results.fixedEffects) {
+                resultContent += `Time Effect: β = ${results.fixedEffects.time.estimate.toFixed(2)}, p = ${results.fixedEffects.time.p < 0.001 ? '<0.001' : results.fixedEffects.time.p.toFixed(3)}`;
+            } else if (results.trend) {
+                resultContent += `Trend: ${results.trend.estimate.toFixed(2)}, p = ${results.trend.pValue < 0.001 ? '<0.001' : results.trend.pValue.toFixed(3)}`;
+            } else {
+                resultContent += `Mean Change: ${results.populationParameters.meanSlope.toFixed(2)} units per time point`;
+            }
+            
+            resultContent += `</div>`;
+            
+            if (results.sphericity) {
+                resultContent += `
+                    <div class="longitudinal-table">
+                        <h5>ANOVA Results & Assumptions</h5>
+                        <table>
+                            <tr><th>Effect</th><th>F-statistic</th><th>p-value</th><th>η² (Effect Size)</th></tr>
+                            <tr><td>Time</td><td class="time-point">${results.timeEffect.F.toFixed(2)}</td><td>${results.timeEffect.p < 0.001 ? '<0.001' : results.timeEffect.p.toFixed(3)}</td><td class="measurement">${results.timeEffect.etaSquared.toFixed(3)}</td></tr>
+                            <tr><td>Group</td><td class="time-point">${results.groupEffect.F.toFixed(2)}</td><td>${results.groupEffect.p < 0.001 ? '<0.001' : results.groupEffect.p.toFixed(3)}</td><td class="measurement">${results.groupEffect.etaSquared.toFixed(3)}</td></tr>
+                            <tr><td>Time × Group</td><td class="time-point">${results.interactionEffect.F.toFixed(2)}</td><td>${results.interactionEffect.p < 0.001 ? '<0.001' : results.interactionEffect.p.toFixed(3)}</td><td class="measurement">${results.interactionEffect.etaSquared.toFixed(3)}</td></tr>
+                        </table>
+                        <p style="margin-top: 20px;"><strong>Sphericity Check:</strong> Mauchly's W = ${results.sphericity.mauchlys.toFixed(3)}, Greenhouse-Geisser ε = ${results.sphericity.greenhouseGeisser.toFixed(3)}</p>
+                    </div>
+                `;
+            }
+            
+            if (results.randomEffects) {
+                resultContent += `
+                    <div class="longitudinal-table">
+                        <h5>Mixed-Effects Model Components</h5>
+                        <table>
+                            <tr><th>Parameter</th><th>Estimate</th><th>SE</th><th>p-value</th></tr>
+                            <tr><td>Intercept</td><td class="time-point">${results.fixedEffects.intercept.estimate.toFixed(2)}</td><td>${results.fixedEffects.intercept.se.toFixed(2)}</td><td class="measurement">${results.fixedEffects.intercept.p < 0.001 ? '<0.001' : results.fixedEffects.intercept.p.toFixed(3)}</td></tr>
+                            <tr><td>Time Slope</td><td class="time-point">${results.fixedEffects.time.estimate.toFixed(2)}</td><td>${results.fixedEffects.time.se.toFixed(2)}</td><td class="measurement">${results.fixedEffects.time.p < 0.001 ? '<0.001' : results.fixedEffects.time.p.toFixed(3)}</td></tr>
+                        </table>
+                        <p style="margin-top: 20px;">
+                        <strong>Random Effects:</strong> Intercept variance = ${results.randomEffects.interceptVar.toFixed(1)}, 
+                        Slope variance = ${results.randomEffects.slopeVar.toFixed(1)}, 
+                        ICC = ${results.randomEffects.icc.toFixed(3)}<br>
+                        <strong>Model Fit:</strong> AIC = ${results.modelFit.aic.toFixed(0)}, BIC = ${results.modelFit.bic.toFixed(0)}
+                        </p>
+                    </div>
+                `;
+            }
+            
+            resultContent += `
+                <div class="longitudinal-highlight">
+                    <p><strong>📊 Advanced Longitudinal Interpretation:</strong> 
+                    The ${results.analysisName.toLowerCase()} reveals ${results.timeEffect?.p < 0.05 || results.fixedEffects?.time.p < 0.05 || results.trend?.pValue < 0.05 ? 'significant temporal changes' : 'no significant temporal pattern'} 
+                    in the outcome over the study period. 
+                    ${results.randomEffects ? `Individual variability in trajectories (ICC = ${results.randomEffects.icc.toFixed(2)}) suggests ${results.randomEffects.icc > 0.1 ? 'substantial' : 'modest'} between-subject differences in response patterns.` : ''} 
+                    This sophisticated longitudinal modeling accounts for within-subject correlation and provides robust estimates for clinical interpretation.
+                    <span class="canada-longitudinal">Canadian validation</span> 
+                    supports evidence-based longitudinal care protocols and personalized treatment approaches.
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('longitudinalTable').innerHTML = resultContent;
+
+            // Update longitudinal statistics display
+            updateLongitudinalStats(results);
+        }
+
+        function updateLongitudinalStats(results) {
+            let statsHTML = '';
+            
+            if (results.timeEffect) {
+                statsHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${results.timeEffect.F.toFixed(2)}</div>
+                        <div class="stat-label">Time F-statistic</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.timeEffect.p < 0.001 ? '<0.001' : results.timeEffect.p.toFixed(3)}</div>
+                        <div class="stat-label">Time p-value</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.timeEffect.etaSquared.toFixed(3)}</div>
+                        <div class="stat-label">Effect Size (η²)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.sphericity.greenhouseGeisser.toFixed(3)}</div>
+                        <div class="stat-label">G-G Epsilon</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${currentLongitudinalModel.timePoints}</div>
+                        <div class="stat-label">Time Points</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${currentLongitudinalModel.sampleSize}</div>
+                        <div class="stat-label">Sample Size</div>
+                    </div>
+                `;
+            } else if (results.randomEffects) {
+                statsHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${results.fixedEffects.time.estimate.toFixed(2)}</div>
+                        <div class="stat-label">Time Effect</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.fixedEffects.time.p < 0.001 ? '<0.001' : results.fixedEffects.time.p.toFixed(3)}</div>
+                        <div class="stat-label">Time p-value</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.randomEffects.icc.toFixed(3)}</div>
+                        <div class="stat-label">ICC</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${results.modelFit.aic.toFixed(0)}</div>
+                        <div class="stat-label">AIC</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">Mixed-Effects</div>
+                        <div class="stat-label">Model Type</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${currentLongitudinalModel.sampleSize}</div>
+                        <div class="stat-label">Sample Size</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('longitudinalStats').innerHTML = statsHTML;
+        }
+
+        function performMixedModeling() {
+            if (!currentLongitudinalModel) {
+                alert('Please perform longitudinal analysis first');
+                return;
+            }
+
+            generateGrowthChart();
+            displayMixedAnalysis();
+        }
+
+        function generateGrowthChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            if (growthChart) {
+                growthChart.destroy();
+            }
+
+            // Generate individual trajectory lines for visualization
+            const data = currentLongitudinalModel.longitudinalData.filter(d => !d.missing);
+            const participants = [...new Set(data.map(d => d.participantId))].slice(0, 20); // Show first 20
+            const colors = ['#8B5A96', '#FFB300', '#B0BEC5', '#8A2BE2'];
+            
+            const datasets = participants.map((pid, index) => {
+                const participantData = data.filter(d => d.participantId === pid);
+                const trajectoryData = participantData.map(d => ({ x: d.timePoint, y: d.measurement }));
+                const groupIndex = participantData[0].group;
+
+                return {
+                    label: index === 0 ? `Group ${groupIndex + 1} Trajectories` : '',
+                    data: trajectoryData,
+                    borderColor: colors[groupIndex] + '40',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    fill: false,
+                    pointRadius: 0,
+                    showLine: true,
+                    tension: 0.3
+                };
+            });
+
+            // Add group means
+            const groups = [...new Set(data.map(d => d.group))];
+            groups.forEach(group => {
+                const groupData = data.filter(d => d.group === group);
+                const timePoints = [...new Set(groupData.map(d => d.timePoint))].sort();
+                const meanData = timePoints.map(tp => {
+                    const values = groupData.filter(d => d.timePoint === tp).map(d => d.measurement);
+                    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                    return { x: tp, y: mean };
+                });
+
+                datasets.push({
+                    label: `Group ${group + 1} Mean`,
+                    data: meanData,
+                    borderColor: colors[group],
+                    backgroundColor: colors[group] + '20',
+                    borderWidth: 4,
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 6
+                });
+            });
+
+            growthChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Individual Trajectories and Group Means',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            filter: function(legendItem) {
+                                return legendItem.text !== '';
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Time Point' },
+                            type: 'linear'
+                        },
+                        y: { 
+                            title: { display: true, text: currentLongitudinalModel.model.outcome },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayMixedAnalysis() {
+            const model = currentLongitudinalModel.model;
+            
+            // Simulate advanced mixed model results
+            const timeEffect = currentLongitudinalModel.timeEffect * 4;
+            const icc = 0.3 + Math.random() * 0.4;
+            const r2Marginal = 0.15 + Math.random() * 0.25; // Fixed effects only
+            const r2Conditional = r2Marginal + 0.2 + Math.random() * 0.3; // Fixed + random effects
+            
+            document.getElementById('mixedTable').innerHTML = `
+                <h4>📊 Advanced Mixed-Effects Analysis</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin: 55px 0;">
+                    <div class="stat-card" style="padding: 55px;">
+                        <h5>Model Components</h5>
+                        <div class="growth-curve-info">
+                            <div class="gc-metric">Time Effect<br>${timeEffect.toFixed(2)}</div>
+                            <div class="gc-metric">ICC<br>${icc.toFixed(3)}</div>
+                            <div class="gc-metric">R² Marginal<br>${r2Marginal.toFixed(3)}</div>
+                        </div>
+                        <p><strong>Intraclass Correlation:</strong> ${(icc * 100).toFixed(1)}% of variance between subjects</p>
+                        <p><strong>Model Explanation:</strong> Fixed effects explain ${(r2Marginal * 100).toFixed(1)}% of variance</p>
+                    </div>
+                    
+                    <div class="stat-card" style="padding: 55px;">
+                        <h5>Clinical Interpretation</h5>
+                        <p><strong>Time Trend:</strong> ${timeEffect > 0 ? 'Improvement' : 'Decline'} of ${Math.abs(timeEffect).toFixed(1)} units per time point</p>
+                        <p><strong>Individual Variability:</strong> ${icc > 0.3 ? 'Substantial' : 'Moderate'} between-patient differences</p>
+                        <p><strong>Clinical Significance:</strong> ${Math.abs(timeEffect) > 3 ? 'Clinically meaningful change' : 'Small change over time'}</p>
+                        <p><strong>Trajectory Prediction:</strong> Individual slopes enable personalized prognosis</p>
+                    </div>
+                </div>
+                
+                <div class="longitudinal-highlight">
+                    <p><strong>📊 Advanced Mixed-Effects Interpretation:</strong> 
+                    The longitudinal mixed-effects model reveals ${Math.abs(timeEffect) > 2 ? 'significant' : 'modest'} temporal changes 
+                    (${timeEffect.toFixed(2)} units per time point) with ${icc > 0.3 ? 'substantial' : 'moderate'} individual heterogeneity (ICC = ${icc.toFixed(3)}). 
+                    Random effects modeling captures patient-specific trajectories while accounting for within-subject correlation. 
+                    The model explains ${(r2Conditional * 100).toFixed(1)}% of total variance including individual differences.
+                    <span class="canada-longitudinal">Canadian longitudinal standards</span> 
+                    require assessment of missing data mechanisms and sensitivity analysis for robust inference.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>📊 Advanced Longitudinal Analysis</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Longitudinal Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Clinical Application:</strong> Longitudinal data analysis provides essential methodology for studying change and development in healthcare settings, from basic repeated measures ANOVA to sophisticated mixed-effects and growth curve models. Understanding within-subject correlation, missing data mechanisms, and individual trajectory heterogeneity is crucial for clinical trials, cohort studies, and health services research. These advanced methods enable evidence-based evaluation of treatment effects over time and personalized medicine approaches.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateLongitudinalModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
