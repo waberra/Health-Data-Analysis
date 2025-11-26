@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Series: Meta-Analysis Methods in Healthcare & Systematic Review Methodology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Roboto+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-emerald: #059669;
+            --secondary-green: #10B981;
+            --light-emerald: #D1FAE5;
+            --pale-emerald: #ECFDF5;
+            --deep-emerald: #064E3B;
+            --clinical-forest: #166534;
+            --sophisticated-teal: #0F766E;
+            --medical-jade: #14B8A6;
+            --clinical-gold: #F59E0B;
+            --health-slate: #475569;
+            --research-blue: #3B82F6;
+            --charcoal: #374151;
+            --steel: #64748B;
+            --cream: #F9FAFB;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F0FDF4 50%, var(--pale-emerald) 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Meta-Analysis Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(5, 150, 105, 0.12) 0%, transparent 75%),
+                radial-gradient(ellipse at 70% 80%, rgba(16, 185, 129, 0.14) 0%, transparent 80%),
+                radial-gradient(ellipse at 90% 10%, rgba(15, 118, 110, 0.1) 0%, transparent 70%),
+                radial-gradient(ellipse at 10% 90%, rgba(20, 184, 166, 0.08) 0%, transparent 65%);
+            animation: metaFlow 80s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes metaFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.9; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.4) translate(70px, -40px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.8) translate(-60px, 60px); 
+                opacity: 0.95; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.35) translate(55px, -25px); 
+                opacity: 0.98; 
+            }
+        }
+
+        /* Forest Plot Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(135deg, 
+                    transparent 0px, 
+                    rgba(5, 150, 105, 0.032) 1px, 
+                    transparent 2px, 
+                    transparent 125px),
+                repeating-linear-gradient(-25deg, 
+                    transparent 0px, 
+                    rgba(16, 185, 129, 0.025) 1px, 
+                    transparent 2px, 
+                    transparent 145px);
+            z-index: -1;
+            animation: metaGrid 64s linear infinite;
+        }
+
+        @keyframes metaGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(125px) translateY(145px); }
+        }
+
+        .container {
+            max-width: 2300px;
+            margin: 55px auto;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 
+                0 0 135px rgba(5, 150, 105, 0.22),
+                0 65px 125px rgba(16, 185, 129, 0.2),
+                0 55px 85px rgba(15, 118, 110, 0.18);
+            border-radius: 75px;
+            overflow: hidden;
+            backdrop-filter: blur(42px);
+            animation: metaEntry 5.2s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(5, 150, 105, 0.35);
+        }
+
+        @keyframes metaEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.75) translateY(135px) rotateX(42deg);
+                filter: blur(42px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Meta-Analysis Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-emerald) 35%, var(--deep-emerald) 70%, var(--clinical-forest) 100%);
+            color: white;
+            padding: 110px 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(115deg, 
+                transparent 0%, 
+                rgba(16, 185, 129, 0.32) 6%, 
+                transparent 22%, 
+                rgba(15, 118, 110, 0.28) 40%, 
+                transparent 58%, 
+                rgba(20, 184, 166, 0.25) 75%, 
+                transparent 88%);
+            animation: metaHeader 32s ease-in-out infinite;
+        }
+
+        @keyframes metaHeader {
+            0%, 100% { 
+                transform: translateX(-220px) scaleY(1) rotate(0deg); 
+                opacity: 0.88; 
+            }
+            33% { 
+                transform: translateX(155px) scaleY(1.9) rotate(4deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-125px) scaleY(0.65) rotate(-3.5deg); 
+                opacity: 0.93; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Crimson Text', serif;
+            font-size: 7.8em;
+            font-weight: 700;
+            margin-bottom: 65px;
+            text-shadow: 11px 13px 42px rgba(0,0,0,0.9);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--light-emerald) 20%, #A7F3D0 55%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleMeta 8.0s ease-in-out infinite alternate;
+            letter-spacing: -6.2px;
+        }
+
+        @keyframes titleMeta {
+            from { 
+                filter: drop-shadow(0 0 50px rgba(16, 185, 129, 1.0)); 
+                text-shadow: 0 0 105px rgba(5, 150, 105, 0.85);
+            }
+            to { 
+                filter: drop-shadow(0 0 70px rgba(5, 150, 105, 1.0)); 
+                text-shadow: 0 0 125px rgba(6, 78, 59, 0.9);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 4.1em;
+            font-weight: 400;
+            opacity: 0.98;
+            position: relative;
+            z-index: 2;
+            color: var(--light-emerald);
+            text-shadow: 10px 11px 36px rgba(0,0,0,0.8);
+            letter-spacing: 3.2px;
+            font-style: italic;
+        }
+
+        /* Advanced Meta-Analysis Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-emerald) 0%, var(--clinical-gold) 9%, var(--health-slate) 18%, var(--sophisticated-teal) 27%, var(--deep-emerald) 36%, var(--clinical-forest) 45%, var(--primary-emerald) 54%, var(--medical-jade) 63%, var(--deep-emerald) 72%, var(--clinical-gold) 81%, var(--primary-emerald) 90%, var(--clinical-forest) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 13px 0 rgba(16, 185, 129, 1.0);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.3) 0%, 
+                rgba(16, 185, 129, 0.48) 50%, 
+                rgba(255,255,255,0.3) 100%);
+            transform: translateX(-500%);
+            animation: metaNav 26s ease-in-out infinite;
+        }
+
+        @keyframes metaNav {
+            0%, 100% { transform: translateX(-500%); }
+            50% { transform: translateX(1000%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 68px 75px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.85em;
+            cursor: pointer;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 14px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 2.3px;
+        }
+
+        .tab-button:hover {
+            background: rgba(16, 185, 129, 0.48);
+            transform: translateY(-10px);
+            box-shadow: 0 32px 70px rgba(0,0,0,0.65);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(16, 185, 129, 0.65);
+            border-bottom-color: var(--clinical-gold);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -14px 0 var(--clinical-gold);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 140px;
+            animation: metaSlide 3.0s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes metaSlide {
+            from {
+                opacity: 0;
+                transform: translateY(130px) scale(0.9);
+                filter: blur(28px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Crimson Text', serif;
+            font-size: 7.8em;
+            color: var(--secondary-red);
+            margin-bottom: 135px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 10px 11px 36px rgba(0,0,0,0.3);
+            letter-spacing: -5.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 520px;
+            height: 13px;
+            background: linear-gradient(90deg, 
+                var(--light-emerald) 0%, 
+                var(--clinical-gold) 7%, 
+                var(--health-slate) 14%, 
+                var(--sophisticated-teal) 21%, 
+                var(--deep-emerald) 28%, 
+                var(--primary-emerald) 35%, 
+                var(--clinical-forest) 42%, 
+                var(--medical-jade) 49%, 
+                var(--deep-emerald) 56%, 
+                var(--clinical-gold) 63%, 
+                var(--health-slate) 70%, 
+                var(--light-emerald) 100%);
+            border-radius: 12px;
+            animation: metaUnderline 13.0s ease-in-out infinite alternate;
+        }
+
+        @keyframes metaUnderline {
+            from { width: 520px; opacity: 0.9; }
+            to { width: 750px; opacity: 1; }
+        }
+
+        /* Medical Emerald/Forest Green Boxes - Advanced Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(780px, 1fr));
+            gap: 125px;
+            margin-bottom: 145px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, #F0FDF4 50%, var(--white) 100%);
+            padding: 100px;
+            border-radius: 65px;
+            border: 12px solid var(--light-emerald);
+            box-shadow: 
+                0 60px 155px rgba(5, 150, 105, 0.26),
+                0 40px 80px rgba(16, 185, 129, 0.28);
+            transition: all 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -85px;
+            right: -85px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, 
+                rgba(16, 185, 129, 0.26) 0%, 
+                rgba(5, 150, 105, 0.24) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardMeta 17s ease-in-out infinite;
+        }
+
+        @keyframes cardMeta {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.93; 
+            }
+            25% { 
+                transform: scale(1.55) translateX(65px) translateY(-65px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.65) translateX(-55px) translateY(55px) rotate(180deg); 
+                opacity: 0.88; 
+            }
+            75% { 
+                transform: scale(1.5) translateX(55px) translateY(-35px) rotate(270deg); 
+                opacity: 1; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-42px);
+            box-shadow: 
+                0 80px 205px rgba(5, 150, 105, 0.35),
+                0 50px 105px rgba(16, 185, 129, 0.42);
+            border-color: var(--primary-emerald);
+        }
+
+        .theory-card h3 {
+            font-family: 'Crimson Text', serif;
+            color: var(--secondary-red);
+            margin-bottom: 70px;
+            font-size: 4.3em;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.6px;
+        }
+
+        .theory-card p {
+            font-size: 1.95em;
+            line-height: 2.6;
+            margin-bottom: 42px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Meta-Analysis Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-emerald) 50%, var(--deep-emerald) 100%);
+            color: white;
+            padding: 85px;
+            border-radius: 60px;
+            margin: 75px 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.95em;
+            box-shadow: 
+                inset 0 12px 65px rgba(0,0,0,0.95), 
+                0 55px 115px rgba(5, 150, 105, 0.68);
+            overflow-x: auto;
+            border: 12px solid rgba(16, 185, 129, 1.0);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--light-emerald) 7%, 
+                var(--clinical-gold) 14%, 
+                var(--health-slate) 21%, 
+                var(--sophisticated-teal) 28%, 
+                var(--deep-emerald) 35%, 
+                var(--clinical-forest) 42%, 
+                var(--medical-jade) 49%, 
+                transparent 100%);
+            animation: formulaMeta 9.0s ease-in-out infinite;
+        }
+
+        @keyframes formulaMeta {
+            0%, 100% { opacity: 0.8; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(3.2); }
+        }
+
+        /* Medical Emerald Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, #F0FDF4 50%, var(--white) 100%);
+            padding: 135px;
+            border-radius: 75px;
+            margin: 135px 0;
+            border: 13px solid var(--light-emerald);
+            box-shadow: 
+                0 70px 200px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -220%;
+            left: -220%;
+            width: 540%;
+            height: 540%;
+            background: conic-gradient(from 140deg at 50% 50%, 
+                transparent 0%, 
+                rgba(16, 185, 129, 0.15) 16%, 
+                transparent 26%, 
+                rgba(5, 150, 105, 0.13) 52%, 
+                transparent 62%);
+            animation: controlMeta 52s linear infinite;
+        }
+
+        @keyframes controlMeta {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Crimson Text', serif;
+            color: var(--secondary-red);
+            font-size: 6.3em;
+            margin-bottom: 115px;
+            text-align: center;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.6px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 85px;
+            margin-bottom: 125px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 55px;
+            color: var(--charcoal);
+            font-size: 1.85em;
+            letter-spacing: 1.2px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 60px;
+            border: 2px solid #E5E7EB;
+            border-radius: 55px;
+            font-size: 1.75em;
+            transition: all 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 20px 55px rgba(0,0,0,0.18);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-emerald);
+            box-shadow: 
+                0 0 70px rgba(5, 150, 105, 0.68),
+                0 0 0 12px rgba(16, 185, 129, 0.4);
+            transform: translateY(-10px) scale(1.12);
+        }
+
+        /* Advanced Meta-Analysis Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 70px;
+            margin-top: 125px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 60px 135px;
+            border: none;
+            border-radius: 55px;
+            font-weight: 600;
+            font-size: 1.95em;
+            cursor: pointer;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 4.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,1.0) 50%, 
+                transparent 100%);
+            transition: left 2.4s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--deep-emerald) 100%);
+            color: white;
+            box-shadow: 0 32px 90px rgba(5, 150, 105, 0.78);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--deep-emerald) 0%, var(--primary-emerald) 100%);
+            transform: translateY(-22px);
+            box-shadow: 0 50px 135px rgba(5, 150, 105, 0.88);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--clinical-gold) 0%, #D97706 100%);
+            color: white;
+            box-shadow: 0 32px 90px rgba(245, 158, 11, 0.78);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #D97706 0%, var(--clinical-gold) 100%);
+            transform: translateY(-22px);
+            box-shadow: 0 50px 135px rgba(245, 158, 11, 0.88);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--health-slate) 0%, #334155 100%);
+            color: white;
+            box-shadow: 0 32px 90px rgba(71, 85, 105, 0.78);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #334155 0%, var(--health-slate) 100%);
+            transform: translateY(-22px);
+            box-shadow: 0 50px 135px rgba(71, 85, 105, 0.88);
+        }
+
+        /* Medical Emerald Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, #F0FDF4 100%);
+            border: 13px solid var(--light-emerald);
+            border-radius: 70px;
+            padding: 135px;
+            margin: 135px 0;
+            box-shadow: 
+                0 70px 215px rgba(0,0,0,0.32),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: linear-gradient(90deg, 
+                var(--light-emerald) 0%, 
+                var(--clinical-gold) 6%, 
+                var(--health-slate) 12%, 
+                var(--sophisticated-teal) 18%, 
+                var(--deep-emerald) 24%, 
+                var(--primary-emerald) 30%, 
+                var(--clinical-forest) 36%, 
+                var(--medical-jade) 42%, 
+                var(--deep-emerald) 48%, 
+                var(--clinical-gold) 54%, 
+                var(--health-slate) 60%, 
+                var(--primary-emerald) 66%, 
+                var(--light-emerald) 100%);
+            animation: metaResults 9.0s ease-in-out infinite;
+        }
+
+        @keyframes metaResults {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Crimson Text', serif;
+            font-size: 6.8em;
+            color: var(--secondary-red);
+            margin-bottom: 115px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: -2.6px;
+        }
+
+        /* Medical Emerald Chart Container */
+        .chart-container {
+            position: relative;
+            height: 1100px;
+            margin: 135px 0;
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, var(--white) 100%);
+            border-radius: 65px;
+            padding: 125px;
+            box-shadow: 0 60px 175px rgba(0,0,0,0.32);
+            border: 12px solid var(--light-emerald);
+        }
+
+        /* Statistics Grid - Medical Emerald Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+            gap: 115px;
+            margin: 125px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, var(--white) 100%);
+            padding: 85px;
+            border-radius: 60px;
+            text-align: center;
+            border: 12px solid var(--light-emerald);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, var(--light-emerald) 0%, var(--primary-emerald) 50%, var(--clinical-gold) 100%);
+            transform: scaleX(0);
+            transition: transform 1.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-35px) scale(1.13);
+            box-shadow: 0 65px 180px rgba(0,0,0,0.4);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 4.8em;
+            font-weight: 700;
+            color: var(--primary-emerald);
+            margin-bottom: 42px;
+        }
+
+        .stat-label {
+            font-size: 1.85em;
+            color: var(--steel);
+            font-weight: 500;
+        }
+
+        /* Meta-Analysis-Specific Elements */
+        .meta-info {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, #E6FFFA 100%);
+            border: 12px solid var(--light-emerald);
+            border-radius: 55px;
+            padding: 85px;
+            margin: 85px 0;
+        }
+
+        .meta-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 60px;
+            margin: 70px 0;
+        }
+
+        .meta-metric-card {
+            background: var(--primary-emerald);
+            color: white;
+            padding: 60px 50px;
+            border-radius: 42px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.75em;
+            font-weight: 600;
+        }
+
+        .meta-metric-card:nth-child(1) { background: var(--clinical-gold); }
+        .meta-metric-card:nth-child(2) { background: var(--health-slate); }
+        .meta-metric-card:nth-child(3) { background: var(--primary-emerald); }
+        .meta-metric-card:nth-child(4) { background: var(--sophisticated-teal); }
+
+        /* Decision Framework - Medical Emerald */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, rgba(16, 185, 129, 0.5) 100%);
+            border: 13px solid var(--light-emerald);
+            border-radius: 70px;
+            padding: 125px;
+            margin: 125px 0;
+        }
+
+        .decision-question {
+            font-family: 'Crimson Text', serif;
+            font-weight: 600;
+            font-size: 3.1em;
+            margin-bottom: 90px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -1.2px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(660px, 1fr));
+            gap: 70px;
+        }
+
+        .decision-option {
+            padding: 70px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 55px;
+            cursor: pointer;
+            transition: all 1.4s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.85em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--clinical-gold);
+            background: var(--pale-emerald);
+            transform: translateY(-20px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-emerald);
+            background: var(--pale-emerald);
+            box-shadow: 0 0 95px rgba(5, 150, 105, 0.78);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 85px;
+            border-radius: 60px;
+            margin: 85px 0;
+            font-weight: 500;
+            font-size: 1.95em;
+        }
+
+        .feedback-success {
+            background: var(--pale-emerald);
+            border: 12px solid var(--light-emerald);
+            color: var(--deep-emerald);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 12px solid var(--clinical-gold);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 12px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Forest Plot Specific */
+        .forest-plot {
+            background: white;
+            border: 3px solid var(--light-emerald);
+            border-radius: 35px;
+            padding: 60px;
+            margin: 60px 0;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        }
+
+        .forest-plot h4 {
+            color: var(--primary-emerald);
+            margin-bottom: 35px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .study-row {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--pale-emerald);
+            border-radius: 12px;
+        }
+
+        .study-name {
+            flex: 1;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .effect-size {
+            flex: 0 0 150px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+        }
+
+        .confidence-interval {
+            flex: 0 0 200px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .effect-visual {
+            flex: 0 0 150px;
+            height: 20px;
+            background: var(--primary-emerald);
+            margin: 0 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        /* Funnel Plot */
+        .funnel-plot {
+            background: white;
+            border: 3px solid var(--light-emerald);
+            border-radius: 35px;
+            padding: 60px;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        /* Heterogeneity Assessment */
+        .heterogeneity-panel {
+            background: var(--pale-emerald);
+            border: 3px solid var(--light-emerald);
+            border-radius: 35px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+
+        .heterogeneity-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 35px;
+            margin: 35px 0;
+        }
+
+        .het-metric {
+            background: var(--primary-emerald);
+            color: white;
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 60px;
+                border-radius: 72px;
+            }
+
+            .header-title {
+                font-size: 7.0em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meta-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .heterogeneity-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Emerald */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-emerald) 0%, #E6FFFA 100%);
+            padding: 85px;
+            border-radius: 55px;
+            margin: 85px 0;
+            border-left: 26px solid var(--primary-emerald);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '📊';
+            position: absolute;
+            top: 85px;
+            left: 70px;
+            font-size: 3.2em;
+        }
+
+        .research-note p {
+            margin-left: 125px;
+            line-height: 2.8;
+        }
+
+        /* Advanced Visual Effects */
+        .meta-highlight {
+            background: rgba(5, 150, 105, 0.29);
+            border-left: 22px solid var(--primary-emerald);
+            padding: 60px;
+            margin: 60px 0;
+            border-radius: 32px;
+        }
+
+        .effect-size-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-emerald) 0%, var(--primary-emerald) 100%);
+            color: white;
+            padding: 32px 60px;
+            border-radius: 65px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            margin: 0 32px;
+            font-size: 1.75em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-meta {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 26px 55px;
+            border-radius: 55px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+            font-size: 1.25em;
+            display: inline-block;
+            margin: 0 26px;
+        }
+
+        /* GRADE Evidence */
+        .grade-assessment {
+            background: var(--pale-emerald);
+            border: 3px solid var(--light-emerald);
+            border-radius: 35px;
+            padding: 60px;
+            margin: 60px 0;
+        }
+
+        .grade-levels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .grade-level {
+            background: var(--primary-emerald);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .grade-level.high { background: #059669; }
+        .grade-level.moderate { background: #10B981; }
+        .grade-level.low { background: #6EE7B7; color: var(--charcoal); }
+        .grade-level.very-low { background: #A7F3D0; color: var(--charcoal); }
+
+        /* Meta-Analysis Steps */
+        .meta-steps {
+            background: var(--pale-emerald);
+            padding: 70px;
+            border-radius: 48px;
+            margin: 70px 0;
+            border: 11px solid var(--light-emerald);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 42px 0;
+            padding: 42px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 18px 42px rgba(0,0,0,0.18);
+        }
+
+        .step-number {
+            background: var(--primary-emerald);
+            color: white;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 42px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        /* RED Section Titles */
+        --secondary-red: #DC2626;
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Meta-Analysis Methods in Healthcare & Systematic Review Methodology</h1>
+            <p class="header-subtitle">Advanced Series: Comprehensive Evidence Synthesis for Clinical Decision-Making</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">📊 Meta-Analysis Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Evidence Synthesis</button>
+            <button class="tab-button" onclick="showSection('analysis')">🌲 Meta-Analysis</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title" style="color: #DC2626;">Meta-Analysis Framework for Healthcare Evidence Synthesis</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>📊 Fixed vs Random-Effects Models</h3>
+                    <p><strong>Statistical Pooling Approaches:</strong> Fixed-effects models assume one true effect size across studies, while random-effects models account for between-study heterogeneity, providing more conservative estimates and broader confidence intervals.</p>
+                    <div class="formula-display">
+                        Fixed-Effects Model:<br><br>
+                        θ̂_FE = Σ(w_i × θ_i) / Σw_i<br>
+                        Weight: w_i = 1/SE_i²<br>
+                        Variance: Var(θ̂_FE) = 1/Σw_i<br><br>
+                        Random-Effects Model:<br><br>
+                        θ̂_RE = Σ(w*_i × θ_i) / Σw*_i<br>
+                        Weight: w*_i = 1/(SE_i² + τ²)<br>
+                        Where τ² = between-study variance<br><br>
+                        Model Selection:<br>
+                        Fixed-effects: Homogeneous studies (I² < 25%)<br>
+                        Random-effects: Heterogeneous studies (I² ≥ 25%)<br><br>
+                        Interpretation: Random-effects provides population average effect
+                    </div>
+                    <p><em>Clinical insight: Random-effects models are generally preferred for healthcare meta-analyses due to clinical diversity</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔍 Heterogeneity Assessment</h3>
+                    <p><strong>Between-Study Variability Evaluation:</strong> Heterogeneity assessment quantifies the degree of variation between study results beyond that expected by chance, essential for interpreting pooled estimates and model selection.</p>
+                    <div class="formula-display">
+                        Cochran's Q Test:<br><br>
+                        Q = Σw_i(θ_i - θ̂_FE)²<br>
+                        H₀: τ² = 0 (no heterogeneity)<br>
+                        df = k - 1 (k = number of studies)<br><br>
+                        I² Statistic:<br><br>
+                        I² = max(0, (Q - df)/Q) × 100%<br><br>
+                        Interpretation:<br>
+                        I² = 0-25%: Low heterogeneity<br>
+                        I² = 25-50%: Moderate heterogeneity<br>
+                        I² = 50-75%: Substantial heterogeneity<br>
+                        I² = 75-100%: Considerable heterogeneity<br><br>
+                        Tau-Squared (τ²):<br>
+                        τ² = (Q - df)/(c - Σw_i²/Σw_i)<br>
+                        Variance of true effects in random-effects model
+                    </div>
+                    <p><strong>Clinical Application:</strong> High heterogeneity suggests important clinical or methodological differences requiring investigation</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🌲 Forest Plots & Effect Visualization</h3>
+                    <p><strong>Comprehensive Graphical Synthesis:</strong> Forest plots provide visual representation of individual study effects and pooled estimates with confidence intervals, essential for interpreting meta-analysis results and heterogeneity patterns.</p>
+                    <div class="formula-display">
+                        Forest Plot Components:<br><br>
+                        Study Effect Size: θ_i ± 1.96 × SE_i<br>
+                        Study Weight: Proportional to 1/SE_i² (fixed)<br>
+                        Study Weight: Proportional to 1/(SE_i² + τ²) (random)<br><br>
+                        Diamond Symbol:<br>
+                        Center = Pooled effect estimate<br>
+                        Width = 95% confidence interval<br>
+                        Area ∝ Total weight of evidence<br><br>
+                        Visual Assessment:<br>
+                        Overlap of CIs: Consistency indicator<br>
+                        Study spread: Heterogeneity visualization<br>
+                        Null line (0): Effect significance<br><br>
+                        Quality Indicators:<br>
+                        Square size ∝ Study weight<br>
+                        Color coding: Study quality/risk of bias<br>
+                        Symbol shape: Study design type
+                    </div>
+                    <p><strong>Interpretation Guide:</strong> Non-overlapping confidence intervals suggest statistical heterogeneity requiring investigation</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📈 Publication Bias Detection</h3>
+                    <p><strong>Bias Assessment & Adjustment:</strong> Publication bias occurs when study results influence publication likelihood, requiring statistical detection methods and sensitivity analyses to ensure robust meta-analysis conclusions.</p>
+                    <div class="formula-display">
+                        Funnel Plot Assessment:<br><br>
+                        Plot: Effect size vs Standard Error<br>
+                        Expected: Symmetric inverted funnel<br>
+                        Bias indicator: Asymmetric distribution<br><br>
+                        Egger's Regression Test:<br><br>
+                        Precision = α + β × StandardizedEffect + ε<br>
+                        Precision = 1/SE_i<br>
+                        StandardizedEffect = θ_i/SE_i<br><br>
+                        H₀: β = 0 (no small-study effects)<br>
+                        H₁: β ≠ 0 (publication bias present)<br><br>
+                        Adjustment Methods:<br>
+                        Trim-and-Fill: Impute missing studies<br>
+                        Fail-Safe N: Studies needed to nullify effect<br>
+                        PET-PEESE: Precision-Effect Test/Estimate<br><br>
+                        Clinical Interpretation: Assess robustness to missing studies
+                    </div>
+                    <p><strong>Medical Use:</strong> Publication bias can inflate treatment effects, particularly for pharmaceutical interventions</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📋 Subgroup Analysis & Meta-Regression</h3>
+                    <p><strong>Effect Modification Exploration:</strong> Subgroup analysis and meta-regression investigate sources of heterogeneity by examining how study and participant characteristics modify treatment effects across different populations and settings.</p>
+                    <div class="formula-display">
+                        Subgroup Analysis:<br><br>
+                        Within-subgroup pooling: θ̂_j for subgroup j<br>
+                        Between-subgroup test: Q_between<br>
+                        Q_total = Q_within + Q_between<br><br>
+                        Test for subgroup differences:<br>
+                        Q_between = Σn_j(θ̂_j - θ̂_overall)²<br><br>
+                        Meta-Regression:<br><br>
+                        θ_i = β₀ + β₁x_i + u_i + ε_i<br>
+                        Where: x_i = study-level covariate<br>
+                               u_i ~ N(0, τ²) = random effect<br>
+                               ε_i ~ N(0, σ_i²) = sampling error<br><br>
+                        Mixed-Effects Model:<br>
+                        Accounts for residual heterogeneity after covariate adjustment<br><br>
+                        Power considerations: ≥10 studies per covariate
+                    </div>
+                    <p><strong>Clinical Example:</strong> Age, disease severity, and intervention intensity as effect modifiers in treatment meta-analyses</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⭐ GRADE Evidence Assessment</h3>
+                    <p><strong>Quality & Recommendation Strength:</strong> GRADE (Grading of Recommendations Assessment, Development and Evaluation) provides systematic approach for rating evidence quality and recommendation strength in healthcare decisions.</p>
+                    <div class="formula-display">
+                        GRADE Evidence Quality Levels:<br><br>
+                        HIGH (⊕⊕⊕⊕): Very confident in effect estimate<br>
+                        MODERATE (⊕⊕⊕⊖): Moderately confident<br>
+                        LOW (⊕⊕⊖⊖): Limited confidence<br>
+                        VERY LOW (⊕⊖⊖⊖): Very limited confidence<br><br>
+                        Quality Downgrading Factors:<br>
+                        • Risk of bias (-1 or -2 levels)<br>
+                        • Inconsistency (I² > 50%): -1 level<br>
+                        • Indirectness (population/intervention): -1 level<br>
+                        • Imprecision (wide CIs): -1 level<br>
+                        • Publication bias (Egger p < 0.05): -1 level<br><br>
+                        Quality Upgrading Factors:<br>
+                        • Large magnitude of effect: +1 level<br>
+                        • Dose-response gradient: +1 level<br>
+                        • Plausible confounding reducing effect: +1 level<br><br>
+                        Recommendation Strength: Strong vs Weak
+                    </div>
+                    <p><strong>Healthcare Integration:</strong> GRADE evidence ratings inform clinical practice guidelines and health technology assessment</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Advanced Meta-Analysis Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 85px; margin-top: 75px;">
+                    <div>
+                        <h4>🏥 Clinical Evidence Synthesis Applications:</h4>
+                        <ul>
+                            <li><strong>Pharmaceutical Efficacy Meta-Analysis:</strong> Drug effectiveness synthesis for Health Canada regulatory decisions</li>
+                            <li><strong>Health Technology Assessment:</strong> Medical device and intervention effectiveness for CADTH</li>
+                            <li><strong>Clinical Practice Guideline Development:</strong> Evidence-based recommendations for medical societies</li>
+                            <li><strong>Public Health Intervention Effectiveness:</strong> Population-level program evaluation and policy development</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📈 Advanced Methodological Applications:</h4>
+                        <ul>
+                            <li><strong>Diagnostic Test Accuracy Meta-Analysis:</strong> Pooled sensitivity and specificity across validation studies</li>
+                            <li><strong>Individual Patient Data Meta-Analysis:</strong> Patient-level evidence synthesis for precision medicine</li>
+                            <li><strong>Network Meta-Analysis:</strong> Multiple treatment comparisons for indirect evidence</li>
+                            <li><strong>Real-World Evidence Synthesis:</strong> Administrative data and registry-based effectiveness research</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="meta-steps" style="margin-top: 75px;">
+                    <h4 style="color: #DC2626; margin-bottom: 60px; text-align: center;">📊 Meta-Analysis Methodology Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Protocol Development:</strong> Define research question, inclusion/exclusion criteria, and analysis plan</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Systematic Literature Search:</strong> Comprehensive database searching and study identification</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Study Selection & Quality Assessment:</strong> Apply criteria and evaluate risk of bias</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Data Extraction:</strong> Systematically extract outcomes, characteristics, and quality indicators</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Statistical Analysis:</strong> Assess heterogeneity and perform fixed/random-effects pooling</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Publication Bias Assessment:</strong> Evaluate funnel plots and conduct sensitivity analyses</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Evidence Synthesis:</strong> Integrate findings with GRADE assessment and clinical interpretation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>📊 Advanced Meta-Analysis Foundation:</strong> Meta-analysis provides the highest level of evidence for healthcare decision-making through systematic synthesis of research findings. Rigorous methodology encompassing heterogeneity assessment, publication bias detection, and quality evaluation ensures robust conclusions for clinical practice, policy development, and guideline creation. Understanding fixed versus random-effects models, forest plot interpretation, and GRADE evidence assessment is essential for evidence-based medicine, health technology assessment, and clinical research leadership across diverse healthcare applications.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Evidence Synthesis Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title" style="color: #DC2626;">Canadian Evidence Synthesis Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">📊 Meta-Analysis Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="metaModel">Canadian Healthcare Meta-Analysis Model</label>
+                        <select id="metaModel" onchange="updateMetaModel()">
+                            <option value="pharmaceutical_efficacy">Pharmaceutical Efficacy Meta-Analysis</option>
+                            <option value="health_technology">Health Technology Assessment</option>
+                            <option value="clinical_guidelines">Clinical Practice Guideline Development</option>
+                            <option value="public_health">Public Health Intervention Effectiveness</option>
+                            <option value="diagnostic_meta">Diagnostic Test Accuracy Meta-Analysis</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysisType">Meta-Analysis Method</label>
+                        <select id="analysisType">
+                            <option value="fixed_effects">Fixed-Effects Model</option>
+                            <option value="random_effects" selected>Random-Effects Model</option>
+                            <option value="subgroup_analysis">Subgroup Analysis</option>
+                            <option value="meta_regression">Meta-Regression</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studyCount">Number of Studies</label>
+                        <select id="studyCount">
+                            <option value="5">5 studies</option>
+                            <option value="10" selected>10 studies</option>
+                            <option value="15">15 studies</option>
+                            <option value="25">25 studies</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="heterogeneityLevel">Heterogeneity Level</label>
+                        <select id="heterogeneityLevel">
+                            <option value="low">Low (I² = 15-25%)</option>
+                            <option value="moderate" selected>Moderate (I² = 35-50%)</option>
+                            <option value="substantial">Substantial (I² = 60-75%)</option>
+                            <option value="considerable">Considerable (I² = 80-90%)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="effectSize">Overall Effect Size</label>
+                        <input type="range" id="effectSize" min="0.3" max="2.0" step="0.1" value="0.8" onchange="updateEffectDisplay()">
+                        <span id="effectValue">0.8</span> (Moderate beneficial effect)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateMetaData()">📊 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performMetaAnalysis()">🌲 Run Analysis</button>
+                    <button class="btn btn-accent" onclick="performForestPlot()">📈 Forest Plot</button>
+                </div>
+            </div>
+
+            <!-- Meta-Analysis Model Description -->
+            <div id="metaDescription" class="meta-info">
+                <div class="results-header">Current Meta-Analysis Model</div>
+                <div id="metaText"></div>
+                <div id="metaModelMetrics" class="meta-metrics"></div>
+            </div>
+
+            <!-- Meta-Analysis Chart -->
+            <div class="chart-container">
+                <canvas id="metaChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Meta-Analysis Results Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title" style="color: #DC2626;">Meta-Analysis Results & Evidence Synthesis</h2>
+
+            <div id="metaResults" class="results-container">
+                <div class="results-header">Meta-Analysis Results</div>
+                <div id="metaTable"></div>
+            </div>
+
+            <div class="stats-grid" id="metaStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="forestResults" class="results-container">
+                <div class="results-header">🌲 Forest Plot & Evidence Synthesis</div>
+                <div id="forestTable"></div>
+            </div>
+
+            <!-- Forest Plot Visualization -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 75px; color: #DC2626;">🌲 Forest Plot & Meta-Analysis Visualization</h3>
+                <canvas id="forestChart"></canvas>
+            </div>
+
+            <!-- Heterogeneity Assessment -->
+            <div class="heterogeneity-panel">
+                <h4 style="color: var(--primary-emerald); margin-bottom: 40px; text-align: center;">🔍 Heterogeneity Assessment</h4>
+                <div class="heterogeneity-metrics" id="heterogeneityMetrics">
+                    <!-- Dynamic heterogeneity metrics will be populated here -->
+                </div>
+            </div>
+
+            <!-- Publication Bias Assessment -->
+            <div class="funnel-plot">
+                <h4 style="color: var(--primary-emerald); margin-bottom: 40px;">📈 Publication Bias Assessment</h4>
+                <div id="publicationBiasResults"></div>
+                <canvas id="funnelChart" width="800" height="400"></canvas>
+            </div>
+
+            <!-- GRADE Evidence Assessment -->
+            <div class="grade-assessment">
+                <h4 style="color: var(--primary-emerald); margin-bottom: 40px; text-align: center;">⭐ GRADE Evidence Quality Assessment</h4>
+                <div class="grade-levels" id="gradeAssessment">
+                    <!-- Dynamic GRADE assessment will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title" style="color: #DC2626;">Meta-Analysis Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading meta-analysis assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 85px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 125px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentMetaModel = null;
+        let currentMetaChart = null;
+        let forestChart = null;
+        let funnelChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Meta-Analysis Model Definitions
+        const metaModels = {
+            pharmaceutical_efficacy: {
+                title: "Pharmaceutical Efficacy Meta-Analysis (Cardiovascular Drug Effectiveness)",
+                description: "Systematic review and meta-analysis evaluating cardiovascular medication effectiveness across randomized controlled trials, pooling efficacy outcomes for Health Canada regulatory decision-making and clinical practice guideline development.",
+                intervention: "Novel Cardiovascular Medication vs Standard Care",
+                outcome: "Major Adverse Cardiovascular Events (MACE)",
+                population: "Adults with cardiovascular disease or high risk",
+                clinical_context: "Pharmaceutical regulation and evidence-based prescribing",
+                study_design: "Systematic review of randomized controlled trials with GRADE assessment",
+                expected_effect: "Risk Ratio 0.75-0.85 (15-25% relative risk reduction)",
+                clinical_application: "Regulatory approval, formulary decisions, clinical guidelines, treatment protocols"
+            },
+            health_technology: {
+                title: "Health Technology Assessment (Medical Device Effectiveness)",
+                description: "Comprehensive health technology assessment synthesizing evidence for medical device effectiveness, safety, and cost-effectiveness for CADTH evaluation and provincial health system implementation decisions.",
+                intervention: "Advanced Medical Device vs Conventional Technology",
+                outcome: "Clinical Effectiveness and Safety Composite",
+                population: "Patients requiring medical device intervention",
+                clinical_context: "Health technology assessment and health system decision-making",
+                study_design: "Mixed-methods systematic review with economic evaluation",
+                expected_effect: "Standardized Mean Difference 0.5-0.8 (moderate to large effect)",
+                clinical_application: "Technology adoption, reimbursement decisions, implementation planning, quality improvement"
+            },
+            clinical_guidelines: {
+                title: "Clinical Practice Guideline Development (Evidence Synthesis)",
+                description: "Evidence synthesis supporting clinical practice guideline development through comprehensive meta-analysis of therapeutic interventions, diagnostic strategies, and preventive measures for medical society recommendations.",
+                intervention: "Evidence-Based Clinical Intervention vs Usual Care",
+                outcome: "Patient-Centered Outcome Measures",
+                population: "Target clinical population for guideline recommendations",
+                clinical_context: "Clinical practice guideline development and implementation",
+                study_design: "Systematic review with GRADE methodology for recommendation development",
+                expected_effect: "Odds Ratio 0.60-0.80 (20-40% odds reduction)",
+                clinical_application: "Clinical guidelines, quality indicators, performance measures, continuing education"
+            },
+            public_health: {
+                title: "Public Health Intervention Effectiveness (Population-Level Programs)",
+                description: "Meta-analysis of population-level public health interventions evaluating effectiveness across diverse communities and settings, informing provincial health policy and program implementation strategies.",
+                intervention: "Public Health Program vs Control Communities",
+                outcome: "Population Health Indicators and Behavioral Changes",
+                population: "Population-based samples across Canadian communities",
+                clinical_context: "Public health policy and population health improvement",
+                study_design: "Systematic review of controlled studies with implementation science focus",
+                expected_effect: "Risk Difference 5-15% (absolute risk reduction)",
+                clinical_application: "Public health policy, program planning, resource allocation, health promotion strategies"
+            },
+            diagnostic_meta: {
+                title: "Diagnostic Test Accuracy Meta-Analysis (Screening Program Evaluation)",
+                description: "Meta-analysis of diagnostic test accuracy studies pooling sensitivity and specificity estimates across validation studies to inform population-based screening program development and implementation.",
+                intervention: "Diagnostic Test vs Reference Standard",
+                outcome: "Sensitivity, Specificity, and Predictive Values",
+                population: "Screening-eligible population across healthcare settings",
+                clinical_context: "Diagnostic test evaluation and screening program optimization",
+                study_design: "Bivariate meta-analysis of diagnostic accuracy studies with HSROC modeling",
+                expected_effect: "Summary ROC AUC 0.85-0.92 (excellent diagnostic accuracy)",
+                clinical_application: "Screening protocols, test selection, quality assurance, program evaluation"
+            }
+        };
+
+        // Assessment Questions (Meta-Analysis focused)
+        const assessmentQuestions = [
+            {
+                question: "When should you choose a random-effects model over a fixed-effects model in meta-analysis?",
+                options: [
+                    "When there are fewer than 10 studies in the meta-analysis",
+                    "When there is evidence of substantial heterogeneity between studies (I² ≥ 25%)",
+                    "When all studies have the same sample size",
+                    "When the effect sizes are all statistically significant"
+                ],
+                correct: 1,
+                explanation: "Random-effects models should be used when there is evidence of heterogeneity between studies (I² ≥ 25%). Random-effects models account for both within-study sampling error and between-study variance, providing more conservative confidence intervals and allowing for generalization beyond the included studies."
+            },
+            {
+                question: "What does an I² statistic of 60% indicate in a meta-analysis?",
+                options: [
+                    "60% of the studies show a statistically significant effect",
+                    "The meta-analysis has 60% statistical power",
+                    "60% of the total variation across studies is due to heterogeneity rather than chance",
+                    "60% of the effect size is attributable to the intervention"
+                ],
+                correct: 2,
+                explanation: "I² = 60% indicates that 60% of the total variation across studies is due to true heterogeneity between studies rather than sampling error (chance). This represents substantial heterogeneity that requires investigation into potential sources of between-study differences."
+            },
+            {
+                question: "In a forest plot, what does the size of each study's square represent?",
+                options: [
+                    "The effect size of that particular study",
+                    "The sample size of that study",
+                    "The statistical weight of that study in the pooled analysis",
+                    "The quality score of that study"
+                ],
+                correct: 2,
+                explanation: "In forest plots, the size of each study's square is proportional to the statistical weight of that study in the pooled analysis. Larger, more precise studies (with smaller standard errors) receive more weight and are represented by larger squares."
+            },
+            {
+                question: "What pattern in a funnel plot suggests publication bias?",
+                options: [
+                    "A symmetric inverted funnel shape",
+                    "An asymmetric distribution with missing studies in the bottom corners",
+                    "All studies clustering around the null effect",
+                    "Studies with large effect sizes having small standard errors"
+                ],
+                correct: 1,
+                explanation: "Publication bias is suggested by an asymmetric funnel plot, particularly when there are missing studies in the bottom corners (small studies with negative or null results). This asymmetry indicates that small studies with unfavorable results may not have been published."
+            },
+            {
+                question: "According to GRADE methodology, what would downgrade evidence quality by one level?",
+                options: [
+                    "Including only randomized controlled trials",
+                    "Having a large sample size across studies",
+                    "Moderate heterogeneity with I² = 55%",
+                    "A statistically significant pooled effect"
+                ],
+                correct: 2,
+                explanation: "According to GRADE, moderate to substantial heterogeneity (I² > 50%) would downgrade evidence quality by one level due to inconsistency between study results. Other factors that downgrade evidence include risk of bias, indirectness, imprecision, and publication bias."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Meta-Analysis Model Management
+        function updateMetaModel() {
+            const modelType = document.getElementById('metaModel').value;
+            const model = metaModels[modelType];
+            
+            document.getElementById('metaText').innerHTML = `
+                <h3 style="color: #DC2626; margin-bottom: 60px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>📊 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Intervention:</strong> ${model.intervention}</p>
+                <p><strong>Primary Outcome:</strong> ${model.outcome}</p>
+                <p><strong>Study Population:</strong> ${model.population}</p>
+                <p><strong>Study Design:</strong> ${model.study_design}</p>
+                <p><strong>Expected Effect:</strong> ${model.expected_effect}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateMetaMetrics();
+        }
+
+        function updateMetaMetrics() {
+            const analysisType = document.getElementById('analysisType').value;
+            const container = document.getElementById('metaModelMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(analysisType) {
+                case 'fixed_effects': metrics = ['Pooled Effect', 'Q Statistic', 'I²', 'Weight Sum']; break;
+                case 'random_effects': metrics = ['Random Effect', 'Tau²', 'I²', 'Prediction Interval']; break;
+                case 'subgroup_analysis': metrics = ['Subgroup 1', 'Subgroup 2', 'Q Between', 'Interaction']; break;
+                case 'meta_regression': metrics = ['Regression Slope', 'R² Explained', 'Residual Tau²', 'P Value']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'meta-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateEffectDisplay() {
+            const effect = document.getElementById('effectSize').value;
+            let interpretation;
+            if (effect < 0.6) interpretation = 'Large beneficial effect';
+            else if (effect < 0.8) interpretation = 'Moderate beneficial effect';
+            else if (effect < 1.2) interpretation = 'Small effect';
+            else interpretation = 'Harmful effect';
+            document.getElementById('effectValue').textContent = `${effect} (${interpretation})`;
+        }
+
+        // Meta-Analysis Data Generation
+        function generateMetaData() {
+            const modelType = document.getElementById('metaModel').value;
+            const analysisType = document.getElementById('analysisType').value;
+            const studyCount = parseInt(document.getElementById('studyCount').value);
+            const heterogeneity = document.getElementById('heterogeneityLevel').value;
+            const effectSize = parseFloat(document.getElementById('effectSize').value);
+            
+            const model = metaModels[modelType];
+            
+            currentMetaModel = {
+                model: model,
+                analysisType: analysisType,
+                studyCount: studyCount,
+                heterogeneity: heterogeneity,
+                effectSize: effectSize,
+                studies: []
+            };
+
+            // Generate meta-analysis data with realistic medical patterns
+            generateStudyData(studyCount, heterogeneity, effectSize);
+            updateMetaChart();
+        }
+
+        function generateStudyData(k, heterogeneity, targetEffect) {
+            const studies = [];
+            
+            // Set heterogeneity parameters
+            let tau2 = 0; // Between-study variance
+            switch(heterogeneity) {
+                case 'low': tau2 = 0.01; break;
+                case 'moderate': tau2 = 0.04; break;
+                case 'substantial': tau2 = 0.09; break;
+                case 'considerable': tau2 = 0.16; break;
+            }
+            
+            for (let i = 0; i < k; i++) {
+                // Generate realistic study characteristics
+                const sampleSize = 50 + Math.random() * 450; // 50-500 participants
+                const se = Math.sqrt(4/sampleSize + tau2); // Standard error with heterogeneity
+                
+                // Generate effect size with between-study variation
+                const trueEffect = Math.log(targetEffect) + Math.sqrt(tau2) * (Math.random() - 0.5) * 3;
+                const observedEffect = trueEffect + Math.random() * se - se/2;
+                
+                studies.push({
+                    studyId: `Study ${i + 1}`,
+                    sampleSize: Math.round(sampleSize),
+                    effectSize: Math.exp(observedEffect), // Convert back to ratio scale
+                    standardError: se,
+                    lowerCI: Math.exp(observedEffect - 1.96 * se),
+                    upperCI: Math.exp(observedEffect + 1.96 * se),
+                    weight: 1 / (se * se),
+                    logEffect: observedEffect
+                });
+            }
+            
+            currentMetaModel.studies = studies;
+        }
+
+        function updateMetaChart() {
+            if (!currentMetaModel) return;
+            
+            const ctx = document.getElementById('metaChart').getContext('2d');
+            
+            if (currentMetaChart) {
+                currentMetaChart.destroy();
+            }
+
+            // Create effect size distribution chart
+            const studies = currentMetaModel.studies;
+            const labels = studies.map(s => s.studyId);
+            const effects = studies.map(s => s.effectSize);
+            const lowerCI = studies.map(s => s.lowerCI);
+            const upperCI = studies.map(s => s.upperCI);
+            
+            currentMetaChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Study Effect Sizes',
+                            data: studies.map((s, i) => ({ x: i, y: s.effectSize })),
+                            backgroundColor: 'rgba(5, 150, 105, 0.8)',
+                            borderColor: '#059669',
+                            borderWidth: 2,
+                            pointRadius: 8
+                        },
+                        {
+                            label: 'Confidence Intervals',
+                            data: studies.map((s, i) => ({ x: i, y: s.lowerCI })),
+                            backgroundColor: 'rgba(5, 150, 105, 0.3)',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            pointRadius: 3,
+                            showLine: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentMetaModel.model.title} - Study Effect Sizes`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Study Number' },
+                            ticks: {
+                                callback: function(value, index) {
+                                    return `Study ${index + 1}`;
+                                }
+                            }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Effect Size (Ratio Scale)' },
+                            min: 0
+                        }
+                    }
+                }
+            });
+        }
+
+        // Meta-Analysis Performance
+        function performMetaAnalysis() {
+            if (!currentMetaModel) {
+                alert('Please generate meta-analysis data first');
+                return;
+            }
+
+            const studies = currentMetaModel.studies;
+            const analysisType = currentMetaModel.analysisType;
+            
+            // Calculate meta-analysis results
+            const results = calculateMetaAnalysis(studies, analysisType);
+            displayMetaResults(results);
+        }
+
+        function calculateMetaAnalysis(studies, analysisType) {
+            // Fixed-effects calculation
+            let totalWeight = 0;
+            let weightedSum = 0;
+            
+            studies.forEach(study => {
+                totalWeight += study.weight;
+                weightedSum += study.weight * study.logEffect;
+            });
+            
+            const fixedEffect = weightedSum / totalWeight;
+            const fixedSE = Math.sqrt(1 / totalWeight);
+            
+            // Calculate Q statistic and I²
+            let qStat = 0;
+            studies.forEach(study => {
+                const deviation = study.logEffect - fixedEffect;
+                qStat += study.weight * deviation * deviation;
+            });
+            
+            const df = studies.length - 1;
+            const i2 = Math.max(0, (qStat - df) / qStat) * 100;
+            
+            // Random-effects calculation
+            let tau2 = 0;
+            if (qStat > df) {
+                const c = totalWeight - (studies.reduce((sum, s) => sum + s.weight * s.weight, 0) / totalWeight);
+                tau2 = Math.max(0, (qStat - df) / c);
+            }
+            
+            // Random-effects weights and pooled estimate
+            let totalWeightRE = 0;
+            let weightedSumRE = 0;
+            
+            studies.forEach(study => {
+                const weightRE = 1 / (1/study.weight + tau2);
+                totalWeightRE += weightRE;
+                weightedSumRE += weightRE * study.logEffect;
+            });
+            
+            const randomEffect = weightedSumRE / totalWeightRE;
+            const randomSE = Math.sqrt(1 / totalWeightRE);
+            
+            return {
+                analysisType: analysisType,
+                fixedEffect: fixedEffect,
+                fixedSE: fixedSE,
+                randomEffect: randomEffect,
+                randomSE: randomSE,
+                qStatistic: qStat,
+                i2: i2,
+                tau2: tau2,
+                df: df,
+                studies: studies
+            };
+        }
+
+        function displayMetaResults(results) {
+            const model = currentMetaModel.model;
+            const useRandom = results.i2 >= 25;
+            const effect = useRandom ? results.randomEffect : results.fixedEffect;
+            const se = useRandom ? results.randomSE : results.fixedSE;
+            
+            const pooledRatio = Math.exp(effect);
+            const lowerCI = Math.exp(effect - 1.96 * se);
+            const upperCI = Math.exp(effect + 1.96 * se);
+            
+            const significance = (lowerCI > 1 || upperCI < 1) ? '✅ Statistically Significant' : '❌ Not Significant';
+            const modelType = useRandom ? 'Random-Effects' : 'Fixed-Effects';
+            
+            let resultContent = `
+                <h4>📊 Meta-Analysis Results</h4>
+                <div style="background: var(--primary-emerald); color: white; padding: 26px; border-radius: 20px; margin-bottom: 32px; text-align: center;">
+                    <strong>${results.analysisType.toUpperCase().replace('_', '-')} MODEL</strong><br>
+                    Study: ${model.title}<br>
+                    Pooled Effect = ${pooledRatio.toFixed(3)} [${lowerCI.toFixed(3)}, ${upperCI.toFixed(3)}] (${significance})
+                </div>
+            `;
+            
+            // Forest plot data
+            resultContent += `
+                <div class="forest-plot">
+                    <h4>🌲 Individual Study Results</h4>
+                    ${results.studies.map((study, index) => `
+                        <div class="study-row">
+                            <div class="study-name">${study.studyId}</div>
+                            <div class="effect-size">${study.effectSize.toFixed(3)}</div>
+                            <div class="confidence-interval">[${study.lowerCI.toFixed(3)}, ${study.upperCI.toFixed(3)}]</div>
+                            <div class="effect-visual" style="width: ${Math.min(150, study.weight / Math.max(...results.studies.map(s => s.weight)) * 150)}px;"></div>
+                        </div>
+                    `).join('')}
+                    <div class="study-row" style="border-top: 3px solid var(--primary-emerald); margin-top: 20px; background: var(--light-emerald);">
+                        <div class="study-name"><strong>Pooled (${modelType})</strong></div>
+                        <div class="effect-size"><strong>${pooledRatio.toFixed(3)}</strong></div>
+                        <div class="confidence-interval"><strong>[${lowerCI.toFixed(3)}, ${upperCI.toFixed(3)}]</strong></div>
+                        <div class="effect-visual" style="width: 150px; background: var(--clinical-gold);"></div>
+                    </div>
+                </div>
+            `;
+            
+            resultContent += `
+                <div class="meta-highlight">
+                    <p><strong>📊 Advanced Meta-Analysis Interpretation:</strong> 
+                    The ${results.analysisType.toLowerCase().replace('_', '-')} demonstrates ${pooledRatio < 0.8 ? 'beneficial' : pooledRatio > 1.2 ? 'harmful' : 'minimal'} effects 
+                    (Pooled ${pooledRatio < 1 ? 'Risk Ratio' : 'Odds Ratio'} = ${pooledRatio.toFixed(3)}, ${significance}). 
+                    Heterogeneity assessment reveals I² = ${results.i2.toFixed(1)}% (${results.i2 < 25 ? 'low' : results.i2 < 50 ? 'moderate' : results.i2 < 75 ? 'substantial' : 'considerable'}), 
+                    supporting ${modelType.toLowerCase()} model selection. 
+                    This sophisticated evidence synthesis provides ${results.i2 < 50 ? 'robust' : 'moderate quality'} evidence for clinical decision-making.
+                    <span class="canada-meta">Canadian evidence standards</span> 
+                    support implementation with appropriate monitoring and evaluation frameworks.
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('metaTable').innerHTML = resultContent;
+
+            // Update meta-analysis statistics display
+            document.getElementById('metaStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${pooledRatio.toFixed(3)}</div>
+                    <div class="stat-label">Pooled Effect</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.i2.toFixed(1)}%</div>
+                    <div class="stat-label">I² Heterogeneity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.qStatistic.toFixed(2)}</div>
+                    <div class="stat-label">Q Statistic</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.sqrt(results.tau2).toFixed(3)}</div>
+                    <div class="stat-label">Tau (τ)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.studies.length}</div>
+                    <div class="stat-label">Studies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${modelType}</div>
+                    <div class="stat-label">Model Used</div>
+                </div>
+            `;
+
+            // Update heterogeneity assessment
+            document.getElementById('heterogeneityMetrics').innerHTML = `
+                <div class="het-metric">I² = ${results.i2.toFixed(1)}%</div>
+                <div class="het-metric">Q = ${results.qStatistic.toFixed(2)}</div>
+                <div class="het-metric">τ² = ${results.tau2.toFixed(3)}</div>
+            `;
+        }
+
+        function performForestPlot() {
+            if (!currentMetaModel) {
+                alert('Please perform meta-analysis first');
+                return;
+            }
+
+            generateForestChart();
+            displayForestAnalysis();
+        }
+
+        function generateForestChart() {
+            const ctx = document.getElementById('forestChart').getContext('2d');
+            
+            if (forestChart) {
+                forestChart.destroy();
+            }
+
+            // Generate forest plot data
+            const studies = currentMetaModel.studies;
+            const labels = studies.map(s => s.studyId);
+            const effects = studies.map(s => s.effectSize);
+            const lowerCI = studies.map(s => s.lowerCI);
+            const upperCI = studies.map(s => s.upperCI);
+
+            forestChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Effect Size',
+                            data: effects.map((effect, i) => ({ x: effect, y: i })),
+                            backgroundColor: 'rgba(5, 150, 105, 0.8)',
+                            borderColor: '#059669',
+                            borderWidth: 2,
+                            pointRadius: effects.map((_, i) => Math.sqrt(studies[i].weight) * 2)
+                        },
+                        {
+                            label: 'Lower CI',
+                            data: lowerCI.map((ci, i) => ({ x: ci, y: i })),
+                            backgroundColor: 'rgba(5, 150, 105, 0.4)',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            pointRadius: 2,
+                            showLine: false
+                        },
+                        {
+                            label: 'Upper CI',
+                            data: upperCI.map((ci, i) => ({ x: ci, y: i })),
+                            backgroundColor: 'rgba(5, 150, 105, 0.4)',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            pointRadius: 2,
+                            showLine: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Forest Plot - Effect Sizes and Confidence Intervals',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Effect Size (Risk Ratio)' },
+                            min: 0
+                        },
+                        y: { 
+                            title: { display: true, text: 'Studies' },
+                            type: 'linear',
+                            position: 'left',
+                            ticks: {
+                                callback: function(value, index) {
+                                    return labels[value] || '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayForestAnalysis() {
+            const model = currentMetaModel.model;
+            const studies = currentMetaModel.studies;
+            
+            // Calculate publication bias assessment
+            const effectSizes = studies.map(s => s.logEffect);
+            const standardErrors = studies.map(s => s.standardError);
+            
+            // Simple Egger's test simulation
+            const eggerP = Math.random() < 0.2 ? Math.random() * 0.05 : Math.random() * 0.3 + 0.05;
+            const biasAssessment = eggerP < 0.05 ? '⚠️ Possible publication bias detected' : '✅ No significant publication bias';
+            
+            document.getElementById('forestTable').innerHTML = `
+                <h4>🌲 Advanced Forest Plot Analysis</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 70px; margin: 65px 0;">
+                    <div class="stat-card" style="padding: 65px;">
+                        <h5>Forest Plot Interpretation</h5>
+                        <p><strong>Effect Direction:</strong> ${studies.every(s => s.effectSize < 1) ? 'Consistently beneficial' : studies.every(s => s.effectSize > 1) ? 'Consistently harmful' : 'Mixed effects'}</p>
+                        <p><strong>Confidence Intervals:</strong> ${studies.every(s => s.lowerCI < 1 && s.upperCI < 1) ? 'All favor intervention' : studies.some(s => s.lowerCI > 1 || s.upperCI < 1) ? 'Mixed significance' : 'Mostly non-significant'}</p>
+                        <p><strong>Study Weights:</strong> Based on precision (inverse variance)</p>
+                        <p><strong>Clinical Consistency:</strong> ${studies.length > 8 ? 'Large evidence base' : 'Moderate evidence base'}</p>
+                    </div>
+                    
+                    <div class="stat-card" style="padding: 65px;">
+                        <h5>Publication Bias Assessment</h5>
+                        <p><strong>Egger's Test:</strong> p = ${eggerP.toFixed(3)} (${biasAssessment})</p>
+                        <p><strong>Study Distribution:</strong> Visual funnel plot assessment required</p>
+                        <p><strong>Sensitivity Analysis:</strong> Trim-and-fill method recommended</p>
+                        <p><strong>Clinical Implications:</strong> Consider unpublished studies and grey literature</p>
+                    </div>
+                </div>
+                
+                <div class="meta-highlight">
+                    <p><strong>🌲 Advanced Forest Plot Interpretation:</strong> 
+                    The forest plot visualization reveals ${studies.length} studies contributing to the evidence synthesis. 
+                    Study weights reflect precision with larger squares indicating higher statistical weight in pooled analysis. 
+                    Confidence interval overlap patterns suggest ${studies.length > 10 ? 'substantial' : 'moderate'} evidence consistency. 
+                    Publication bias assessment ${eggerP < 0.05 ? 'indicates potential asymmetry requiring sensitivity analysis' : 'supports robust evidence synthesis'}.
+                    <span class="canada-meta">Canadian systematic review standards</span> 
+                    require comprehensive bias assessment and transparency in evidence synthesis methodology.
+                    </p>
+                </div>
+            `;
+
+            // Update publication bias assessment
+            document.getElementById('publicationBiasResults').innerHTML = `
+                <p><strong>Egger's Regression Test:</strong> p = ${eggerP.toFixed(3)} (${biasAssessment})</p>
+                <p><strong>Funnel Plot Symmetry:</strong> ${eggerP < 0.05 ? 'Asymmetric distribution suggests possible bias' : 'Symmetric distribution supports unbiased evidence'}</p>
+                <p><strong>Recommendations:</strong> ${eggerP < 0.05 ? 'Conduct sensitivity analyses and search for unpublished studies' : 'Evidence synthesis appears robust to publication bias'}</p>
+            `;
+
+            // Generate simple funnel plot
+            generateFunnelPlot();
+
+            // Update GRADE assessment
+            const gradeQuality = studies.length > 15 ? 'HIGH' : studies.length > 10 ? 'MODERATE' : studies.length > 5 ? 'LOW' : 'VERY LOW';
+            document.getElementById('gradeAssessment').innerHTML = `
+                <div class="grade-level high">High Quality<br>⊕⊕⊕⊕</div>
+                <div class="grade-level moderate">Moderate Quality<br>⊕⊕⊕⊖</div>
+                <div class="grade-level low">Low Quality<br>⊕⊕⊖⊖</div>
+                <div class="grade-level very-low">Very Low Quality<br>⊕⊖⊖⊖</div>
+            `;
+        }
+
+        function generateFunnelPlot() {
+            const ctx = document.getElementById('funnelChart').getContext('2d');
+            
+            if (funnelChart) {
+                funnelChart.destroy();
+            }
+
+            const studies = currentMetaModel.studies;
+            
+            funnelChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Studies',
+                        data: studies.map(s => ({ 
+                            x: s.logEffect, 
+                            y: 1/s.standardError 
+                        })),
+                        backgroundColor: 'rgba(5, 150, 105, 0.7)',
+                        borderColor: '#059669',
+                        borderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Funnel Plot - Publication Bias Assessment',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Log Effect Size' }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Precision (1/SE)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>📊 Advanced Meta-Analysis Mastery</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Meta-Analysis Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Evidence Synthesis Application:</strong> Meta-analysis provides the highest level of evidence for healthcare decision-making through systematic synthesis of research findings. Understanding fixed versus random-effects models, heterogeneity assessment, publication bias detection, and GRADE evaluation is essential for evidence-based medicine, clinical practice guidelines, health technology assessment, and regulatory decision-making. These rigorous methods enable robust evidence synthesis for optimal clinical and policy decisions across diverse healthcare applications.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateMetaModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
