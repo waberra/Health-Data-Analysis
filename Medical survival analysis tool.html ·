@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Series: Survival Analysis in Healthcare & Time-to-Event Modeling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-navy: #1E3A8A;
+            --secondary-red: #DC2626;
+            --light-navy: #3B82F6;
+            --pale-navy: #EFF6FF;
+            --deep-navy: #1E40AF;
+            --clinical-navy: #1F2937;
+            --sophisticated-blue: #2563EB;
+            --medical-platinum: #E5E7EB;
+            --clinical-copper: #D97706;
+            --health-burgundy: #7C2D12;
+            --steel: #64748B;
+            --charcoal: #374151;
+            --cream: #F9FAFB;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F0F9FF 50%, var(--pale-navy) 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Survival Analysis Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(ellipse at 40% 30%, rgba(30, 58, 138, 0.06) 0%, transparent 90%),
+                radial-gradient(ellipse at 60% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 85%),
+                radial-gradient(ellipse at 95% 15%, rgba(217, 119, 6, 0.05) 0%, transparent 80%),
+                radial-gradient(ellipse at 10% 90%, rgba(124, 45, 18, 0.04) 0%, transparent 75%);
+            animation: survivalFlow 68s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes survivalFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.8; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.25) translate(50px, -50px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.75) translate(-40px, 40px); 
+                opacity: 0.85; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.2) translate(38px, -25px); 
+                opacity: 0.95; 
+            }
+        }
+
+        /* Time-to-Event Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(120deg, 
+                    transparent 0px, 
+                    rgba(30, 58, 138, 0.022) 1px, 
+                    transparent 2px, 
+                    transparent 105px),
+                repeating-linear-gradient(-10deg, 
+                    transparent 0px, 
+                    rgba(59, 130, 246, 0.018) 1px, 
+                    transparent 2px, 
+                    transparent 125px);
+            z-index: -1;
+            animation: survivalGrid 52s linear infinite;
+        }
+
+        @keyframes survivalGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(105px) translateY(125px); }
+        }
+
+        .container {
+            max-width: 2100px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 
+                0 0 115px rgba(30, 58, 138, 0.19),
+                0 50px 105px rgba(59, 130, 246, 0.17),
+                0 40px 65px rgba(217, 119, 6, 0.15);
+            border-radius: 65px;
+            overflow: hidden;
+            backdrop-filter: blur(32px);
+            animation: survivalEntry 4.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(30, 58, 138, 0.28);
+        }
+
+        @keyframes survivalEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.75) translateY(105px) rotateX(32deg);
+                filter: blur(32px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Time-to-Event Analysis Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-navy) 35%, var(--deep-navy) 70%, #1E40AF 100%);
+            color: white;
+            padding: 95px 85px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(100deg, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.25) 3%, 
+                transparent 16%, 
+                rgba(217, 119, 6, 0.2) 32%, 
+                transparent 46%, 
+                rgba(124, 45, 18, 0.18) 62%, 
+                transparent 76%);
+            animation: survivalHeader 26s ease-in-out infinite;
+        }
+
+        @keyframes survivalHeader {
+            0%, 100% { 
+                transform: translateX(-160px) scaleY(1) rotate(0deg); 
+                opacity: 0.85; 
+            }
+            33% { 
+                transform: translateX(115px) scaleY(1.65) rotate(2.5deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-85px) scaleY(0.6) rotate(-2deg); 
+                opacity: 0.9; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Merriweather', serif;
+            font-size: 6.5em;
+            font-weight: 900;
+            margin-bottom: 50px;
+            text-shadow: 8px 10px 32px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--light-navy) 12%, #60A5FA 40%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleSurvival 6.8s ease-in-out infinite alternate;
+            letter-spacing: -4.8px;
+        }
+
+        @keyframes titleSurvival {
+            from { 
+                filter: drop-shadow(0 0 36px rgba(59, 130, 246, 0.9)); 
+                text-shadow: 0 0 85px rgba(30, 58, 138, 0.7);
+            }
+            to { 
+                filter: drop-shadow(0 0 55px rgba(30, 58, 138, 1.0)); 
+                text-shadow: 0 0 100px rgba(30, 64, 175, 0.8);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 3.3em;
+            font-weight: 400;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            color: var(--light-navy);
+            text-shadow: 7px 8px 28px rgba(0,0,0,0.7);
+            letter-spacing: 2.3px;
+            font-style: italic;
+        }
+
+        /* Advanced Survival Analysis Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-navy) 0%, var(--clinical-copper) 8%, var(--health-burgundy) 16%, var(--sophisticated-blue) 24%, var(--deep-navy) 32%, var(--clinical-navy) 40%, var(--primary-navy) 48%, var(--sophisticated-blue) 56%, var(--deep-navy) 64%, var(--clinical-copper) 72%, var(--primary-navy) 80%, var(--clinical-navy) 88%, var(--primary-navy) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 10px 0 rgba(59, 130, 246, 0.95);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 90%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(59, 130, 246, 0.35) 50%, 
+                rgba(255,255,255,0.2) 100%);
+            transform: translateX(-400%);
+            animation: survivalNav 20s ease-in-out infinite;
+        }
+
+        @keyframes survivalNav {
+            0%, 100% { transform: translateX(-400%); }
+            50% { transform: translateX(900%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 56px 60px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.65em;
+            cursor: pointer;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 11px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 1.7px;
+        }
+
+        .tab-button:hover {
+            background: rgba(59, 130, 246, 0.38);
+            transform: translateY(-7px);
+            box-shadow: 0 22px 55px rgba(0,0,0,0.5);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(59, 130, 246, 0.5);
+            border-bottom-color: var(--clinical-copper);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -11px 0 var(--clinical-copper);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 115px;
+            animation: survivalSlide 2.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes survivalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(100px) scale(0.88);
+                filter: blur(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Merriweather', serif;
+            font-size: 6.5em;
+            color: var(--secondary-red);
+            margin-bottom: 105px;
+            text-align: center;
+            font-weight: 900;
+            position: relative;
+            text-shadow: 7px 8px 28px rgba(0,0,0,0.25);
+            letter-spacing: -4.0px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 10px;
+            background: linear-gradient(90deg, 
+                var(--light-navy) 0%, 
+                var(--clinical-copper) 6%, 
+                var(--health-burgundy) 12%, 
+                var(--sophisticated-blue) 18%, 
+                var(--deep-navy) 24%, 
+                var(--primary-navy) 30%, 
+                var(--clinical-navy) 36%, 
+                var(--sophisticated-blue) 42%, 
+                var(--deep-navy) 48%, 
+                var(--clinical-copper) 54%, 
+                var(--health-burgundy) 60%, 
+                var(--light-navy) 100%);
+            border-radius: 9px;
+            animation: survivalUnderline 10.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes survivalUnderline {
+            from { width: 400px; opacity: 0.8; }
+            to { width: 600px; opacity: 1; }
+        }
+
+        /* Medical Navy/Deep Blue Boxes - Advanced Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(650px, 1fr));
+            gap: 95px;
+            margin-bottom: 115px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, #F0F9FF 50%, var(--white) 100%);
+            padding: 85px;
+            border-radius: 50px;
+            border: 9px solid var(--light-navy);
+            box-shadow: 
+                0 45px 125px rgba(30, 58, 138, 0.2),
+                0 25px 60px rgba(59, 130, 246, 0.22);
+            transition: all 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -70px;
+            right: -70px;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, 
+                rgba(59, 130, 246, 0.2) 0%, 
+                rgba(30, 58, 138, 0.18) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardSurvival 14s ease-in-out infinite;
+        }
+
+        @keyframes cardSurvival {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.9; 
+            }
+            25% { 
+                transform: scale(1.4) translateX(50px) translateY(-50px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.6) translateX(-40px) translateY(40px) rotate(180deg); 
+                opacity: 0.85; 
+            }
+            75% { 
+                transform: scale(1.35) translateX(40px) translateY(-22px) rotate(270deg); 
+                opacity: 0.95; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-32px);
+            box-shadow: 
+                0 60px 170px rgba(30, 58, 138, 0.28),
+                0 35px 85px rgba(59, 130, 246, 0.35);
+            border-color: var(--primary-navy);
+        }
+
+        .theory-card h3 {
+            font-family: 'Merriweather', serif;
+            color: var(--secondary-red);
+            margin-bottom: 55px;
+            font-size: 3.5em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.0px;
+        }
+
+        .theory-card p {
+            font-size: 1.7em;
+            line-height: 2.3;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Survival Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-navy) 50%, var(--deep-navy) 100%);
+            color: white;
+            padding: 70px;
+            border-radius: 45px;
+            margin: 60px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75em;
+            box-shadow: 
+                inset 0 9px 50px rgba(0,0,0,0.85), 
+                0 40px 95px rgba(30, 58, 138, 0.55);
+            overflow-x: auto;
+            border: 9px solid rgba(59, 130, 246, 1.0);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 9px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--light-navy) 6%, 
+                var(--clinical-copper) 12%, 
+                var(--health-burgundy) 18%, 
+                var(--sophisticated-blue) 24%, 
+                var(--deep-navy) 30%, 
+                var(--clinical-navy) 36%, 
+                var(--sophisticated-blue) 42%, 
+                transparent 100%);
+            animation: formulaSurvival 7.5s ease-in-out infinite;
+        }
+
+        @keyframes formulaSurvival {
+            0%, 100% { opacity: 0.7; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(2.6); }
+        }
+
+        /* Medical Navy Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, #F0F9FF 50%, var(--white) 100%);
+            padding: 105px;
+            border-radius: 60px;
+            margin: 105px 0;
+            border: 10px solid var(--light-navy);
+            box-shadow: 
+                0 55px 165px rgba(59, 130, 246, 0.32),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -190%;
+            left: -190%;
+            width: 480%;
+            height: 480%;
+            background: conic-gradient(from 115deg at 50% 50%, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.12) 10%, 
+                transparent 20%, 
+                rgba(30, 58, 138, 0.1) 45%, 
+                transparent 55%);
+            animation: controlSurvival 40s linear infinite;
+        }
+
+        @keyframes controlSurvival {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Merriweather', serif;
+            color: var(--secondary-red);
+            font-size: 5.0em;
+            margin-bottom: 85px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.0px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+            gap: 70px;
+            margin-bottom: 95px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 40px;
+            color: var(--charcoal);
+            font-size: 1.65em;
+            letter-spacing: 0.9px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 45px;
+            border: 2px solid #E5E7EB;
+            border-radius: 40px;
+            font-size: 1.6em;
+            transition: all 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-navy);
+            box-shadow: 
+                0 0 55px rgba(30, 58, 138, 0.55),
+                0 0 0 9px rgba(59, 130, 246, 0.32);
+            transform: translateY(-7px) scale(1.06);
+        }
+
+        /* Advanced Survival Analysis Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 55px;
+            margin-top: 95px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 48px 105px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.7em;
+            cursor: pointer;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 3.8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,1.0) 50%, 
+                transparent 100%);
+            transition: left 1.8s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-navy) 0%, var(--deep-navy) 100%);
+            color: white;
+            box-shadow: 0 22px 75px rgba(30, 58, 138, 0.65);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--primary-navy) 100%);
+            transform: translateY(-16px);
+            box-shadow: 0 36px 105px rgba(30, 58, 138, 0.75);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--clinical-copper) 0%, #B45309 100%);
+            color: white;
+            box-shadow: 0 22px 75px rgba(217, 119, 6, 0.65);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #B45309 0%, var(--clinical-copper) 100%);
+            transform: translateY(-16px);
+            box-shadow: 0 36px 105px rgba(217, 119, 6, 0.75);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--health-burgundy) 0%, #8B5CF6 100%);
+            color: white;
+            box-shadow: 0 22px 75px rgba(124, 45, 18, 0.65);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #8B5CF6 0%, var(--health-burgundy) 100%);
+            transform: translateY(-16px);
+            box-shadow: 0 36px 105px rgba(124, 45, 18, 0.75);
+        }
+
+        /* Medical Navy Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, #F0F9FF 100%);
+            border: 10px solid var(--light-navy);
+            border-radius: 57px;
+            padding: 105px;
+            margin: 105px 0;
+            box-shadow: 
+                0 55px 180px rgba(0,0,0,0.25),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 11px;
+            background: linear-gradient(90deg, 
+                var(--light-navy) 0%, 
+                var(--clinical-copper) 5%, 
+                var(--health-burgundy) 10%, 
+                var(--sophisticated-blue) 15%, 
+                var(--deep-navy) 20%, 
+                var(--primary-navy) 25%, 
+                var(--clinical-navy) 30%, 
+                var(--sophisticated-blue) 35%, 
+                var(--deep-navy) 40%, 
+                var(--clinical-copper) 45%, 
+                var(--health-burgundy) 50%, 
+                var(--primary-navy) 55%, 
+                var(--light-navy) 100%);
+            animation: survivalResults 7.5s ease-in-out infinite;
+        }
+
+        @keyframes survivalResults {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Merriweather', serif;
+            font-size: 5.5em;
+            color: var(--secondary-red);
+            margin-bottom: 85px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -2.0px;
+        }
+
+        /* Medical Navy Chart Container */
+        .chart-container {
+            position: relative;
+            height: 950px;
+            margin: 105px 0;
+            background: linear-gradient(135deg, var(--pale-navy) 0%, var(--white) 100%);
+            border-radius: 50px;
+            padding: 95px;
+            box-shadow: 0 45px 140px rgba(0,0,0,0.25);
+            border: 9px solid var(--light-navy);
+        }
+
+        /* Statistics Grid - Medical Navy Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 85px;
+            margin: 98px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, var(--white) 100%);
+            padding: 70px;
+            border-radius: 45px;
+            text-align: center;
+            border: 9px solid var(--light-navy);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 9px;
+            background: linear-gradient(90deg, var(--light-navy) 0%, var(--primary-navy) 50%, var(--clinical-copper) 100%);
+            transform: scaleX(0);
+            transition: transform 1.1s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-25px) scale(1.08);
+            box-shadow: 0 50px 145px rgba(0,0,0,0.32);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 4.0em;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 32px;
+        }
+
+        .stat-label {
+            font-size: 1.6em;
+            color: var(--steel);
+            font-weight: 500;
+        }
+
+        /* Survival-Specific Elements */
+        .survival-info {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, #F0F8FF 100%);
+            border: 9px solid var(--light-navy);
+            border-radius: 40px;
+            padding: 70px;
+            margin: 70px 0;
+        }
+
+        .survival-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 45px;
+            margin: 55px 0;
+        }
+
+        .survival-metric-card {
+            background: var(--primary-navy);
+            color: white;
+            padding: 45px 36px;
+            border-radius: 32px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .survival-metric-card:nth-child(1) { background: var(--clinical-copper); }
+        .survival-metric-card:nth-child(2) { background: var(--health-burgundy); }
+        .survival-metric-card:nth-child(3) { background: var(--primary-navy); }
+        .survival-metric-card:nth-child(4) { background: var(--sophisticated-blue); }
+
+        /* Decision Framework - Medical Navy */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, rgba(59, 130, 246, 0.5) 100%);
+            border: 10px solid var(--light-navy);
+            border-radius: 55px;
+            padding: 95px;
+            margin: 95px 0;
+        }
+
+        .decision-question {
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            font-size: 2.5em;
+            margin-bottom: 75px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -0.9px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+            gap: 55px;
+        }
+
+        .decision-option {
+            padding: 55px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 1.1s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.6em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--clinical-copper);
+            background: #E8F5E8;
+            transform: translateY(-14px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-navy);
+            background: var(--pale-navy);
+            box-shadow: 0 0 80px rgba(30, 58, 138, 0.65);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 70px;
+            border-radius: 45px;
+            margin: 70px 0;
+            font-weight: 500;
+            font-size: 1.7em;
+        }
+
+        .feedback-success {
+            background: var(--pale-navy);
+            border: 9px solid var(--light-navy);
+            color: var(--deep-navy);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 9px solid var(--clinical-copper);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 9px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 45px;
+                border-radius: 57px;
+            }
+
+            .header-title {
+                font-size: 5.5em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .survival-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Navy */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-navy) 0%, #F0F8FF 100%);
+            padding: 70px;
+            border-radius: 40px;
+            margin: 70px 0;
+            border-left: 20px solid var(--primary-navy);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '📈';
+            position: absolute;
+            top: 70px;
+            left: 55px;
+            font-size: 2.5em;
+        }
+
+        .research-note p {
+            margin-left: 95px;
+            line-height: 2.4;
+        }
+
+        /* Advanced Visual Effects */
+        .survival-highlight {
+            background: rgba(30, 58, 138, 0.22);
+            border-left: 16px solid var(--primary-navy);
+            padding: 45px;
+            margin: 45px 0;
+            border-radius: 22px;
+        }
+
+        .hazard-ratio-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-navy) 0%, var(--primary-navy) 100%);
+            color: white;
+            padding: 22px 45px;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            margin: 0 22px;
+            font-size: 1.5em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-survival {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        /* Kaplan-Meier Visualization */
+        .kaplan-meier-info {
+            display: flex;
+            justify-content: space-between;
+            background: var(--pale-navy);
+            padding: 50px;
+            border-radius: 32px;
+            margin: 50px 0;
+        }
+
+        .km-metric {
+            background: var(--primary-navy);
+            color: white;
+            padding: 32px 45px;
+            border-radius: 22px;
+            text-align: center;
+            flex: 1;
+            margin: 0 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.4em;
+        }
+
+        .km-metric:first-child {
+            background: var(--clinical-copper);
+        }
+
+        .km-metric:nth-child(2) {
+            background: var(--health-burgundy);
+        }
+
+        .km-metric:last-child {
+            background: var(--sophisticated-blue);
+        }
+
+        /* Survival Steps */
+        .survival-steps {
+            background: var(--pale-navy);
+            padding: 55px;
+            border-radius: 36px;
+            margin: 55px 0;
+            border: 8px solid var(--light-navy);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 32px 0;
+            padding: 32px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        .step-number {
+            background: var(--primary-navy);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 32px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        /* Survival Table */
+        .survival-table {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin: 45px 0;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+            border: 4px solid var(--light-navy);
+        }
+
+        .survival-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3em;
+        }
+
+        .survival-table th,
+        .survival-table td {
+            padding: 18px;
+            text-align: center;
+            border: 2px solid var(--light-navy);
+        }
+
+        .survival-table th {
+            background: var(--primary-navy);
+            color: white;
+            font-weight: 700;
+        }
+
+        .survival-table .survival-prob {
+            background: rgba(30, 58, 138, 0.1);
+        }
+
+        .survival-table .hazard {
+            background: rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Survival Analysis in Healthcare & Time-to-Event Modeling</h1>
+            <p class="header-subtitle">Advanced Series: Cutting-Edge Survival Methods for Medical Research</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">📈 Survival Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Time-to-Event Analysis</button>
+            <button class="tab-button" onclick="showSection('analysis')">🔍 Cox Modeling</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Survival Analysis Framework for Healthcare</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>📈 Kaplan-Meier Survival Curves</h3>
+                    <p><strong>Non-parametric Survival Estimation:</strong> Kaplan-Meier method estimates survival probabilities over time without distributional assumptions, providing fundamental survival curve analysis for medical research.</p>
+                    <div class="formula-display">
+                        Kaplan-Meier Estimator:<br><br>
+                        Ŝ(t) = ∏[t(i) ≤ t] (1 - dᵢ/nᵢ)<br><br>
+                        Where:<br>
+                        dᵢ = number of deaths at time t(i)<br>
+                        nᵢ = number at risk just before t(i)<br>
+                        t(i) = ordered event times<br><br>
+                        Properties:<br>
+                        • Non-parametric (no distribution assumed)<br>
+                        • Handles right censoring<br>
+                        • Step function (jumps at event times)<br>
+                        • Decreases monotonically<br><br>
+                        Confidence Intervals:<br>
+                        Greenwood's formula for variance estimation
+                    </div>
+                    <p><em>Clinical insight: Essential for reporting survival rates and comparing treatment groups visually</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⚡ Cox Proportional Hazards Model</h3>
+                    <p><strong>Semi-parametric Regression:</strong> Cox model examines the relationship between covariates and hazard rates without specifying the baseline hazard, ideal for multivariable survival analysis.</p>
+                    <div class="formula-display">
+                        Cox Proportional Hazards Model:<br><br>
+                        h(t|x) = h₀(t) × exp(β₁x₁ + β₂x₂ + ... + βₚxₚ)<br><br>
+                        Where:<br>
+                        h(t|x) = hazard at time t given covariates x<br>
+                        h₀(t) = baseline hazard (unspecified)<br>
+                        βᵢ = regression coefficients<br><br>
+                        Hazard Ratio:<br>
+                        HR = h(t|x₁)/h(t|x₀) = exp(β(x₁ - x₀))<br><br>
+                        Key Assumptions:<br>
+                        • Proportional hazards<br>
+                        • Log-linearity<br>
+                        • Independence of observations<br><br>
+                        Partial Likelihood for estimation (no h₀(t) needed)
+                    </div>
+                    <p><strong>Medical Example:</strong> Analyzing treatment effect on cancer survival controlling for age, stage, comorbidities</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📊 Log-Rank Test</h3>
+                    <p><strong>Survival Curve Comparison:</strong> Log-rank test compares survival distributions between groups, providing statistical significance testing for treatment efficacy in clinical trials.</p>
+                    <div class="formula-display">
+                        Log-Rank Test:<br><br>
+                        χ² = [Σ(O₁ᵢ - E₁ᵢ)]² / Σ Var(O₁ᵢ)<br><br>
+                        At each event time tᵢ:<br>
+                        E₁ᵢ = n₁ᵢ × dᵢ / nᵢ<br>
+                        Var(O₁ᵢ) = n₁ᵢn₂ᵢdᵢ(nᵢ-dᵢ) / [nᵢ²(nᵢ-1)]<br><br>
+                        Where:<br>
+                        O₁ᵢ = observed deaths in group 1 at tᵢ<br>
+                        E₁ᵢ = expected deaths under H₀<br>
+                        n₁ᵢ, n₂ᵢ = at risk in groups 1, 2<br>
+                        dᵢ = total deaths at tᵢ<br><br>
+                        H₀: S₁(t) = S₂(t) for all t<br>
+                        χ² ~ χ²(1) under H₀
+                    </div>
+                    <p><strong>Clinical Application:</strong> Primary analysis for comparing survival between treatment arms in randomized trials</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⏰ Hazard Ratios & Interpretation</h3>
+                    <p><strong>Risk Quantification:</strong> Hazard ratios quantify the instantaneous risk of events, providing clinically meaningful measures of treatment effects and risk factor impacts.</p>
+                    <div class="formula-display">
+                        Hazard Ratio Interpretation:<br><br>
+                        HR = exp(β) for unit increase in covariate<br><br>
+                        Clinical Meaning:<br>
+                        HR = 1.0: No effect<br>
+                        HR > 1.0: Increased hazard (worse survival)<br>
+                        HR < 1.0: Decreased hazard (better survival)<br><br>
+                        Examples:<br>
+                        HR = 2.0: 2× instantaneous risk<br>
+                        HR = 0.5: 50% reduction in risk<br>
+                        HR = 1.5: 50% increase in risk<br><br>
+                        Confidence Intervals:<br>
+                        HR CI excludes 1.0 → significant effect<br>
+                        95% CI for HR = exp(β̂ ± 1.96 × SE(β̂))
+                    </div>
+                    <p><strong>Medical Interpretation:</strong> HR = 0.7 for new treatment means 30% reduction in death rate at any time</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎯 Competing Risks Analysis</h3>
+                    <p><strong>Multiple Event Types:</strong> Competing risks analysis handles situations where multiple types of events can occur, preventing observation of the primary event of interest.</p>
+                    <div class="formula-display">
+                        Cumulative Incidence Function:<br><br>
+                        CIF_k(t) = ∫₀ᵗ S(u⁻) × λₖ(u) du<br><br>
+                        Where:<br>
+                        S(u⁻) = overall survival just before u<br>
+                        λₖ(u) = cause-specific hazard for event k<br><br>
+                        Subdistribution Hazard (Fine-Gray):<br>
+                        λₖˢᵈ(t) = lim[h→0] P(t ≤ T < t+h, ε=k | T ≥ t ∪ (T < t ∧ ε ≠ k))/h<br><br>
+                        Properties:<br>
+                        • Sum of CIFs ≤ 1<br>
+                        • Accounts for competing events<br>
+                        • Different from standard Kaplan-Meier<br><br>
+                        Use when: Multiple event types possible
+                    </div>
+                    <p><strong>Clinical Example:</strong> Cancer death vs. cardiovascular death in elderly cancer patients</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔄 Time-Varying Covariates</h3>
+                    <p><strong>Dynamic Risk Factors:</strong> Time-varying covariates allow analysis of factors that change over time, essential for modeling dynamic clinical variables and treatment responses.</p>
+                    <div class="formula-display">
+                        Extended Cox Model:<br><br>
+                        h(t|x(t)) = h₀(t) × exp(Σβⱼxⱼ(t))<br><br>
+                        Types of Time-Varying Covariates:<br>
+                        1. External: x(t) determined outside study<br>
+                        2. Internal: x(t) measured during follow-up<br><br>
+                        Implementation:<br>
+                        • Split time intervals at covariate changes<br>
+                        • Create multiple records per subject<br>
+                        • Use counting process notation<br><br>
+                        Data Structure:<br>
+                        (tstart, tstop] format<br>
+                        Subject contributes person-time to risk sets<br><br>
+                        Challenges: Measurement error, informative monitoring
+                    </div>
+                    <p><strong>Medical Use:</strong> CD4 count changes in HIV studies, biomarker evolution in cancer trials</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Advanced Survival Analysis Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 70px; margin-top: 60px;">
+                    <div>
+                        <h4>🏥 Clinical Research Applications:</h4>
+                        <ul>
+                            <li><strong>Cancer Survival Analysis:</strong> 5-year survival rates by treatment protocol and staging</li>
+                            <li><strong>Cardiac Event Prediction:</strong> Time to cardiovascular events post-intervention</li>
+                            <li><strong>Transplant Outcome Modeling:</strong> Graft survival and rejection analysis</li>
+                            <li><strong>Medication Adherence Survival:</strong> Time to treatment discontinuation</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Health System Analysis:</h4>
+                        <ul>
+                            <li><strong>Healthcare Service Utilization:</strong> Time to readmission or service access</li>
+                            <li><strong>Quality Improvement:</strong> Time-to-event endpoints in QI studies</li>
+                            <li><strong>Health Economics:</strong> Cost-effectiveness with survival outcomes</li>
+                            <li><strong>Population Health:</strong> Mortality trends and risk factor analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="survival-steps" style="margin-top: 60px;">
+                    <h4 style="color: var(--secondary-red); margin-bottom: 45px; text-align: center;">📈 Survival Analysis Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Study Design:</strong> Define time origin, event definition, and censoring mechanism</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Data Preparation:</strong> Create survival objects with time and event indicators</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Descriptive Analysis:</strong> Generate Kaplan-Meier curves and summary statistics</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>Group Comparison:</strong> Perform log-rank tests for treatment differences</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Multivariable Modeling:</strong> Fit Cox models with relevant covariates</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Model Diagnostics:</strong> Check proportional hazards and model assumptions</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Clinical Interpretation:</strong> Translate hazard ratios to clinical recommendations</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>📈 Advanced Survival Analysis Foundation:</strong> Survival analysis provides essential tools for analyzing time-to-event data in medical research, from basic Kaplan-Meier estimation to advanced Cox modeling with time-varying covariates. Understanding censoring mechanisms, hazard ratios, and competing risks is crucial for clinical trials, epidemiological studies, and health services research. These sophisticated methods enable evidence-based evaluation of treatment effectiveness and prognostic factors across diverse medical applications.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Time-to-Event Analysis Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Time-to-Event Analysis Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">📈 Survival Analysis Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="survivalModel">Canadian Medical Survival Model</label>
+                        <select id="survivalModel" onchange="updateSurvivalModel()">
+                            <option value="cancer_survival">Cancer Survival Analysis</option>
+                            <option value="cardiac_events">Cardiac Event Prediction</option>
+                            <option value="transplant_outcomes">Transplant Outcome Modeling</option>
+                            <option value="service_utilization">Healthcare Service Utilization</option>
+                            <option value="medication_adherence">Medication Adherence Survival</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysisType">Survival Analysis Method</label>
+                        <select id="analysisType">
+                            <option value="kaplan_meier" selected>Kaplan-Meier Curves</option>
+                            <option value="cox_model">Cox Proportional Hazards</option>
+                            <option value="log_rank">Log-Rank Test</option>
+                            <option value="competing_risks">Competing Risks Analysis</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="followupTime">Follow-up Period</label>
+                        <select id="followupTime">
+                            <option value="12">12 months</option>
+                            <option value="24">24 months</option>
+                            <option value="60" selected">5 years (60 months)</option>
+                            <option value="120">10 years (120 months)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeSurvival">Study Population Size</label>
+                        <select id="sampleSizeSurvival">
+                            <option value="200">200 patients</option>
+                            <option value="500" selected>500 patients</option>
+                            <option value="1000">1,000 patients</option>
+                            <option value="2000">2,000 patients</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hazardRatioEffect">Treatment Effect (Hazard Ratio)</label>
+                        <input type="range" id="hazardRatioEffect" min="0.3" max="2.0" step="0.1" value="0.7" onchange="updateHazardRatioDisplay()">
+                        <span id="hazardRatioValue">0.7</span> (30% risk reduction)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateSurvivalData()">📈 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performSurvivalAnalysis()">🔍 Run Analysis</button>
+                    <button class="btn btn-accent" onclick="performCoxModeling()">📊 Cox Modeling</button>
+                </div>
+            </div>
+
+            <!-- Medical Model Description -->
+            <div id="survivalDescription" class="survival-info">
+                <div class="results-header">Current Survival Analysis Model</div>
+                <div id="survivalText"></div>
+                <div id="survivalModelMetrics" class="survival-metrics"></div>
+            </div>
+
+            <!-- Survival Analysis Chart -->
+            <div class="chart-container">
+                <canvas id="survivalChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Cox Modeling Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Survival Analysis & Results</h2>
+
+            <div id="survivalResults" class="results-container">
+                <div class="results-header">Survival Analysis Results</div>
+                <div id="survivalTable"></div>
+            </div>
+
+            <div class="stats-grid" id="survivalStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="coxResults" class="results-container">
+                <div class="results-header">📈 Cox Model & Hazard Ratios</div>
+                <div id="coxTable"></div>
+            </div>
+
+            <!-- Kaplan-Meier Visualization -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 60px; color: var(--secondary-red);">🔍 Kaplan-Meier Survival Curves & Risk Analysis</h3>
+                <canvas id="kmChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Survival Analysis Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading survival analysis assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 70px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 95px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Survival Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentSurvivalModel = null;
+        let currentSurvivalChart = null;
+        let kmChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Medical Survival Model Definitions
+        const survivalModels = {
+            cancer_survival: {
+                title: "Cancer Survival Analysis (5-Year Outcomes by Treatment Protocol)",
+                description: "Randomized controlled trial comparing novel immunotherapy versus standard chemotherapy for advanced lung cancer, analyzing overall survival as primary endpoint with progression-free survival as secondary endpoint.",
+                event: "Death from any cause",
+                treatment_groups: ["Standard Chemotherapy", "Novel Immunotherapy"],
+                population: "Adults aged 18-80 with advanced NSCLC",
+                clinical_context: "Oncology treatment effectiveness and regulatory approval",
+                study_design: "Phase III randomized controlled trial with stratification",
+                expected_hr: "0.65 (35% reduction in death rate with immunotherapy)",
+                median_survival: "18 months (chemotherapy) vs 28 months (immunotherapy)",
+                clinical_application: "Treatment selection, clinical guidelines, health technology assessment"
+            },
+            cardiac_events: {
+                title: "Cardiac Event Prediction (Post-PCI Outcomes)",
+                description: "Prospective cohort study following patients after percutaneous coronary intervention (PCI), analyzing time to major adverse cardiovascular events (MACE) including death, MI, or stroke.",
+                event: "MACE (Death/MI/Stroke)",
+                treatment_groups: ["Drug-Eluting Stent", "Bare Metal Stent"],
+                population: "Adults undergoing elective or urgent PCI",
+                clinical_context: "Cardiovascular intervention outcomes and device effectiveness",
+                study_design: "Observational cohort with propensity score matching",
+                expected_hr: "0.75 (25% reduction with drug-eluting stents)",
+                median_survival: "Event-free survival: 85% at 2 years (DES) vs 78% (BMS)",
+                clinical_application: "Device selection, patient counseling, risk stratification"
+            },
+            transplant_outcomes: {
+                title: "Transplant Outcome Modeling (Kidney Graft Survival)",
+                description: "National registry analysis of kidney transplant recipients examining graft survival and rejection rates, with focus on donor characteristics, recipient factors, and immunosuppression protocols.",
+                event: "Graft failure or return to dialysis",
+                treatment_groups: ["Living Donor", "Deceased Donor", "Extended Criteria Donor"],
+                population: "Adult kidney transplant recipients",
+                clinical_context: "Transplant medicine and organ allocation optimization",
+                study_design: "Retrospective registry analysis with competing risks",
+                expected_hr: "Living: HR 0.5, Standard deceased: HR 1.0, Extended: HR 1.4",
+                median_survival: "Graft survival: >20 years (living) vs 15 years (deceased)",
+                clinical_application: "Organ allocation, patient selection, counseling"
+            },
+            service_utilization: {
+                title: "Healthcare Service Utilization (30-Day Readmission Risk)",
+                description: "Health administrative data analysis examining time to first hospital readmission following discharge, with focus on patient factors, discharge planning, and community supports affecting readmission risk.",
+                event: "Hospital readmission (unplanned)",
+                treatment_groups: ["Standard Discharge", "Enhanced Discharge Planning", "Home Care Support"],
+                population: "Adult patients discharged from acute care hospitals",
+                clinical_context: "Quality improvement and health system efficiency",
+                study_design: "Retrospective cohort using administrative data linkage",
+                expected_hr: "Enhanced planning: HR 0.8, Home care: HR 0.6",
+                median_survival: "Readmission-free: 90% at 30 days (enhanced) vs 85% (standard)",
+                clinical_application: "Discharge planning, resource allocation, quality metrics"
+            },
+            medication_adherence: {
+                title: "Medication Adherence Survival (Chronic Disease Management)",
+                description: "Pharmacy dispensing data analysis examining time to medication discontinuation for chronic disease management, focusing on factors affecting long-term adherence and clinical outcomes.",
+                event: "Medication discontinuation (>90 days gap)",
+                treatment_groups: ["Standard Therapy", "Patient Education + Support", "Integrated Care Model"],
+                population: "Adults with diabetes, hypertension, or cardiovascular disease",
+                clinical_context: "Pharmaceutical care and chronic disease management",
+                study_design: "Population-based cohort using pharmacy and health records",
+                expected_hr: "Education: HR 0.7, Integrated care: HR 0.5",
+                median_survival: "Medication continuation: 80% at 1 year (integrated) vs 60% (standard)",
+                clinical_application: "Pharmaceutical care, patient support programs, policy development"
+            }
+        };
+
+        // Assessment Questions (Survival Analysis focused)
+        const assessmentQuestions = [
+            {
+                question: "What does a hazard ratio of 0.6 in a cancer survival study indicate?",
+                options: [
+                    "60% of patients will survive in the treatment group",
+                    "The treatment reduces the instantaneous risk of death by 40%",
+                    "The treatment group has 60% longer survival time",
+                    "40% of patients will experience the event"
+                ],
+                correct: 1,
+                explanation: "A hazard ratio of 0.6 means the instantaneous risk of death (hazard) is 0.6 times that of the control group, representing a 40% reduction in risk (1 - 0.6 = 0.4 or 40%). HR is about instantaneous risk, not probabilities or survival times directly."
+            },
+            {
+                question: "When is the log-rank test most appropriate for comparing survival curves?",
+                options: [
+                    "When hazards are proportional across groups throughout follow-up",
+                    "When you want to compare median survival times only",
+                    "When the data is normally distributed",
+                    "When censoring rates are very high (>50%)"
+                ],
+                correct: 0,
+                explanation: "The log-rank test is most appropriate when hazards are proportional - meaning the ratio of hazards between groups remains constant over time. If hazards cross or change dramatically over time, other tests (weighted log-rank, Fleming-Harrington) may be more appropriate."
+            },
+            {
+                question: "In the Kaplan-Meier method, what happens to the survival curve when a patient is censored?",
+                options: [
+                    "The survival probability drops to zero",
+                    "Nothing - the curve continues unchanged",
+                    "The number at risk decreases but survival probability remains the same",
+                    "The curve shows a vertical drop"
+                ],
+                correct: 2,
+                explanation: "When a patient is censored in Kaplan-Meier analysis, they are removed from the risk set (number at risk decreases), but the survival probability estimate remains unchanged at that time point. The curve continues without a drop. Only observed events cause the survival curve to drop."
+            },
+            {
+                question: "What is the key assumption of the Cox proportional hazards model?",
+                options: [
+                    "Survival times follow an exponential distribution",
+                    "The hazard ratios between groups remain constant over time",
+                    "There is no censoring in the data",
+                    "The baseline hazard follows a normal distribution"
+                ],
+                correct: 1,
+                explanation: "The key assumption of Cox regression is proportional hazards - that hazard ratios between groups remain constant over time. The Cox model is semi-parametric and makes no assumptions about the baseline hazard distribution, which is a major advantage over parametric survival models."
+            },
+            {
+                question: "In competing risks analysis, why can't standard Kaplan-Meier be used?",
+                options: [
+                    "The sample sizes are too small",
+                    "There are too many covariates to consider",
+                    "Standard KM overestimates cumulative incidence when competing events prevent the outcome of interest",
+                    "The follow-up time is too short"
+                ],
+                correct: 2,
+                explanation: "In competing risks situations, standard Kaplan-Meier treats competing events as censoring, which overestimates the cumulative incidence of the primary outcome. Competing events actually prevent the primary outcome from occurring, so they should be modeled as informative rather than random censoring. Cumulative incidence functions account for this."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Survival Model Management
+        function updateSurvivalModel() {
+            const modelType = document.getElementById('survivalModel').value;
+            const model = survivalModels[modelType];
+            
+            document.getElementById('survivalText').innerHTML = `
+                <h3 style="color: var(--secondary-red); margin-bottom: 45px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>📈 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Primary Event:</strong> ${model.event}</p>
+                <p><strong>Comparison Groups:</strong> ${model.treatment_groups.join(', ')}</p>
+                <p><strong>Target Population:</strong> ${model.population}</p>
+                <p><strong>Study Design:</strong> ${model.study_design}</p>
+                <p><strong>Expected Effect:</strong> HR ${model.expected_hr}</p>
+                <p><strong>Survival Endpoints:</strong> ${model.median_survival}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateSurvivalMetrics();
+        }
+
+        function updateSurvivalMetrics() {
+            const analysisType = document.getElementById('analysisType').value;
+            const container = document.getElementById('survivalModelMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(analysisType) {
+                case 'kaplan_meier': metrics = ['Survival Curve', 'Median Survival', '95% CI', 'Log-Rank p']; break;
+                case 'cox_model': metrics = ['Hazard Ratio', 'p-value', '95% CI', 'C-Index']; break;
+                case 'log_rank': metrics = ['Test Statistic', 'p-value', 'Effect Size', 'Power']; break;
+                case 'competing_risks': metrics = ['CIF Curves', 'Gray\'s Test', 'sHR', 'Fine-Gray']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'survival-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateHazardRatioDisplay() {
+            const hr = document.getElementById('hazardRatioEffect').value;
+            const effect = hr < 1.0 ? 
+                `${Math.round((1 - hr) * 100)}% risk reduction` : 
+                `${Math.round((hr - 1) * 100)}% risk increase`;
+            document.getElementById('hazardRatioValue').textContent = `${hr} (${effect})`;
+        }
+
+        // Survival Data Generation
+        function generateSurvivalData() {
+            const modelType = document.getElementById('survivalModel').value;
+            const analysisType = document.getElementById('analysisType').value;
+            const followupTime = parseInt(document.getElementById('followupTime').value);
+            const sampleSize = parseInt(document.getElementById('sampleSizeSurvival').value);
+            const hazardRatio = parseFloat(document.getElementById('hazardRatioEffect').value);
+            
+            const model = survivalModels[modelType];
+            
+            currentSurvivalModel = {
+                model: model,
+                analysisType: analysisType,
+                followupTime: followupTime,
+                sampleSize: sampleSize,
+                hazardRatio: hazardRatio,
+                survivalData: []
+            };
+
+            // Generate survival data with realistic medical patterns
+            generateSurvivalTimes(sampleSize, followupTime, hazardRatio);
+            updateSurvivalChart();
+        }
+
+        function generateSurvivalTimes(n, maxTime, hr) {
+            const data = [];
+            const numGroups = 2; // Control vs Treatment
+            const patientsPerGroup = Math.floor(n / numGroups);
+            
+            for (let group = 0; group < numGroups; group++) {
+                for (let patient = 0; patient < patientsPerGroup; patient++) {
+                    // Generate survival times using exponential distribution
+                    // Base rate = 0.02 (median ~35 months)
+                    const baseRate = 0.02;
+                    const rate = group === 0 ? baseRate : baseRate * hr;
+                    
+                    // Generate time to event
+                    const survivalTime = -Math.log(Math.random()) / rate;
+                    
+                    // Generate censoring (administrative or random)
+                    const censoringTime = Math.random() * maxTime * 1.2; // Some extend beyond study
+                    
+                    const observedTime = Math.min(survivalTime, censoringTime, maxTime);
+                    const eventOccurred = survivalTime <= Math.min(censoringTime, maxTime);
+                    
+                    const patientData = {
+                        id: `${group}-${patient}`,
+                        group: group,
+                        groupName: group === 0 ? 'Control' : 'Treatment',
+                        survivalTime: observedTime,
+                        event: eventOccurred ? 1 : 0,
+                        censored: !eventOccurred
+                    };
+                    
+                    data.push(patientData);
+                }
+            }
+            
+            // Sort by survival time for analysis
+            currentSurvivalModel.survivalData = data.sort((a, b) => a.survivalTime - b.survivalTime);
+        }
+
+        function updateSurvivalChart() {
+            if (!currentSurvivalModel) return;
+            
+            const ctx = document.getElementById('survivalChart').getContext('2d');
+            
+            if (currentSurvivalChart) {
+                currentSurvivalChart.destroy();
+            }
+
+            // Create survival time distribution histogram
+            const data = currentSurvivalModel.survivalData;
+            const controlData = data.filter(d => d.group === 0).map(d => d.survivalTime);
+            const treatmentData = data.filter(d => d.group === 1).map(d => d.survivalTime);
+            
+            // Create histograms
+            const bins = 15;
+            const maxTime = Math.max(...data.map(d => d.survivalTime));
+            const binWidth = maxTime / bins;
+            
+            const controlHist = createHistogram(controlData, bins, maxTime);
+            const treatmentHist = createHistogram(treatmentData, bins, maxTime);
+            
+            const labels = [];
+            for (let i = 0; i < bins; i++) {
+                labels.push((i * binWidth).toFixed(1));
+            }
+
+            currentSurvivalChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Control Group',
+                            data: controlHist,
+                            backgroundColor: 'rgba(30, 58, 138, 0.7)',
+                            borderColor: '#1E3A8A',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Treatment Group',
+                            data: treatmentHist,
+                            backgroundColor: 'rgba(217, 119, 6, 0.7)',
+                            borderColor: '#D97706',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentSurvivalModel.model.title} - Survival Time Distribution`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Time (months)' } },
+                        y: { title: { display: true, text: 'Frequency' } }
+                    }
+                }
+            });
+        }
+
+        function createHistogram(data, bins, maxValue) {
+            const hist = new Array(bins).fill(0);
+            const binWidth = maxValue / bins;
+            
+            data.forEach(value => {
+                const binIndex = Math.min(Math.floor(value / binWidth), bins - 1);
+                hist[binIndex]++;
+            });
+            
+            return hist;
+        }
+
+        // Survival Analysis
+        function performSurvivalAnalysis() {
+            if (!currentSurvivalModel) {
+                alert('Please generate survival data first');
+                return;
+            }
+
+            const data = currentSurvivalModel.survivalData;
+            const analysisType = currentSurvivalModel.analysisType;
+            
+            let analysisResults;
+            switch(analysisType) {
+                case 'kaplan_meier':
+                    analysisResults = performKaplanMeier(data);
+                    break;
+                case 'cox_model':
+                    analysisResults = performCoxModel(data);
+                    break;
+                case 'log_rank':
+                    analysisResults = performLogRank(data);
+                    break;
+                case 'competing_risks':
+                    analysisResults = performCompetingRisks(data);
+                    break;
+            }
+
+            displaySurvivalResults(analysisResults);
+        }
+
+        function performKaplanMeier(data) {
+            // Calculate Kaplan-Meier estimates for each group
+            const controlData = data.filter(d => d.group === 0);
+            const treatmentData = data.filter(d => d.group === 1);
+            
+            const controlKM = calculateKaplanMeier(controlData);
+            const treatmentKM = calculateKaplanMeier(treatmentData);
+            
+            // Calculate medians
+            const controlMedian = calculateMedianSurvival(controlKM);
+            const treatmentMedian = calculateMedianSurvival(treatmentKM);
+            
+            // Simplified log-rank test
+            const logRankResult = performLogRankTest(controlData, treatmentData);
+            
+            return {
+                analysisName: 'Kaplan-Meier Survival Analysis',
+                controlKM: controlKM,
+                treatmentKM: treatmentKM,
+                controlMedian: controlMedian,
+                treatmentMedian: treatmentMedian,
+                logRankP: logRankResult.pValue,
+                logRankStat: logRankResult.statistic
+            };
+        }
+
+        function calculateKaplanMeier(groupData) {
+            // Sort by survival time
+            const sortedData = [...groupData].sort((a, b) => a.survivalTime - b.survivalTime);
+            
+            let survivalProb = 1.0;
+            let atRisk = sortedData.length;
+            const kmCurve = [];
+            
+            // Group by unique event times
+            const eventTimes = {};
+            sortedData.forEach(d => {
+                const time = d.survivalTime.toFixed(2);
+                if (!eventTimes[time]) {
+                    eventTimes[time] = { events: 0, total: 0 };
+                }
+                eventTimes[time].total++;
+                if (d.event === 1) {
+                    eventTimes[time].events++;
+                }
+            });
+            
+            let cumulativeAtRisk = atRisk;
+            for (const [time, counts] of Object.entries(eventTimes)) {
+                if (counts.events > 0) {
+                    survivalProb *= (1 - counts.events / cumulativeAtRisk);
+                }
+                
+                kmCurve.push({
+                    time: parseFloat(time),
+                    survival: survivalProb,
+                    atRisk: cumulativeAtRisk,
+                    events: counts.events
+                });
+                
+                cumulativeAtRisk -= counts.total;
+            }
+            
+            return kmCurve;
+        }
+
+        function calculateMedianSurvival(kmCurve) {
+            // Find time where survival probability drops below 0.5
+            for (let i = 0; i < kmCurve.length; i++) {
+                if (kmCurve[i].survival < 0.5) {
+                    return kmCurve[i].time;
+                }
+            }
+            return 'Not reached';
+        }
+
+        function performLogRankTest(controlData, treatmentData) {
+            // Simplified log-rank test calculation
+            // Combine and sort all data
+            const allData = [...controlData, ...treatmentData].sort((a, b) => a.survivalTime - b.survivalTime);
+            
+            let logRankStat = 0;
+            let variance = 0;
+            
+            // For each event time, calculate contribution
+            const eventTimes = {};
+            allData.forEach(d => {
+                if (d.event === 1) {
+                    const time = d.survivalTime.toFixed(2);
+                    if (!eventTimes[time]) {
+                        eventTimes[time] = [];
+                    }
+                    eventTimes[time].push(d);
+                }
+            });
+            
+            for (const [time, events] of Object.entries(eventTimes)) {
+                const timePoint = parseFloat(time);
+                
+                // Count at risk in each group
+                const controlAtRisk = controlData.filter(d => d.survivalTime >= timePoint).length;
+                const treatmentAtRisk = treatmentData.filter(d => d.survivalTime >= timePoint).length;
+                const totalAtRisk = controlAtRisk + treatmentAtRisk;
+                
+                if (totalAtRisk === 0) continue;
+                
+                const totalEvents = events.length;
+                const controlEvents = events.filter(d => d.group === 0).length;
+                
+                const expectedControl = (controlAtRisk * totalEvents) / totalAtRisk;
+                const observedControl = controlEvents;
+                
+                logRankStat += (observedControl - expectedControl);
+                
+                // Simplified variance calculation
+                if (totalAtRisk > 1) {
+                    const varContrib = (controlAtRisk * treatmentAtRisk * totalEvents * (totalAtRisk - totalEvents)) / 
+                                     (totalAtRisk * totalAtRisk * (totalAtRisk - 1));
+                    variance += varContrib;
+                }
+            }
+            
+            const zStat = Math.abs(logRankStat) / Math.sqrt(variance);
+            const pValue = 2 * (1 - normalCDF(zStat));
+            
+            return {
+                statistic: logRankStat,
+                pValue: pValue
+            };
+        }
+
+        function performCoxModel(data) {
+            // Simplified Cox model (group only)
+            const controlData = data.filter(d => d.group === 0);
+            const treatmentData = data.filter(d => d.group === 1);
+            
+            // Calculate hazard ratio approximation
+            const controlEvents = controlData.filter(d => d.event === 1).length;
+            const controlPersonTime = controlData.reduce((sum, d) => sum + d.survivalTime, 0);
+            const controlRate = controlEvents / controlPersonTime;
+            
+            const treatmentEvents = treatmentData.filter(d => d.event === 1).length;
+            const treatmentPersonTime = treatmentData.reduce((sum, d) => sum + d.survivalTime, 0);
+            const treatmentRate = treatmentEvents / treatmentPersonTime;
+            
+            const hazardRatio = treatmentRate / controlRate;
+            const logHR = Math.log(hazardRatio);
+            const seLogHR = Math.sqrt(1/treatmentEvents + 1/controlEvents); // Simplified
+            
+            const zStat = Math.abs(logHR) / seLogHR;
+            const pValue = 2 * (1 - normalCDF(zStat));
+            
+            const lowerCI = Math.exp(logHR - 1.96 * seLogHR);
+            const upperCI = Math.exp(logHR + 1.96 * seLogHR);
+            
+            return {
+                analysisName: 'Cox Proportional Hazards Model',
+                hazardRatio: hazardRatio,
+                logHazardRatio: logHR,
+                pValue: pValue,
+                lowerCI: lowerCI,
+                upperCI: upperCI,
+                controlRate: controlRate,
+                treatmentRate: treatmentRate
+            };
+        }
+
+        function performLogRank(data) {
+            const controlData = data.filter(d => d.group === 0);
+            const treatmentData = data.filter(d => d.group === 1);
+            
+            const result = performLogRankTest(controlData, treatmentData);
+            
+            return {
+                analysisName: 'Log-Rank Test',
+                statistic: result.statistic,
+                pValue: result.pValue,
+                effectSize: Math.abs(result.statistic) / Math.sqrt(data.length) // Approximation
+            };
+        }
+
+        function performCompetingRisks(data) {
+            // Simplified competing risks analysis
+            return {
+                analysisName: 'Competing Risks Analysis',
+                primaryEvents: data.filter(d => d.event === 1).length,
+                competingEvents: Math.floor(data.filter(d => d.event === 0).length * 0.3), // Simulate
+                pValue: 0.05 * Math.random()
+            };
+        }
+
+        function normalCDF(x) {
+            // Standard normal CDF approximation
+            const a = 0.3193815;
+            const b = -0.3565638;
+            const c = 1.781478;
+            const d = -1.821256;
+            const e = 1.330274;
+            
+            const t = 1 / (1 + 0.2316419 * Math.abs(x));
+            const phi = 0.39894228 * Math.exp(-0.5 * x * x) * (a * t + b * t * t + c * Math.pow(t, 3) + d * Math.pow(t, 4) + e * Math.pow(t, 5));
+            
+            return x >= 0 ? 1 - phi : phi;
+        }
+
+        function displaySurvivalResults(results) {
+            const model = currentSurvivalModel.model;
+            const significance = results.pValue < 0.05 ? '✅ Significant' : '❌ Not Significant';
+            
+            let resultContent = `
+                <h4>📈 Survival Analysis Results</h4>
+                <div style="background: var(--primary-navy); color: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; text-align: center;">
+                    <strong>${results.analysisName.toUpperCase()}</strong><br>
+                    Study: ${model.title}<br>
+            `;
+            
+            if (results.hazardRatio) {
+                resultContent += `HR = ${results.hazardRatio.toFixed(3)} (95% CI: ${results.lowerCI.toFixed(3)}-${results.upperCI.toFixed(3)}), p = ${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}`;
+            } else if (results.logRankP) {
+                resultContent += `Log-Rank p = ${results.logRankP < 0.001 ? '<0.001' : results.logRankP.toFixed(3)}`;
+            } else {
+                resultContent += `p = ${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}`;
+            }
+            
+            resultContent += `</div>`;
+            
+            if (results.controlMedian && results.treatmentMedian) {
+                resultContent += `
+                    <div class="survival-table">
+                        <h5>Survival Summary</h5>
+                        <table>
+                            <tr><th>Group</th><th>Median Survival</th><th>Events</th><th>Censored</th></tr>
+                            <tr><td>Control</td><td class="survival-prob">${results.controlMedian} months</td><td>-</td><td>-</td></tr>
+                            <tr><td>Treatment</td><td class="survival-prob">${results.treatmentMedian} months</td><td>-</td><td>-</td></tr>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            resultContent += `
+                <div class="survival-highlight">
+                    <p><strong>📈 Advanced Survival Interpretation:</strong> 
+                    The ${results.analysisName.toLowerCase()} ${results.pValue < 0.05 ? 'demonstrates significant differences' : 'shows no significant differences'} 
+                    between groups (${significance}). 
+                    ${results.hazardRatio ? `The hazard ratio (${results.hazardRatio.toFixed(2)}) indicates ${results.hazardRatio < 1 ? 'reduced' : 'increased'} instantaneous risk with treatment.` : ''} 
+                    This sophisticated time-to-event analysis accounts for censoring and provides robust estimates for clinical decision-making.
+                    <span class="canada-survival">Canadian clinical validation</span> 
+                    supports evidence-based implementation considering both statistical significance and clinical relevance.
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('survivalTable').innerHTML = resultContent;
+
+            // Update survival statistics display
+            document.getElementById('survivalStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${results.hazardRatio ? results.hazardRatio.toFixed(3) : results.statistic?.toFixed(3) || 'N/A'}</div>
+                    <div class="stat-label">${results.hazardRatio ? 'Hazard Ratio' : 'Test Statistic'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.pValue ? (results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)) : (results.logRankP < 0.001 ? '<0.001' : results.logRankP?.toFixed(3)) || 'N/A'}</div>
+                    <div class="stat-label">p-value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.lowerCI && results.upperCI ? `${results.lowerCI.toFixed(2)}-${results.upperCI.toFixed(2)}` : 'N/A'}</div>
+                    <div class="stat-label">95% CI</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${currentSurvivalModel.survivalData.filter(d => d.event === 1).length}</div>
+                    <div class="stat-label">Total Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Time-to-Event</div>
+                    <div class="stat-label">Analysis Type</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${currentSurvivalModel.followupTime}</div>
+                    <div class="stat-label">Follow-up (months)</div>
+                </div>
+            `;
+        }
+
+        function performCoxModeling() {
+            if (!currentSurvivalModel) {
+                alert('Please perform survival analysis first');
+                return;
+            }
+
+            generateKMChart();
+            displayCoxAnalysis();
+        }
+
+        function generateKMChart() {
+            const ctx = document.getElementById('kmChart').getContext('2d');
+            
+            if (kmChart) {
+                kmChart.destroy();
+            }
+
+            // Generate Kaplan-Meier curves for visualization
+            const data = currentSurvivalModel.survivalData;
+            const controlData = data.filter(d => d.group === 0);
+            const treatmentData = data.filter(d => d.group === 1);
+            
+            const controlKM = calculateKaplanMeier(controlData);
+            const treatmentKM = calculateKaplanMeier(treatmentData);
+            
+            // Create step function data for Chart.js
+            const controlCurve = [];
+            const treatmentCurve = [];
+            
+            // Add initial point
+            controlCurve.push({ x: 0, y: 1 });
+            treatmentCurve.push({ x: 0, y: 1 });
+            
+            // Add KM points
+            controlKM.forEach(point => {
+                controlCurve.push({ x: point.time, y: point.survival });
+            });
+            
+            treatmentKM.forEach(point => {
+                treatmentCurve.push({ x: point.time, y: point.survival });
+            });
+
+            kmChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Control Group',
+                            data: controlCurve,
+                            borderColor: '#1E3A8A',
+                            backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            stepped: true
+                        },
+                        {
+                            label: 'Treatment Group',
+                            data: treatmentCurve,
+                            borderColor: '#D97706',
+                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            stepped: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Time (months)' },
+                            min: 0
+                        },
+                        y: { 
+                            title: { display: true, text: 'Survival Probability' },
+                            min: 0,
+                            max: 1
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Kaplan-Meier Survival Curves',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayCoxAnalysis() {
+            const model = currentSurvivalModel.model;
+            const hr = currentSurvivalModel.hazardRatio;
+            
+            // Simulate Cox model results
+            const cIndex = 0.65 + Math.random() * 0.15; // C-index between 0.65-0.8
+            const logLikelihood = -Math.random() * 1000 - 500;
+            const waldTest = Math.pow(Math.log(hr) / 0.2, 2); // Simulate
+            
+            document.getElementById('coxTable').innerHTML = `
+                <h4>📈 Cox Proportional Hazards Analysis</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 55px; margin: 50px 0;">
+                    <div class="stat-card" style="padding: 50px;">
+                        <h5>Model Performance</h5>
+                        <div class="kaplan-meier-info">
+                            <div class="km-metric">Hazard Ratio<br>${hr.toFixed(2)}</div>
+                            <div class="km-metric">C-Index<br>${cIndex.toFixed(3)}</div>
+                            <div class="km-metric">Log-Likelihood<br>${logLikelihood.toFixed(0)}</div>
+                        </div>
+                        <p><strong>Concordance Index:</strong> ${(cIndex * 100).toFixed(1)}% (${cIndex > 0.7 ? 'Good' : 'Moderate'} discrimination)</p>
+                        <p><strong>Model Fit:</strong> Adequate for clinical prediction</p>
+                    </div>
+                    
+                    <div class="stat-card" style="padding: 50px;">
+                        <h5>Clinical Interpretation</h5>
+                        <p><strong>Treatment Effect:</strong> ${hr < 1 ? 'Protective' : 'Harmful'} (HR = ${hr.toFixed(2)})</p>
+                        <p><strong>Risk Reduction:</strong> ${hr < 1 ? Math.round((1-hr)*100) : 0}% reduction in hazard</p>
+                        <p><strong>Clinical Significance:</strong> ${Math.abs(hr - 1) > 0.2 ? 'Clinically meaningful' : 'Borderline significant'}</p>
+                        <p><strong>Number Needed:</strong> Consider for treatment guidelines</p>
+                    </div>
+                </div>
+                
+                <div class="survival-highlight">
+                    <p><strong>📈 Advanced Cox Model Interpretation:</strong> 
+                    The Cox proportional hazards analysis reveals ${hr < 1 ? 'significant survival benefit' : 'increased hazard'} 
+                    with the intervention (${hr < 1 ? 'protective' : 'harmful'} HR = ${hr.toFixed(2)}). 
+                    The model demonstrates ${cIndex > 0.7 ? 'good' : 'moderate'} discriminative ability (C-index = ${cIndex.toFixed(3)}) 
+                    for risk stratification. Semi-parametric modeling accounts for covariate effects while avoiding distributional assumptions.
+                    <span class="canada-survival">Canadian evidence standards</span> 
+                    require validation cohorts and clinical outcome correlation for guideline implementation.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>📈 Advanced Survival Analysis</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Survival Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Clinical Application:</strong> Survival analysis provides essential methodology for analyzing time-to-event data in medical research, from basic Kaplan-Meier estimation to sophisticated Cox modeling with time-varying covariates. Understanding hazard ratios, censoring mechanisms, and competing risks is crucial for clinical trials, prognostic studies, and treatment effectiveness research. These advanced methods enable evidence-based evaluation of interventions and risk factors across diverse medical applications.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateSurvivalModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
