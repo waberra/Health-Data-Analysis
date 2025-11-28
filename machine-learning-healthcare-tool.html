@@ -954,44 +954,13 @@
             <div class="assessment-content">
                 <h2 class="assessment-title">Expert Assessment</h2>
                 <p style="margin-bottom: 2rem;">Test your mastery of machine learning applications in healthcare and medical research.</p>
-
-                <div class="question-card">
-                    <div class="question-text">
-                        <strong>Question 1:</strong> When developing a machine learning model for sepsis prediction in ICU patients, which approach best addresses the class imbalance problem where sepsis cases represent only 3% of admissions?
-                    </div>
-                    <button class="option-button" onclick="checkMLAnswer(1, 'a', false)">A) Simple random undersampling of majority class</button>
-                    <button class="option-button" onclick="checkMLAnswer(1, 'b', true)">B) SMOTE with careful validation strategy</button>
-                    <button class="option-button" onclick="checkMLAnswer(1, 'c', false)">C) Ignoring imbalance and using accuracy as metric</button>
-                    <button class="option-button" onclick="checkMLAnswer(1, 'd', false)">D) Only oversampling minority class examples</button>
-                    <div class="explanation" id="ml-explanation-1">
-                        <strong>Correct!</strong> SMOTE (Synthetic Minority Oversampling Technique) generates synthetic examples while preserving class distributions, but requires careful validation to avoid overfitting and ensure clinical relevance of synthetic cases.
-                    </div>
+                
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <button class="action-button" onclick="generateNewQuestions()" style="width: auto; padding: 1rem 2rem;">🔄 Generate New Questions</button>
                 </div>
 
-                <div class="question-card">
-                    <div class="question-text">
-                        <strong>Question 2:</strong> In genomic biomarker discovery with 20,000 gene expression features and 500 patients, which regularization approach is most appropriate for identifying clinically relevant predictors?
-                    </div>
-                    <button class="option-button" onclick="checkMLAnswer(2, 'a', false)">A) Ridge regression only</button>
-                    <button class="option-button" onclick="checkMLAnswer(2, 'b', true)">B) Elastic net with pathway-informed penalties</button>
-                    <button class="option-button" onclick="checkMLAnswer(2, 'c', false)">C) No regularization to preserve all information</button>
-                    <button class="option-button" onclick="checkMLAnswer(2, 'd', false)">D) Simple univariate filtering only</button>
-                    <div class="explanation" id="ml-explanation-2">
-                        <strong>Correct!</strong> Elastic net combines L1 and L2 penalties for feature selection while handling correlated features, and pathway-informed penalties incorporate biological knowledge to improve interpretability and clinical relevance.
-                    </div>
-                </div>
-
-                <div class="question-card">
-                    <div class="question-text">
-                        <strong>Question 3:</strong> For a deep learning model analyzing medical images for cancer detection, which validation approach provides the most reliable estimate of real-world performance?
-                    </div>
-                    <button class="option-button" onclick="checkMLAnswer(3, 'a', false)">A) Random 80-20 train-test split</button>
-                    <button class="option-button" onclick="checkMLAnswer(3, 'b', false)">B) 10-fold cross-validation</button>
-                    <button class="option-button" onclick="checkMLAnswer(3, 'c', true)">C) External validation on different institutions</button>
-                    <button class="option-button" onclick="checkMLAnswer(3, 'd', false)">D) Leave-one-out cross-validation</button>
-                    <div class="explanation" id="ml-explanation-3">
-                        <strong>Correct!</strong> External validation across different institutions, imaging equipment, and patient populations provides the most realistic assessment of model generalizability and clinical utility in diverse real-world settings.
-                    </div>
+                <div id="dynamic-questions-container">
+                    <!-- Questions will be dynamically generated here -->
                 </div>
             </div>
         </section>
@@ -1000,6 +969,227 @@
     <script>
         // Global chart storage
         let mlCharts = {};
+
+        // Dynamic Assessment Question Pools
+        const questionPools = {
+            classImbalance: [
+                {
+                    question: "When developing a machine learning model for sepsis prediction in ICU patients, which approach best addresses the class imbalance problem where sepsis cases represent only 3% of admissions?",
+                    options: [
+                        { text: "Simple random undersampling of majority class", correct: false },
+                        { text: "SMOTE with careful validation strategy", correct: true },
+                        { text: "Ignoring imbalance and using accuracy as metric", correct: false },
+                        { text: "Only oversampling minority class examples", correct: false }
+                    ],
+                    explanation: "SMOTE (Synthetic Minority Oversampling Technique) generates synthetic examples while preserving class distributions, but requires careful validation to avoid overfitting and ensure clinical relevance of synthetic cases."
+                },
+                {
+                    question: "In predicting hospital readmissions where only 8% of patients are readmitted within 30 days, which sampling strategy is most appropriate for model training?",
+                    options: [
+                        { text: "Balanced sampling with cost-sensitive learning", correct: true },
+                        { text: "Random sampling without adjustment", correct: false },
+                        { text: "Removing all negative cases for simplicity", correct: false },
+                        { text: "Using only accuracy to evaluate performance", correct: false }
+                    ],
+                    explanation: "Balanced sampling combined with cost-sensitive learning adjusts for class imbalance while maintaining clinical relevance and enabling proper evaluation using metrics like precision, recall, and F1-score."
+                },
+                {
+                    question: "For rare adverse drug event detection (0.5% prevalence) in pharmacovigilance, which approach provides the most reliable model performance assessment?",
+                    options: [
+                        { text: "Standard accuracy metric only", correct: false },
+                        { text: "Precision-recall curves with stratified validation", correct: true },
+                        { text: "Simple random train-test split", correct: false },
+                        { text: "Majority class undersampling to 50-50 balance", correct: false }
+                    ],
+                    explanation: "Precision-recall curves are essential for rare events as they focus on positive class performance, and stratified validation ensures representative rare event distribution across folds."
+                }
+            ],
+            featureSelection: [
+                {
+                    question: "In genomic biomarker discovery with 20,000 gene expression features and 500 patients, which regularization approach is most appropriate for identifying clinically relevant predictors?",
+                    options: [
+                        { text: "Ridge regression only", correct: false },
+                        { text: "Elastic net with pathway-informed penalties", correct: true },
+                        { text: "No regularization to preserve all information", correct: false },
+                        { text: "Simple univariate filtering only", correct: false }
+                    ],
+                    explanation: "Elastic net combines L1 and L2 penalties for feature selection while handling correlated features, and pathway-informed penalties incorporate biological knowledge to improve interpretability and clinical relevance."
+                },
+                {
+                    question: "When analyzing electronic health records with 5,000 clinical features for disease prediction, which dimensionality reduction strategy best preserves interpretability?",
+                    options: [
+                        { text: "Principal Component Analysis (PCA)", correct: false },
+                        { text: "LASSO regression with clinical domain constraints", correct: true },
+                        { text: "Random feature selection", correct: false },
+                        { text: "Using all features without selection", correct: false }
+                    ],
+                    explanation: "LASSO regression provides automatic feature selection while domain constraints ensure clinical relevance and interpretability, crucial for healthcare applications requiring explainable decisions."
+                },
+                {
+                    question: "In multi-omics cancer research combining genomics, transcriptomics, and proteomics data, which integration approach handles different data scales and feature counts most effectively?",
+                    options: [
+                        { text: "Simple concatenation of all features", correct: false },
+                        { text: "Multi-view learning with regularized fusion", correct: true },
+                        { text: "Analyzing each omics layer separately", correct: false },
+                        { text: "Random forest without preprocessing", correct: false }
+                    ],
+                    explanation: "Multi-view learning with regularized fusion accounts for different scales and dimensionalities across omics layers while identifying complementary patterns for improved cancer subtyping and outcome prediction."
+                }
+            ],
+            validation: [
+                {
+                    question: "For a deep learning model analyzing medical images for cancer detection, which validation approach provides the most reliable estimate of real-world performance?",
+                    options: [
+                        { text: "Random 80-20 train-test split", correct: false },
+                        { text: "10-fold cross-validation", correct: false },
+                        { text: "External validation on different institutions", correct: true },
+                        { text: "Leave-one-out cross-validation", correct: false }
+                    ],
+                    explanation: "External validation across different institutions, imaging equipment, and patient populations provides the most realistic assessment of model generalizability and clinical utility in diverse real-world settings."
+                },
+                {
+                    question: "When validating a clinical prediction model for deployment across Canada's provincial health systems, which validation strategy best addresses population heterogeneity?",
+                    options: [
+                        { text: "Single-site validation in Toronto", correct: false },
+                        { text: "Multi-provincial external validation with fairness assessment", correct: true },
+                        { text: "Bootstrap resampling on training data", correct: false },
+                        { text: "Time-based split validation only", correct: false }
+                    ],
+                    explanation: "Multi-provincial validation with fairness assessment ensures model performance generalizes across diverse populations, healthcare systems, and demographic groups throughout Canada."
+                },
+                {
+                    question: "For real-time clinical decision support systems in emergency departments, which validation approach best simulates deployment conditions?",
+                    options: [
+                        { text: "Retrospective cross-validation on historical data", correct: false },
+                        { text: "Prospective validation with temporal data streams", correct: true },
+                        { text: "Random sampling validation", correct: false },
+                        { text: "Synthetic data generation for testing", correct: false }
+                    ],
+                    explanation: "Prospective validation with temporal data streams mimics real-world deployment conditions, accounting for data drift, changing patient populations, and time-dependent clinical patterns."
+                }
+            ],
+            interpretability: [
+                {
+                    question: "In clinical AI systems requiring regulatory approval, which interpretability approach best balances model performance with explainability requirements?",
+                    options: [
+                        { text: "Black-box deep learning with post-hoc LIME", correct: false },
+                        { text: "Inherently interpretable models with performance optimization", correct: true },
+                        { text: "Complex ensemble methods without explanations", correct: false },
+                        { text: "Feature importance rankings only", correct: false }
+                    ],
+                    explanation: "Inherently interpretable models (like regularized logistic regression or decision trees) with performance optimization provide transparent decision-making while meeting regulatory requirements for clinical deployment."
+                },
+                {
+                    question: "For personalized treatment recommendations in oncology, which explanation method provides the most clinically actionable insights?",
+                    options: [
+                        { text: "Global feature importance across all patients", correct: false },
+                        { text: "Individual patient counterfactual explanations", correct: true },
+                        { text: "Model confidence scores only", correct: false },
+                        { text: "Average prediction probabilities", correct: false }
+                    ],
+                    explanation: "Individual counterfactual explanations show how changing specific patient characteristics would alter treatment recommendations, providing actionable insights for personalized clinical decision-making."
+                },
+                {
+                    question: "When deploying ML models for diagnostic imaging in radiology, which approach best supports radiologist trust and adoption?",
+                    options: [
+                        { text: "Providing only final classification probabilities", correct: false },
+                        { text: "Visual attention maps with uncertainty quantification", correct: true },
+                        { text: "Complex mathematical explanations", correct: false },
+                        { text: "Historical accuracy statistics only", correct: false }
+                    ],
+                    explanation: "Visual attention maps show where the model focuses attention while uncertainty quantification helps radiologists understand model confidence, supporting informed clinical decision-making and professional judgment."
+                }
+            ]
+        };
+
+        let currentQuestions = [];
+        let currentQuestionAnswered = {};
+
+        // Generate random questions from different pools
+        function generateNewQuestions() {
+            const poolNames = Object.keys(questionPools);
+            currentQuestions = [];
+            currentQuestionAnswered = {};
+            
+            // Select one question from each of 3 random pools
+            const selectedPools = [];
+            while (selectedPools.length < 3 && selectedPools.length < poolNames.length) {
+                const randomPool = poolNames[Math.floor(Math.random() * poolNames.length)];
+                if (!selectedPools.includes(randomPool)) {
+                    selectedPools.push(randomPool);
+                }
+            }
+            
+            selectedPools.forEach(poolName => {
+                const pool = questionPools[poolName];
+                const randomQuestion = pool[Math.floor(Math.random() * pool.length)];
+                currentQuestions.push(randomQuestion);
+            });
+            
+            renderQuestions();
+        }
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Render questions to DOM
+        function renderQuestions() {
+            const container = document.getElementById('dynamic-questions-container');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((question, questionIndex) => {
+                const shuffledOptions = shuffleArray(question.options.map((opt, idx) => ({...opt, originalIndex: idx})));
+                
+                const questionHTML = `
+                    <div class="question-card">
+                        <div class="question-text">
+                            <strong>Question ${questionIndex + 1}:</strong> ${question.question}
+                        </div>
+                        ${shuffledOptions.map((option, optIndex) => 
+                            `<button class="option-button" onclick="checkDynamicMLAnswer(${questionIndex}, ${optIndex}, ${option.correct})">${String.fromCharCode(65 + optIndex)}) ${option.text}</button>`
+                        ).join('')}
+                        <div class="explanation" id="ml-explanation-${questionIndex}" style="display: none;">
+                            <strong>${shuffledOptions.some(opt => opt.correct) ? 'Correct!' : 'Incorrect.'}</strong> ${question.explanation}
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += questionHTML;
+            });
+        }
+
+        // Check dynamic question answers
+        function checkDynamicMLAnswer(questionNum, choiceIndex, isCorrect) {
+            if (currentQuestionAnswered[questionNum]) return; // Already answered
+            
+            currentQuestionAnswered[questionNum] = true;
+            
+            const questionCard = document.querySelectorAll('.question-card')[questionNum];
+            const buttons = questionCard.querySelectorAll('.option-button');
+            const explanation = document.getElementById(`ml-explanation-${questionNum}`);
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true;
+                if (index === choiceIndex) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+                // Highlight the correct answer if wrong choice was selected
+                if (!isCorrect && btn.textContent.includes(currentQuestions[questionNum].options.find(opt => opt.correct).text)) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            if (explanation) {
+                explanation.style.display = 'block';
+            }
+        }
 
         // Range slider updates
         document.addEventListener('DOMContentLoaded', function() {
@@ -1026,6 +1216,9 @@
                     });
                 }
             });
+
+            // Initialize dynamic assessment questions
+            generateNewQuestions();
         });
 
         // ML Application Functions
@@ -1332,23 +1525,6 @@
                     scales: { r: { beginAtZero: true, max: 1.0 } }
                 }
             });
-        }
-
-        // Assessment functions
-        function checkMLAnswer(questionNum, choice, isCorrect) {
-            const buttons = document.querySelectorAll(`#ml-explanation-${questionNum}`).parentNode?.querySelectorAll('.option-button') || [];
-            const explanation = document.getElementById(`ml-explanation-${questionNum}`);
-            
-            buttons.forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent.startsWith(choice.toUpperCase())) {
-                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
-                }
-            });
-
-            if (explanation) {
-                explanation.style.display = 'block';
-            }
         }
     </script>
 </body>
