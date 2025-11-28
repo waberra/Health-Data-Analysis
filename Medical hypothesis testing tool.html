@@ -1916,6 +1916,326 @@
             }
         }
 
+        function createNonparametricVisualization(group1Data, group2Data, distribution, scenario) {
+            const ctx = document.getElementById('nonparametric-chart').getContext('2d');
+            if (charts.nonparametric) charts.nonparametric.destroy();
+
+            // Create box plot-style visualization
+            const group1Stats = {
+                min: Math.min(...group1Data),
+                q1: percentile(group1Data, 25),
+                median: median(group1Data),
+                q3: percentile(group1Data, 75),
+                max: Math.max(...group1Data),
+                mean: mean(group1Data)
+            };
+            
+            const group2Stats = {
+                min: Math.min(...group2Data),
+                q1: percentile(group2Data, 25),
+                median: median(group2Data),
+                q3: percentile(group2Data, 75),
+                max: Math.max(...group2Data),
+                mean: mean(group2Data)
+            };
+
+            charts.nonparametric = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Group 1 Data',
+                        data: group1Data.slice(0, 20).map((value, i) => ({x: 1, y: value})),
+                        backgroundColor: 'rgba(255, 107, 107, 0.6)',
+                        borderColor: '#ff6b6b',
+                        pointRadius: 4
+                    }, {
+                        label: 'Group 2 Data',
+                        data: group2Data.slice(0, 20).map((value, i) => ({x: 2, y: value})),
+                        backgroundColor: 'rgba(47, 139, 139, 0.6)',
+                        borderColor: '#2f8b8b',
+                        pointRadius: 4
+                    }, {
+                        label: 'Group 1 Median',
+                        data: [{x: 1, y: group1Stats.median}],
+                        backgroundColor: '#dc143c',
+                        borderColor: '#dc143c',
+                        pointRadius: 8,
+                        pointStyle: 'triangle',
+                        showLine: false
+                    }, {
+                        label: 'Group 2 Median',
+                        data: [{x: 2, y: group2Stats.median}],
+                        backgroundColor: '#dc143c',
+                        borderColor: '#dc143c',
+                        pointRadius: 8,
+                        pointStyle: 'triangle',
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Non-parametric Analysis: ${distribution} Distribution`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Groups'
+                            },
+                            min: 0.5,
+                            max: 2.5,
+                            ticks: {
+                                callback: function(value) {
+                                    return value === 1 ? 'Group 1' : value === 2 ? 'Group 2' : '';
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Outcome Value'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDiagnosticVisualization(rocPoints, auc, performance) {
+            const ctx = document.getElementById('diagnostic-chart').getContext('2d');
+            if (charts.diagnostic) charts.diagnostic.destroy();
+
+            charts.diagnostic = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: `ROC Curve (AUC = ${auc.toFixed(3)})`,
+                        data: rocPoints,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: 'Random Chance (AUC = 0.5)',
+                        data: [{x: 0, y: 0}, {x: 1, y: 1}],
+                        borderColor: '#999',
+                        borderWidth: 2,
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `ROC Curve Analysis - ${performance} Performance`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'False Positive Rate (1 - Specificity)'
+                            },
+                            min: 0,
+                            max: 1
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'True Positive Rate (Sensitivity)'
+                            },
+                            min: 0,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        function createEquivalenceVisualization(observedDiff, ci90Lower, ci90Upper, ci95Lower, ci95Upper, margin, studyType) {
+            const ctx = document.getElementById('equivalence-chart').getContext('2d');
+            if (charts.equivalence) charts.equivalence.destroy();
+
+            const datasets = [{
+                label: 'Observed Difference',
+                data: [{x: observedDiff, y: 1}],
+                backgroundColor: '#2f8b8b',
+                borderColor: '#2f8b8b',
+                pointRadius: 8,
+                pointStyle: 'circle'
+            }];
+
+            if (studyType === 'equivalence') {
+                datasets.push({
+                    label: '90% Confidence Interval',
+                    data: [{x: ci90Lower, y: 1}, {x: ci90Upper, y: 1}],
+                    backgroundColor: 'transparent',
+                    borderColor: '#dc143c',
+                    borderWidth: 4,
+                    pointRadius: 6,
+                    pointStyle: 'line',
+                    showLine: true
+                });
+                datasets.push({
+                    label: 'Equivalence Margins',
+                    data: [{x: -margin, y: 0.5}, {x: -margin, y: 1.5}],
+                    backgroundColor: 'transparent',
+                    borderColor: '#ff6b6b',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    showLine: true
+                });
+                datasets.push({
+                    label: '',
+                    data: [{x: margin, y: 0.5}, {x: margin, y: 1.5}],
+                    backgroundColor: 'transparent',
+                    borderColor: '#ff6b6b',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    showLine: true
+                });
+            } else {
+                datasets.push({
+                    label: '95% Confidence Interval',
+                    data: [{x: ci95Lower, y: 1}, {x: ci95Upper, y: 1}],
+                    backgroundColor: 'transparent',
+                    borderColor: '#dc143c',
+                    borderWidth: 4,
+                    pointRadius: 6,
+                    pointStyle: 'line',
+                    showLine: true
+                });
+                datasets.push({
+                    label: 'Non-inferiority Margin',
+                    data: [{x: -margin, y: 0.5}, {x: -margin, y: 1.5}],
+                    backgroundColor: 'transparent',
+                    borderColor: '#ff6b6b',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    showLine: true
+                });
+            }
+
+            datasets.push({
+                label: 'No Difference',
+                data: [{x: 0, y: 0.5}, {x: 0, y: 1.5}],
+                backgroundColor: 'transparent',
+                borderColor: '#666',
+                borderWidth: 2,
+                pointRadius: 0,
+                showLine: true
+            });
+
+            charts.equivalence = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${studyType.charAt(0).toUpperCase() + studyType.slice(1)} Analysis`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Treatment Difference'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: ''
+                            },
+                            min: 0.3,
+                            max: 1.7,
+                            ticks: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createSurvivalVisualization(km1, km2, contextInfo) {
+            const ctx = document.getElementById('survival-chart').getContext('2d');
+            if (charts.survival) charts.survival.destroy();
+
+            // Convert KM data to chart format
+            const km1Data = [{x: 0, y: 1}].concat(km1.map(point => ({x: point.time, y: point.survival})));
+            const km2Data = [{x: 0, y: 1}].concat(km2.map(point => ({x: point.time, y: point.survival})));
+
+            charts.survival = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: contextInfo.group1,
+                        data: km1Data,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        borderWidth: 3,
+                        stepped: true,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: contextInfo.group2,
+                        data: km2Data,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.1)',
+                        borderWidth: 3,
+                        stepped: true,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Kaplan-Meier Survival Curves: ${contextInfo.title}`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (months)'
+                            },
+                            min: 0
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Survival Probability'
+                            },
+                            min: 0,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        }
+
         function createCategoricalVisualization(results, outcome) {
             const ctx = document.getElementById('categorical-chart').getContext('2d');
             if (charts.categorical) charts.categorical.destroy();
@@ -2102,43 +2422,1009 @@
         // These would follow the same pattern as the implemented sections
 
         function compareParametricNonparametric() {
-            // Placeholder for Section 6
+            const distribution = document.getElementById('data-distribution').value;
+            const sampleSize = parseInt(document.getElementById('nonpar-sample').value);
+            const effectSize = parseFloat(document.getElementById('nonpar-effect').value);
+            const scenario = document.getElementById('nonpar-scenario').value;
+
+            // Generate data based on distribution type
+            let group1Data, group2Data;
+            const baseValue = 50;
+            
+            switch (distribution) {
+                case 'normal':
+                    group1Data = generateNormalData(sampleSize, baseValue, 15);
+                    group2Data = generateNormalData(sampleSize, baseValue + effectSize * 15, 15);
+                    break;
+                case 'skewed':
+                    group1Data = generateLogNormalData(sampleSize, baseValue, 0.5);
+                    group2Data = generateLogNormalData(sampleSize, baseValue + effectSize * 15, 0.5);
+                    break;
+                case 'outliers':
+                    group1Data = generateNormalWithOutliers(sampleSize, baseValue, 15);
+                    group2Data = generateNormalWithOutliers(sampleSize, baseValue + effectSize * 15, 15);
+                    break;
+                case 'ordinal':
+                    group1Data = generateOrdinalData(sampleSize, baseValue);
+                    group2Data = generateOrdinalData(sampleSize, baseValue + effectSize * 2);
+                    break;
+            }
+
+            // Parametric test (t-test)
+            const tTestResults = performTTest(group1Data, group2Data);
+            
+            // Non-parametric test (Mann-Whitney U)
+            const mannWhitneyResults = performMannWhitney(group1Data, group2Data);
+            
+            // Effect size calculations
+            const cohenD = (mean(group2Data) - mean(group1Data)) / Math.sqrt((variance(group1Data) + variance(group2Data)) / 2);
+            const rankBiserial = mannWhitneyResults.u1 / (sampleSize * sampleSize);
+
+            const scenarioInfo = getScenarioInfo(scenario);
+
             document.getElementById('nonparametric-results').style.display = 'block';
             document.getElementById('nonparametric-results').innerHTML = `
-                <h4>Non-parametric vs Parametric Test Comparison</h4>
-                <p>This section would demonstrate when to use non-parametric tests and compare their power to parametric alternatives.</p>
-                <p>Implementation includes Mann-Whitney U, Wilcoxon signed-rank, Kruskal-Wallis tests with Canadian healthcare examples.</p>
+                <h4>Parametric vs Non-parametric Test Comparison</h4>
+                
+                <p><strong>Clinical Scenario:</strong> ${scenarioInfo.description}</p>
+                <p><strong>Data Characteristics:</strong></p>
+                <p>• Distribution: ${distribution}</p>
+                <p>• Sample size per group: ${sampleSize}</p>
+                <p>• True effect size: ${effectSize}</p>
+                <p>• Outcome measure: ${scenarioInfo.outcome}</p>
+                
+                <p><strong>Descriptive Statistics:</strong></p>
+                <table>
+                    <tr><th>Group</th><th>Mean</th><th>Median</th><th>SD</th><th>IQR</th></tr>
+                    <tr>
+                        <td>Group 1</td>
+                        <td>${mean(group1Data).toFixed(2)}</td>
+                        <td>${median(group1Data).toFixed(2)}</td>
+                        <td>${Math.sqrt(variance(group1Data)).toFixed(2)}</td>
+                        <td>${(percentile(group1Data, 75) - percentile(group1Data, 25)).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Group 2</td>
+                        <td>${mean(group2Data).toFixed(2)}</td>
+                        <td>${median(group2Data).toFixed(2)}</td>
+                        <td>${Math.sqrt(variance(group2Data)).toFixed(2)}</td>
+                        <td>${(percentile(group2Data, 75) - percentile(group2Data, 25)).toFixed(2)}</td>
+                    </tr>
+                </table>
+
+                <p><strong>Statistical Test Comparison:</strong></p>
+                <table>
+                    <tr><th>Test Type</th><th>Test Statistic</th><th>p-value</th><th>Effect Size</th><th>Interpretation</th></tr>
+                    <tr style="background-color: ${tTestResults.pValue < 0.05 ? '#e8ffe8' : '#ffe8e8'}">
+                        <td>Two-sample t-test</td>
+                        <td>t = ${tTestResults.tStat.toFixed(2)}</td>
+                        <td>${tTestResults.pValue.toFixed(4)}</td>
+                        <td>d = ${cohenD.toFixed(3)}</td>
+                        <td>${tTestResults.pValue < 0.05 ? 'Significant' : 'Not significant'}</td>
+                    </tr>
+                    <tr style="background-color: ${mannWhitneyResults.pValue < 0.05 ? '#e8ffe8' : '#ffe8e8'}">
+                        <td>Mann-Whitney U</td>
+                        <td>U = ${mannWhitneyResults.u1.toFixed(0)}</td>
+                        <td>${mannWhitneyResults.pValue.toFixed(4)}</td>
+                        <td>r = ${rankBiserial.toFixed(3)}</td>
+                        <td>${mannWhitneyResults.pValue < 0.05 ? 'Significant' : 'Not significant'}</td>
+                    </tr>
+                </table>
+
+                <p><strong>Test Assumptions:</strong></p>
+                <p>• <strong>t-test assumptions:</strong> ${checkTTestAssumptions(distribution)}</p>
+                <p>• <strong>Mann-Whitney assumptions:</strong> ${checkMannWhitneyAssumptions()}</p>
+                
+                <p><strong>Recommendation:</strong></p>
+                <p>• <span class="highlight">${getTestRecommendation(distribution, tTestResults.pValue, mannWhitneyResults.pValue)}</span></p>
+                <p>• Clinical significance: ${interpretClinicalSignificance(scenarioInfo, effectSize)}</p>
+                <p>• Regulatory consideration: ${getRegulatory(scenario)}</p>
             `;
+
+            createNonparametricVisualization(group1Data, group2Data, distribution, scenario);
+        }
+
+        function generateLogNormalData(n, meanLog, sigmaLog) {
+            const data = [];
+            for (let i = 0; i < n; i++) {
+                const normalValue = generateNormalData(1, meanLog, sigmaLog)[0];
+                data.push(Math.exp(normalValue / 10)); // Scale for reasonable values
+            }
+            return data;
+        }
+
+        function generateNormalWithOutliers(n, mean, sd) {
+            const data = generateNormalData(Math.floor(n * 0.9), mean, sd);
+            const outliers = Math.floor(n * 0.1);
+            for (let i = 0; i < outliers; i++) {
+                data.push(mean + (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 2) * sd);
+            }
+            return data.sort((a, b) => a - b);
+        }
+
+        function generateOrdinalData(n, baseValue) {
+            const data = [];
+            const scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; // 10-point scale
+            const center = Math.max(1, Math.min(10, Math.round(baseValue / 10)));
+            
+            for (let i = 0; i < n; i++) {
+                const random = Math.random();
+                if (random < 0.3) data.push(center);
+                else if (random < 0.6) data.push(Math.max(1, center + (Math.random() > 0.5 ? 1 : -1)));
+                else data.push(scale[Math.floor(Math.random() * scale.length)]);
+            }
+            return data;
+        }
+
+        function performTTest(group1, group2) {
+            const mean1 = mean(group1);
+            const mean2 = mean(group2);
+            const var1 = variance(group1);
+            const var2 = variance(group2);
+            const n1 = group1.length;
+            const n2 = group2.length;
+            
+            const pooledVar = ((n1 - 1) * var1 + (n2 - 1) * var2) / (n1 + n2 - 2);
+            const se = Math.sqrt(pooledVar * (1/n1 + 1/n2));
+            const tStat = (mean2 - mean1) / se;
+            const df = n1 + n2 - 2;
+            const pValue = 2 * (1 - tCDF(Math.abs(tStat), df));
+            
+            return { tStat, pValue, df, se };
+        }
+
+        function performMannWhitney(group1, group2) {
+            const combined = [...group1.map((x, i) => ({value: x, group: 1, index: i})), 
+                             ...group2.map((x, i) => ({value: x, group: 2, index: i}))];
+            combined.sort((a, b) => a.value - b.value);
+            
+            // Assign ranks
+            let rank = 1;
+            for (let i = 0; i < combined.length; i++) {
+                let j = i;
+                while (j < combined.length - 1 && combined[j].value === combined[j + 1].value) {
+                    j++;
+                }
+                const avgRank = (rank + rank + (j - i)) / 2;
+                for (let k = i; k <= j; k++) {
+                    combined[k].rank = avgRank;
+                }
+                rank = j + 2;
+            }
+            
+            const r1 = combined.filter(x => x.group === 1).reduce((sum, x) => sum + x.rank, 0);
+            const n1 = group1.length;
+            const n2 = group2.length;
+            
+            const u1 = r1 - n1 * (n1 + 1) / 2;
+            const u2 = n1 * n2 - u1;
+            const u = Math.min(u1, u2);
+            
+            // Normal approximation for p-value
+            const meanU = n1 * n2 / 2;
+            const sdU = Math.sqrt(n1 * n2 * (n1 + n2 + 1) / 12);
+            const z = (u - meanU) / sdU;
+            const pValue = 2 * (1 - normalCDF(Math.abs(z)));
+            
+            return { u1, u2, u, pValue, z };
+        }
+
+        function median(data) {
+            const sorted = [...data].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+        }
+
+        function percentile(data, p) {
+            const sorted = [...data].sort((a, b) => a - b);
+            const index = (p / 100) * (sorted.length - 1);
+            const lower = Math.floor(index);
+            const upper = Math.ceil(index);
+            const weight = index - lower;
+            return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+        }
+
+        function getScenarioInfo(scenario) {
+            const scenarios = {
+                pain: { 
+                    description: "Comparing pain scores before/after intervention",
+                    outcome: "Visual Analog Scale (0-10)"
+                },
+                biomarker: { 
+                    description: "Biomarker levels in patient vs control groups",
+                    outcome: "Inflammatory marker concentration"
+                },
+                qol: { 
+                    description: "Quality of life assessment in clinical trial",
+                    outcome: "SF-36 Physical Component Score"
+                },
+                los: { 
+                    description: "Hospital length of stay comparison",
+                    outcome: "Days in hospital"
+                }
+            };
+            return scenarios[scenario];
+        }
+
+        function checkTTestAssumptions(distribution) {
+            switch (distribution) {
+                case 'normal': return 'Met (normal distribution)';
+                case 'skewed': return 'Violated (non-normal distribution)';
+                case 'outliers': return 'Questionable (outliers present)';
+                case 'ordinal': return 'Violated (ordinal scale)';
+                default: return 'Check normality';
+            }
+        }
+
+        function checkMannWhitneyAssumptions() {
+            return 'Met (only requires independent groups)';
+        }
+
+        function getTestRecommendation(distribution, tP, mannP) {
+            if (distribution === 'normal') {
+                return 't-test preferred (assumptions met, more powerful)';
+            } else {
+                return 'Mann-Whitney U preferred (robust to assumption violations)';
+            }
+        }
+
+        function getRegulatory(scenario) {
+            const regulatory = {
+                pain: 'Pain assessment tools require Health Canada validation',
+                biomarker: 'Biomarker qualification through Health Canada guidance',
+                qol: 'Quality of life instruments for regulatory endpoints',
+                los: 'Healthcare utilization metrics for health economics'
+            };
+            return regulatory[scenario] || 'Standard regulatory considerations apply';
+        }
+
+        function interpretClinicalSignificance(scenarioInfo, effectSize) {
+            if (effectSize >= 0.5) return 'Large clinical impact expected';
+            if (effectSize >= 0.3) return 'Moderate clinical impact';
+            return 'Small clinical impact';
         }
 
         function simulateDiagnosticTest() {
-            // Placeholder for Section 7
+            const prevalence = parseFloat(document.getElementById('prevalence').value) / 100;
+            const n = parseInt(document.getElementById('diagnostic-n').value);
+            const performance = document.getElementById('test-performance').value;
+            const setting = document.getElementById('clinical-setting').value;
+
+            // Set performance characteristics based on test quality
+            const performanceParams = {
+                excellent: { sensitivity: 0.92, specificity: 0.95 },
+                good: { sensitivity: 0.85, specificity: 0.88 },
+                moderate: { sensitivity: 0.75, specificity: 0.78 },
+                poor: { sensitivity: 0.65, specificity: 0.68 }
+            };
+
+            const { sensitivity, specificity } = performanceParams[performance];
+            
+            // Calculate sample composition
+            const diseased = Math.round(n * prevalence);
+            const healthy = n - diseased;
+            
+            // Calculate confusion matrix
+            const tp = Math.round(diseased * sensitivity);
+            const fn = diseased - tp;
+            const tn = Math.round(healthy * specificity);
+            const fp = healthy - tn;
+            
+            // Calculate performance metrics
+            const ppv = tp / (tp + fp);
+            const npv = tn / (tn + fn);
+            const accuracy = (tp + tn) / n;
+            const lrPositive = sensitivity / (1 - specificity);
+            const lrNegative = (1 - sensitivity) / specificity;
+            const diagnosticOR = lrPositive / lrNegative;
+            
+            // Calculate AUC (approximation based on sensitivity/specificity)
+            const auc = (sensitivity + specificity) / 2;
+            
+            // Generate ROC points
+            const rocPoints = generateROCPoints(sensitivity, specificity);
+            
+            // Clinical interpretation
+            const settingInfo = getSettingInfo(setting);
+
             document.getElementById('diagnostic-results').style.display = 'block';
             document.getElementById('diagnostic-results').innerHTML = `
                 <h4>Diagnostic Test Performance Analysis</h4>
-                <p>This section would simulate ROC curves, calculate sensitivity/specificity, and demonstrate diagnostic accuracy analysis.</p>
-                <p>Implementation includes screening test validation, biomarker discovery, and Health Canada device approval scenarios.</p>
+                
+                <p><strong>Study Characteristics:</strong></p>
+                <p>• Clinical setting: ${settingInfo.name}</p>
+                <p>• Sample size: ${n} patients</p>
+                <p>• Disease prevalence: ${(prevalence * 100).toFixed(1)}%</p>
+                <p>• Test performance level: ${performance}</p>
+                
+                <p><strong>2×2 Diagnostic Table:</strong></p>
+                <table>
+                    <tr><th></th><th>Disease +</th><th>Disease -</th><th>Total</th></tr>
+                    <tr><td><strong>Test +</strong></td><td>${tp} (TP)</td><td>${fp} (FP)</td><td>${tp + fp}</td></tr>
+                    <tr><td><strong>Test -</strong></td><td>${fn} (FN)</td><td>${tn} (TN)</td><td>${fn + tn}</td></tr>
+                    <tr><td><strong>Total</strong></td><td>${diseased}</td><td>${healthy}</td><td>${n}</td></tr>
+                </table>
+
+                <p><strong>Primary Performance Metrics:</strong></p>
+                <table>
+                    <tr><th>Metric</th><th>Value</th><th>95% CI</th><th>Interpretation</th></tr>
+                    <tr>
+                        <td>Sensitivity</td>
+                        <td>${(sensitivity * 100).toFixed(1)}%</td>
+                        <td>${calculateCI(tp, diseased)}</td>
+                        <td>Probability of positive test given disease</td>
+                    </tr>
+                    <tr>
+                        <td>Specificity</td>
+                        <td>${(specificity * 100).toFixed(1)}%</td>
+                        <td>${calculateCI(tn, healthy)}</td>
+                        <td>Probability of negative test given no disease</td>
+                    </tr>
+                    <tr>
+                        <td>PPV</td>
+                        <td>${(ppv * 100).toFixed(1)}%</td>
+                        <td>${calculateCI(tp, tp + fp)}</td>
+                        <td>Probability of disease given positive test</td>
+                    </tr>
+                    <tr>
+                        <td>NPV</td>
+                        <td>${(npv * 100).toFixed(1)}%</td>
+                        <td>${calculateCI(tn, tn + fn)}</td>
+                        <td>Probability of no disease given negative test</td>
+                    </tr>
+                </table>
+
+                <p><strong>Advanced Metrics:</strong></p>
+                <p>• Overall accuracy: ${(accuracy * 100).toFixed(1)}%</p>
+                <p>• Positive likelihood ratio: ${lrPositive.toFixed(2)}</p>
+                <p>• Negative likelihood ratio: ${lrNegative.toFixed(3)}</p>
+                <p>• Diagnostic odds ratio: ${diagnosticOR.toFixed(1)}</p>
+                <p>• <span class="highlight">Area Under ROC Curve: ${auc.toFixed(3)}</span></p>
+
+                <p><strong>Clinical Utility Assessment:</strong></p>
+                <p>• Test quality: ${interpretAUC(auc)}</p>
+                <p>• Clinical application: ${settingInfo.application}</p>
+                <p>• Key consideration: ${getKeyConsideration(setting, ppv, npv)}</p>
+                <p>• Regulatory pathway: ${getRegulatoryPathway(setting, accuracy)}</p>
+
+                <p><strong>Economic Impact (per 1000 tests):</strong></p>
+                <p>• True positives identified: ${Math.round(tp * 1000 / n)}</p>
+                <p>• False positives (unnecessary follow-up): ${Math.round(fp * 1000 / n)}</p>
+                <p>• False negatives (missed cases): ${Math.round(fn * 1000 / n)}</p>
+                <p>• Estimated cost per correct diagnosis: CAD $${calculateCostPerDiagnosis(settingInfo, accuracy)}</p>
             `;
+
+            createDiagnosticVisualization(rocPoints, auc, performance);
+        }
+
+        function generateROCPoints(baseSens, baseSpec) {
+            const points = [];
+            for (let threshold = 0; threshold <= 1; threshold += 0.05) {
+                // Approximate sensitivity/specificity at different thresholds
+                const sens = baseSens * (1 - threshold * 0.3);
+                const spec = baseSpec * (0.5 + threshold * 0.5);
+                const fpr = 1 - Math.max(0, Math.min(1, spec));
+                const tpr = Math.max(0, Math.min(1, sens));
+                points.push({ x: fpr, y: tpr });
+            }
+            return points.sort((a, b) => a.x - b.x);
+        }
+
+        function calculateCI(successes, total) {
+            const p = successes / total;
+            const se = Math.sqrt(p * (1 - p) / total);
+            const margin = 1.96 * se;
+            const lower = Math.max(0, p - margin);
+            const upper = Math.min(1, p + margin);
+            return `[${(lower * 100).toFixed(1)}%, ${(upper * 100).toFixed(1)}%]`;
+        }
+
+        function getSettingInfo(setting) {
+            const settings = {
+                screening: {
+                    name: 'Population Screening',
+                    application: 'High sensitivity preferred to minimize false negatives'
+                },
+                diagnostic: {
+                    name: 'Diagnostic Workup',
+                    application: 'Balance between sensitivity and specificity'
+                },
+                monitoring: {
+                    name: 'Disease Monitoring',
+                    application: 'High specificity to avoid false alarms'
+                },
+                research: {
+                    name: 'Research Biomarker',
+                    application: 'High discriminatory ability required'
+                }
+            };
+            return settings[setting];
+        }
+
+        function interpretAUC(auc) {
+            if (auc >= 0.9) return 'Excellent discrimination';
+            if (auc >= 0.8) return 'Good discrimination';
+            if (auc >= 0.7) return 'Fair discrimination';
+            if (auc >= 0.6) return 'Poor discrimination';
+            return 'No discriminatory ability';
+        }
+
+        function getKeyConsideration(setting, ppv, npv) {
+            if (setting === 'screening') {
+                return `High NPV (${(npv * 100).toFixed(1)}%) critical for ruling out disease`;
+            } else if (setting === 'diagnostic') {
+                return `Balanced PPV (${(ppv * 100).toFixed(1)}%) and NPV (${(npv * 100).toFixed(1)}%) needed`;
+            }
+            return `PPV (${(ppv * 100).toFixed(1)}%) depends on disease prevalence in population`;
+        }
+
+        function getRegulatoryPathway(setting, accuracy) {
+            if (accuracy >= 0.85) {
+                return 'Health Canada Class II - moderate risk medical device';
+            } else if (accuracy >= 0.75) {
+                return 'Health Canada Class I - low risk, enhanced oversight required';
+            } else {
+                return 'Performance insufficient for regulatory approval';
+            }
+        }
+
+        function calculateCostPerDiagnosis(settingInfo, accuracy) {
+            const baseCosts = {
+                'Population Screening': 150,
+                'Diagnostic Workup': 250,
+                'Disease Monitoring': 200,
+                'Research Biomarker': 500
+            };
+            const baseCost = baseCosts[settingInfo.name] || 200;
+            return Math.round(baseCost / accuracy);
         }
 
         function designEquivalenceStudy() {
-            // Placeholder for Section 8
+            const studyType = document.getElementById('equivalence-type').value;
+            const margin = parseFloat(document.getElementById('equivalence-margin').value);
+            const trueDifference = parseFloat(document.getElementById('true-difference').value);
+            const sd = parseFloat(document.getElementById('equiv-sd').value);
+            const regulatory = document.getElementById('regulatory-context').value;
+
+            // Calculate sample size for equivalence/non-inferiority
+            const alpha = studyType === 'superiority' ? 0.05 : 0.025; // One-sided for equivalence components
+            const power = 0.8;
+            const zAlpha = studyType === 'superiority' ? 1.96 : 2.24; // Adjusted for two one-sided tests
+            const zBeta = 0.84; // 80% power
+            
+            let requiredN;
+            if (studyType === 'equivalence') {
+                // Equivalence requires testing both directions
+                requiredN = Math.ceil(2 * Math.pow((zAlpha + zBeta) * sd / margin, 2));
+            } else if (studyType === 'non-inferiority') {
+                // Non-inferiority single direction
+                requiredN = Math.ceil(2 * Math.pow((zAlpha + zBeta) * sd / margin, 2) * 0.8);
+            } else {
+                // Superiority
+                requiredN = Math.ceil(2 * Math.pow((1.96 + zBeta) * sd / trueDifference, 2));
+            }
+
+            // Simulate study results
+            const finalN = Math.max(requiredN, 50);
+            const group1Data = generateNormalData(finalN, 120, sd); // Reference treatment
+            const group2Data = generateNormalData(finalN, 120 - trueDifference, sd); // Test treatment
+            
+            const mean1 = mean(group1Data);
+            const mean2 = mean(group2Data);
+            const observedDiff = mean1 - mean2;
+            const pooledSD = Math.sqrt((variance(group1Data) + variance(group2Data)) / 2);
+            const se = pooledSD * Math.sqrt(2 / finalN);
+            
+            // Calculate confidence intervals
+            const ci90Lower = observedDiff - 1.645 * se;
+            const ci90Upper = observedDiff + 1.645 * se;
+            const ci95Lower = observedDiff - 1.96 * se;
+            const ci95Upper = observedDiff + 1.96 * se;
+
+            // Determine study conclusion
+            let conclusion, ciToUse, conclusionReasoning;
+            
+            if (studyType === 'equivalence') {
+                ciToUse = `90% CI: [${ci90Lower.toFixed(2)}, ${ci90Upper.toFixed(2)}]`;
+                const equivalent = ci90Lower > -margin && ci90Upper < margin;
+                conclusion = equivalent ? 'Equivalence demonstrated' : 'Equivalence not demonstrated';
+                conclusionReasoning = equivalent ? 
+                    `90% CI entirely within equivalence margins (±${margin})` :
+                    `90% CI extends beyond equivalence margins`;
+            } else if (studyType === 'non-inferiority') {
+                ciToUse = `95% CI: [${ci95Lower.toFixed(2)}, ${ci95Upper.toFixed(2)}]`;
+                const nonInferior = ci95Lower > -margin;
+                conclusion = nonInferior ? 'Non-inferiority demonstrated' : 'Non-inferiority not demonstrated';
+                conclusionReasoning = nonInferior ?
+                    `95% CI lower bound > non-inferiority margin (-${margin})` :
+                    `95% CI lower bound ≤ non-inferiority margin`;
+            } else {
+                ciToUse = `95% CI: [${ci95Lower.toFixed(2)}, ${ci95Upper.toFixed(2)}]`;
+                const superior = ci95Lower > 0;
+                conclusion = superior ? 'Superiority demonstrated' : 'Superiority not demonstrated';
+                conclusionReasoning = superior ?
+                    '95% CI excludes zero (favors test treatment)' :
+                    '95% CI includes zero';
+            }
+
+            const regulatoryInfo = getRegulatoryInfo(regulatory);
+
             document.getElementById('equivalence-results').style.display = 'block';
             document.getElementById('equivalence-results').innerHTML = `
-                <h4>Equivalence/Non-inferiority Study Design</h4>
-                <p>This section would design equivalence studies for generic drugs and biosimilars following Health Canada guidelines.</p>
-                <p>Implementation includes margin justification, sample size calculation, and regulatory pathway guidance.</p>
+                <h4>${studyType.charAt(0).toUpperCase() + studyType.slice(1)} Study Design & Results</h4>
+                
+                <p><strong>Study Design Parameters:</strong></p>
+                <p>• Study type: ${studyType.replace('-', ' ')}</p>
+                <p>• Clinical margin: ±${margin} units</p>
+                <p>• True difference: ${trueDifference} units</p>
+                <p>• Population SD: ${sd} units</p>
+                <p>• Regulatory context: ${regulatoryInfo.name}</p>
+
+                <p><strong>Sample Size Calculation:</strong></p>
+                <p>• Required sample size: ${requiredN} per group</p>
+                <p>• Actual study size: ${finalN} per group</p>
+                <p>• Total patients: ${finalN * 2}</p>
+                <p>• Power achieved: ${requiredN <= finalN ? '≥80%' : '<80% (underpowered)'}</p>
+
+                <p><strong>Study Results:</strong></p>
+                <table>
+                    <tr><th>Group</th><th>N</th><th>Mean</th><th>SD</th></tr>
+                    <tr><td>Reference Treatment</td><td>${finalN}</td><td>${mean1.toFixed(2)}</td><td>${Math.sqrt(variance(group1Data)).toFixed(2)}</td></tr>
+                    <tr><td>Test Treatment</td><td>${finalN}</td><td>${mean2.toFixed(2)}</td><td>${Math.sqrt(variance(group2Data)).toFixed(2)}</td></tr>
+                </table>
+
+                <p><strong>Primary Analysis:</strong></p>
+                <p>• Observed difference (Ref - Test): ${observedDiff.toFixed(2)} units</p>
+                <p>• Standard error: ${se.toFixed(3)}</p>
+                <p>• ${ciToUse}</p>
+                
+                <p><strong>Statistical Conclusion:</strong></p>
+                <p>• <span class="highlight">${conclusion}</span></p>
+                <p>• Reasoning: ${conclusionReasoning}</p>
+                
+                <p><strong>Regulatory Implications:</strong></p>
+                <p>• Regulatory pathway: ${regulatoryInfo.pathway}</p>
+                <p>• Margin justification: ${getMarginJustification(studyType, margin)}</p>
+                <p>• Next steps: ${getNextSteps(conclusion, regulatory)}</p>
+                <p>• Submission timeline: ${regulatoryInfo.timeline}</p>
+
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• Clinical significance: ${interpretClinicalEquivalence(studyType, observedDiff, margin)}</p>
+                <p>• Safety considerations: ${getSafetyConsiderations(regulatory)}</p>
+                <p>• Market access: ${getMarketAccess(conclusion, regulatory)}</p>
+                <p>• Cost implications: ${getCostImplications(studyType, conclusion)}</p>
             `;
+
+            createEquivalenceVisualization(observedDiff, ci90Lower, ci90Upper, ci95Lower, ci95Upper, margin, studyType);
+        }
+
+        function getRegulatoryInfo(regulatory) {
+            const info = {
+                generic: {
+                    name: 'Generic Drug (Health Canada)',
+                    pathway: 'Abbreviated New Drug Submission (ANDS)',
+                    timeline: '12-18 months post-submission'
+                },
+                biosimilar: {
+                    name: 'Biosimilar (Health Canada)', 
+                    pathway: 'New Drug Submission (NDS) - biosimilar',
+                    timeline: '18-24 months post-submission'
+                },
+                device: {
+                    name: 'Medical Device (Health Canada)',
+                    pathway: 'Medical Device License (MDL)',
+                    timeline: '6-12 months post-submission'
+                },
+                fda: {
+                    name: 'US FDA Comparison',
+                    pathway: 'FDA Abbreviated New Drug Application (ANDA)',
+                    timeline: '10-15 months post-submission'
+                }
+            };
+            return info[regulatory];
+        }
+
+        function getMarginJustification(studyType, margin) {
+            if (studyType === 'equivalence') {
+                return `±${margin} units represents clinically acceptable difference range`;
+            } else {
+                return `-${margin} units preserves substantial portion of reference treatment benefit`;
+            }
+        }
+
+        function getNextSteps(conclusion, regulatory) {
+            if (conclusion.includes('demonstrated')) {
+                return regulatory === 'generic' ? 'Prepare bioequivalence submission' :
+                       regulatory === 'biosimilar' ? 'Proceed with comprehensive biosimilar dossier' :
+                       'Complete regulatory submission package';
+            } else {
+                return 'Study redesign required - consider larger sample size or revised margins';
+            }
+        }
+
+        function interpretClinicalEquivalence(studyType, diff, margin) {
+            const absDiff = Math.abs(diff);
+            if (studyType === 'equivalence') {
+                if (absDiff < margin * 0.5) return 'Strong clinical equivalence';
+                if (absDiff < margin) return 'Clinical equivalence within acceptable range';
+                return 'Clinically meaningful difference detected';
+            } else {
+                if (diff < margin * 0.5) return 'Non-inferiority with strong evidence';
+                if (diff < margin) return 'Non-inferiority demonstrated';
+                return 'Inferiority cannot be ruled out';
+            }
+        }
+
+        function getSafetyConsiderations(regulatory) {
+            if (regulatory === 'generic') return 'Bioequivalence implies therapeutic equivalence';
+            if (regulatory === 'biosimilar') return 'Additional immunogenicity and safety monitoring required';
+            return 'Safety profile similar to reference product expected';
+        }
+
+        function getMarketAccess(conclusion, regulatory) {
+            if (conclusion.includes('demonstrated')) {
+                return regulatory === 'generic' ? 'Provincial formulary listing expected' :
+                       'Health technology assessment required for reimbursement';
+            } else {
+                return 'Market access unlikely without successful equivalence demonstration';
+            }
+        }
+
+        function getCostImplications(studyType, conclusion) {
+            if (conclusion.includes('demonstrated')) {
+                return studyType === 'equivalence' ? 'Cost savings through generic competition' :
+                       'Potential cost savings with similar efficacy profile';
+            } else {
+                return 'Additional development costs for study redesign';
+            }
         }
 
         function simulateSurvivalStudy() {
-            // Placeholder for Section 9
+            const design = document.getElementById('survival-design').value;
+            const nPerGroup = parseInt(document.getElementById('survival-n').value);
+            const followupTime = parseInt(document.getElementById('followup-time').value);
+            const hazardRatio = parseFloat(document.getElementById('hazard-ratio').value);
+            const censoringRate = parseFloat(document.getElementById('censoring-rate').value) / 100;
+            const context = document.getElementById('survival-context').value;
+
+            // Generate survival data for two groups
+            const group1Data = generateSurvivalData(nPerGroup, followupTime, 1.0, censoringRate); // Control/reference
+            const group2Data = generateSurvivalData(nPerGroup, followupTime, hazardRatio, censoringRate); // Treatment/test
+            
+            // Calculate Kaplan-Meier estimates
+            const km1 = calculateKaplanMeier(group1Data);
+            const km2 = calculateKaplanMeier(group2Data);
+            
+            // Log-rank test
+            const logRankTest = performLogRankTest(group1Data, group2Data);
+            
+            // Summary statistics
+            const median1 = calculateMedianSurvival(km1);
+            const median2 = calculateMedianSurvival(km2);
+            const survival1At12 = getSurvivalAtTime(km1, 12);
+            const survival2At12 = getSurvivalAtTime(km2, 12);
+            
+            // Event counts
+            const events1 = group1Data.filter(p => p.event === 1).length;
+            const events2 = group2Data.filter(p => p.event === 1).length;
+            const censored1 = nPerGroup - events1;
+            const censored2 = nPerGroup - events2;
+
+            const contextInfo = getContextInfo(context);
+
             document.getElementById('survival-results').style.display = 'block';
             document.getElementById('survival-results').innerHTML = `
-                <h4>Survival Analysis Introduction</h4>
-                <p>This section would introduce Kaplan-Meier curves, log-rank tests, and censoring concepts.</p>
-                <p>Implementation includes time-to-event analysis for oncology trials, device failure studies, and chronic disease progression.</p>
+                <h4>Survival Analysis: ${contextInfo.title}</h4>
+                
+                <p><strong>Study Design:</strong></p>
+                <p>• Clinical context: ${contextInfo.description}</p>
+                <p>• Sample size per group: ${nPerGroup}</p>
+                <p>• Follow-up duration: ${followupTime} months</p>
+                <p>• Expected hazard ratio: ${hazardRatio}</p>
+                <p>• Primary endpoint: ${contextInfo.endpoint}</p>
+
+                <p><strong>Study Population Summary:</strong></p>
+                <table>
+                    <tr><th>Group</th><th>N</th><th>Events</th><th>Censored</th><th>Event Rate</th></tr>
+                    <tr>
+                        <td>${contextInfo.group1}</td>
+                        <td>${nPerGroup}</td>
+                        <td>${events1}</td>
+                        <td>${censored1}</td>
+                        <td>${(events1/nPerGroup*100).toFixed(1)}%</td>
+                    </tr>
+                    <tr>
+                        <td>${contextInfo.group2}</td>
+                        <td>${nPerGroup}</td>
+                        <td>${events2}</td>
+                        <td>${censored2}</td>
+                        <td>${(events2/nPerGroup*100).toFixed(1)}%</td>
+                    </tr>
+                </table>
+
+                <p><strong>Kaplan-Meier Survival Estimates:</strong></p>
+                <table>
+                    <tr><th>Endpoint</th><th>${contextInfo.group1}</th><th>${contextInfo.group2}</th><th>Difference</th></tr>
+                    <tr>
+                        <td>Median survival (months)</td>
+                        <td>${median1 ? median1.toFixed(1) : 'Not reached'}</td>
+                        <td>${median2 ? median2.toFixed(1) : 'Not reached'}</td>
+                        <td>${median1 && median2 ? (median2 - median1).toFixed(1) : 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td>12-month survival</td>
+                        <td>${(survival1At12 * 100).toFixed(1)}%</td>
+                        <td>${(survival2At12 * 100).toFixed(1)}%</td>
+                        <td>${((survival2At12 - survival1At12) * 100).toFixed(1)}%</td>
+                    </tr>
+                </table>
+
+                <p><strong>Log-rank Test Results:</strong></p>
+                <p>• Chi-square statistic: ${logRankTest.chiSquare.toFixed(3)}</p>
+                <p>• <span class="highlight">p-value: ${logRankTest.pValue.toFixed(4)}</span></p>
+                <p>• Degrees of freedom: 1</p>
+                <p>• Statistical conclusion: ${logRankTest.pValue < 0.05 ? 'Significant difference between groups' : 'No significant difference detected'}</p>
+
+                <p><strong>Effect Size Estimation:</strong></p>
+                <p>• Observed hazard ratio: ${logRankTest.observedHR.toFixed(2)}</p>
+                <p>• HR interpretation: ${interpretHazardRatio(logRankTest.observedHR)}</p>
+                <p>• Risk reduction: ${((1 - logRankTest.observedHR) * 100).toFixed(1)}% ${logRankTest.observedHR < 1 ? 'reduction' : 'increase'}</p>
+
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• Clinical significance: ${interpretClinicalSurvival(contextInfo, logRankTest.observedHR, logRankTest.pValue)}</p>
+                <p>• Number needed to treat: ${calculateNNT(survival1At12, survival2At12)}</p>
+                <p>• Years of life gained: ${calculateLifeYearsGained(median1, median2)}</p>
+                
+                <p><strong>Regulatory Considerations:</strong></p>
+                <p>• Primary analysis: ${getAnalysisComment(logRankTest.pValue, events1 + events2)}</p>
+                <p>• Censoring assessment: ${getCensoringComment(censoringRate)}</p>
+                <p>• Follow-up adequacy: ${getFollowupComment(followupTime, median1, median2)}</p>
+                <p>• Regulatory pathway: ${getRegulatoryComment(context, logRankTest.pValue)}</p>
+
+                <p><strong>Study Limitations:</strong></p>
+                <p>• Proportional hazards assumption: ${checkProportionalHazards(hazardRatio)}</p>
+                <p>• Competing risks: ${getCompetingRisks(context)}</p>
+                <p>• Missing data impact: ${getMissingDataImpact(censoringRate)}</p>
             `;
+
+            createSurvivalVisualization(km1, km2, contextInfo);
+        }
+
+        function generateSurvivalData(n, maxTime, hazardRatio, censorRate) {
+            const data = [];
+            for (let i = 0; i < n; i++) {
+                // Exponential survival times with hazard adjustment
+                const baseHazard = 0.02; // Monthly hazard
+                const hazard = baseHazard * hazardRatio;
+                const timeToEvent = -Math.log(Math.random()) / hazard;
+                
+                // Censoring time
+                const censorTime = Math.random() < censorRate ? Math.random() * maxTime : maxTime;
+                
+                // Observed time and event indicator
+                const observedTime = Math.min(timeToEvent, censorTime);
+                const event = timeToEvent <= censorTime ? 1 : 0;
+                
+                data.push({
+                    id: i + 1,
+                    time: observedTime,
+                    event: event
+                });
+            }
+            
+            return data.sort((a, b) => a.time - b.time);
+        }
+
+        function calculateKaplanMeier(data) {
+            const times = [...new Set(data.filter(d => d.event === 1).map(d => d.time))].sort((a, b) => a - b);
+            const kmEstimates = [];
+            let survival = 1.0;
+            
+            for (const time of times) {
+                const atRisk = data.filter(d => d.time >= time).length;
+                const events = data.filter(d => d.time === time && d.event === 1).length;
+                
+                if (atRisk > 0) {
+                    survival *= (1 - events / atRisk);
+                }
+                
+                kmEstimates.push({
+                    time: time,
+                    survival: survival,
+                    atRisk: atRisk,
+                    events: events
+                });
+            }
+            
+            return kmEstimates;
+        }
+
+        function performLogRankTest(group1, group2) {
+            const combinedData = [
+                ...group1.map(d => ({...d, group: 1})),
+                ...group2.map(d => ({...d, group: 2}))
+            ].sort((a, b) => a.time - b.time);
+
+            const uniqueTimes = [...new Set(combinedData.filter(d => d.event === 1).map(d => d.time))];
+            
+            let observedMinus Expected = 0;
+            let variance = 0;
+            
+            for (const time of uniqueTimes) {
+                const atRisk1 = combinedData.filter(d => d.time >= time && d.group === 1).length;
+                const atRisk2 = combinedData.filter(d => d.time >= time && d.group === 2).length;
+                const totalAtRisk = atRisk1 + atRisk2;
+                
+                const events1 = combinedData.filter(d => d.time === time && d.event === 1 && d.group === 1).length;
+                const events2 = combinedData.filter(d => d.time === time && d.event === 1 && d.group === 2).length;
+                const totalEvents = events1 + events2;
+                
+                if (totalAtRisk > 0 && totalEvents > 0) {
+                    const expected1 = atRisk1 * totalEvents / totalAtRisk;
+                    const varComponent = atRisk1 * atRisk2 * totalEvents * (totalAtRisk - totalEvents) / 
+                                       (Math.pow(totalAtRisk, 2) * (totalAtRisk - 1));
+                    
+                    observedMinusExpected += events1 - expected1;
+                    variance += varComponent;
+                }
+            }
+            
+            const chiSquare = variance > 0 ? Math.pow(observedMinusExpected, 2) / variance : 0;
+            const pValue = variance > 0 ? 1 - chiSquareCDF(chiSquare, 1) : 1;
+            
+            // Estimate hazard ratio
+            const events1 = group1.filter(d => d.event === 1).length;
+            const events2 = group2.filter(d => d.event === 1).length;
+            const totalTime1 = group1.reduce((sum, d) => sum + d.time, 0);
+            const totalTime2 = group2.reduce((sum, d) => sum + d.time, 0);
+            
+            const hazardRate1 = events1 / totalTime1;
+            const hazardRate2 = events2 / totalTime2;
+            const observedHR = hazardRate2 / hazardRate1;
+            
+            return {
+                chiSquare: chiSquare,
+                pValue: pValue,
+                observedHR: observedHR
+            };
+        }
+
+        function calculateMedianSurvival(kmData) {
+            const medianPoint = kmData.find(point => point.survival <= 0.5);
+            return medianPoint ? medianPoint.time : null;
+        }
+
+        function getSurvivalAtTime(kmData, targetTime) {
+            if (kmData.length === 0) return 1.0;
+            
+            // Find the last time point <= targetTime
+            let survival = 1.0;
+            for (const point of kmData) {
+                if (point.time <= targetTime) {
+                    survival = point.survival;
+                } else {
+                    break;
+                }
+            }
+            return survival;
+        }
+
+        function getContextInfo(context) {
+            const contexts = {
+                cancer: {
+                    title: 'Cancer Treatment Trial',
+                    description: 'Comparing overall survival between treatment regimens',
+                    endpoint: 'Overall survival (death from any cause)',
+                    group1: 'Standard therapy',
+                    group2: 'Experimental therapy'
+                },
+                cardiovascular: {
+                    title: 'Cardiovascular Prevention Study',
+                    description: 'Primary prevention of major cardiovascular events',
+                    endpoint: 'Time to first major cardiovascular event',
+                    group1: 'Placebo',
+                    group2: 'Active treatment'
+                },
+                'chronic-disease': {
+                    title: 'Chronic Disease Management',
+                    description: 'Comparing disease progression between treatments',
+                    endpoint: 'Time to disease progression',
+                    group1: 'Standard care',
+                    group2: 'Intensive management'
+                },
+                device: {
+                    title: 'Medical Device Study',
+                    description: 'Device failure time comparison',
+                    endpoint: 'Time to device failure or replacement',
+                    group1: 'Standard device',
+                    group2: 'New device'
+                }
+            };
+            return contexts[context];
+        }
+
+        function interpretHazardRatio(hr) {
+            if (hr < 0.5) return 'Large reduction in hazard';
+            if (hr < 0.75) return 'Moderate reduction in hazard';
+            if (hr < 0.9) return 'Small reduction in hazard';
+            if (hr < 1.1) return 'No meaningful difference';
+            if (hr < 1.3) return 'Small increase in hazard';
+            if (hr < 1.5) return 'Moderate increase in hazard';
+            return 'Large increase in hazard';
+        }
+
+        function interpretClinicalSurvival(contextInfo, hr, pValue) {
+            if (pValue >= 0.05) return 'No statistically significant survival benefit detected';
+            
+            if (contextInfo.title.includes('Cancer')) {
+                if (hr < 0.8) return 'Clinically meaningful survival benefit for cancer patients';
+                return 'Modest survival benefit - clinical significance unclear';
+            } else if (contextInfo.title.includes('Cardiovascular')) {
+                if (hr < 0.85) return 'Clinically important cardiovascular risk reduction';
+                return 'Modest risk reduction - consider number needed to treat';
+            }
+            
+            return hr < 0.85 ? 'Clinically significant improvement' : 'Modest benefit of unclear clinical importance';
+        }
+
+        function calculateNNT(control12mo, treatment12mo) {
+            const absoluteRiskReduction = treatment12mo - control12mo;
+            if (Math.abs(absoluteRiskReduction) < 0.01) return 'Cannot calculate (very small difference)';
+            return Math.round(1 / Math.abs(absoluteRiskReduction));
+        }
+
+        function calculateLifeYearsGained(median1, median2) {
+            if (!median1 || !median2) return 'Cannot calculate (median not reached)';
+            const monthsGained = median2 - median1;
+            const yearsGained = monthsGained / 12;
+            return `${yearsGained.toFixed(1)} years`;
+        }
+
+        function getAnalysisComment(pValue, totalEvents) {
+            if (totalEvents < 50) return 'Low event count - consider longer follow-up';
+            if (pValue < 0.001) return 'Highly significant result suitable for regulatory submission';
+            if (pValue < 0.05) return 'Statistically significant - adequate for primary analysis';
+            return 'Non-significant result - consider alternative endpoints';
+        }
+
+        function getCensoringComment(rate) {
+            if (rate < 0.1) return 'Low censoring rate - robust analysis';
+            if (rate < 0.3) return 'Moderate censoring - check for informative censoring';
+            return 'High censoring rate - assess impact on results validity';
+        }
+
+        function getFollowupComment(followup, median1, median2) {
+            const maxMedian = Math.max(median1 || 0, median2 || 0);
+            if (followup > maxMedian * 1.5) return 'Adequate follow-up for mature survival data';
+            if (followup > maxMedian) return 'Reasonable follow-up - consider extended monitoring';
+            return 'Limited follow-up - longer duration recommended';
+        }
+
+        function getRegulatoryComment(context, pValue) {
+            if (context === 'cancer') {
+                return pValue < 0.05 ? 'Eligible for Health Canada oncology review' : 
+                       'Insufficient evidence for regulatory approval';
+            }
+            return pValue < 0.05 ? 'Supportive evidence for Health Canada submission' :
+                   'Additional studies likely required';
+        }
+
+        function checkProportionalHazards(trueHR) {
+            return trueHR > 0.5 && trueHR < 2.0 ? 
+                   'Likely maintained (moderate hazard ratio)' :
+                   'May be violated (extreme hazard ratio) - consider time-varying effects';
+        }
+
+        function getCompetingRisks(context) {
+            if (context === 'cancer') return 'Consider competing mortality risks';
+            if (context === 'cardiovascular') return 'Multiple cardiovascular events possible';
+            return 'Assess for competing events in analysis';
+        }
+
+        function getMissingDataImpact(rate) {
+            if (rate < 0.1) return 'Minimal impact expected';
+            if (rate < 0.3) return 'Moderate impact - assess sensitivity';
+            return 'High impact - comprehensive sensitivity analysis required';
         }
     </script>
 </body>
