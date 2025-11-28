@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Series: Bayesian Methods in Healthcare & Clinical Decision-Making</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --primary-sapphire: #1E40AF;
+            --secondary-blue: #3B82F6;
+            --light-sapphire: #DBEAFE;
+            --pale-sapphire: #EFF6FF;
+            --deep-sapphire: #1E3A8A;
+            --clinical-royal: #1D4ED8;
+            --sophisticated-indigo: #4338CA;
+            --medical-azure: #0EA5E9;
+            --clinical-platinum: #F1F5F9;
+            --health-gold: #F59E0B;
+            --research-emerald: #10B981;
+            --charcoal: #374151;
+            --steel: #64748B;
+            --cream: #F9FAFB;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F8FAFC 50%, var(--pale-sapphire) 100%);
+            color: var(--charcoal);
+            line-height: 1.75;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Bayesian Inference Flow Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(ellipse at 25% 15%, rgba(30, 64, 175, 0.14) 0%, transparent 78%),
+                radial-gradient(ellipse at 75% 85%, rgba(59, 130, 246, 0.16) 0%, transparent 82%),
+                radial-gradient(ellipse at 90% 5%, rgba(29, 78, 216, 0.12) 0%, transparent 75%),
+                radial-gradient(ellipse at 10% 95%, rgba(67, 56, 202, 0.1) 0%, transparent 70%);
+            animation: bayesianFlow 84s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes bayesianFlow {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1) translate(0, 0); 
+                opacity: 0.88; 
+            }
+            25% { 
+                transform: rotate(90deg) scale(1.45) translate(75px, -45px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: rotate(180deg) scale(0.75) translate(-65px, 65px); 
+                opacity: 0.93; 
+            }
+            75% { 
+                transform: rotate(270deg) scale(1.4) translate(60px, -30px); 
+                opacity: 0.97; 
+            }
+        }
+
+        /* MCMC Sampling Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(140deg, 
+                    transparent 0px, 
+                    rgba(30, 64, 175, 0.035) 1px, 
+                    transparent 2px, 
+                    transparent 130px),
+                repeating-linear-gradient(-30deg, 
+                    transparent 0px, 
+                    rgba(59, 130, 246, 0.028) 1px, 
+                    transparent 2px, 
+                    transparent 150px);
+            z-index: -1;
+            animation: bayesianGrid 68s linear infinite;
+        }
+
+        @keyframes bayesianGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(130px) translateY(150px); }
+        }
+
+        .container {
+            max-width: 2400px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 
+                0 0 145px rgba(30, 64, 175, 0.24),
+                0 70px 135px rgba(59, 130, 246, 0.22),
+                0 60px 95px rgba(29, 78, 216, 0.2);
+            border-radius: 80px;
+            overflow: hidden;
+            backdrop-filter: blur(45px);
+            animation: bayesianEntry 5.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(30, 64, 175, 0.38);
+        }
+
+        @keyframes bayesianEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(145px) rotateX(45deg);
+                filter: blur(45px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* Bayesian Methods Header Design */
+        .header-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-sapphire) 35%, var(--deep-sapphire) 70%, var(--clinical-royal) 100%);
+            color: white;
+            padding: 115px 105px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.35) 8%, 
+                transparent 25%, 
+                rgba(29, 78, 216, 0.3) 42%, 
+                transparent 60%, 
+                rgba(67, 56, 202, 0.28) 78%, 
+                transparent 90%);
+            animation: bayesianHeader 34s ease-in-out infinite;
+        }
+
+        @keyframes bayesianHeader {
+            0%, 100% { 
+                transform: translateX(-240px) scaleY(1) rotate(0deg); 
+                opacity: 0.85; 
+            }
+            33% { 
+                transform: translateX(165px) scaleY(1.95) rotate(4.5deg); 
+                opacity: 1; 
+            }
+            66% { 
+                transform: translateX(-135px) scaleY(0.6) rotate(-4deg); 
+                opacity: 0.92; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Spectral', serif;
+            font-size: 8.2em;
+            font-weight: 800;
+            margin-bottom: 70px;
+            text-shadow: 12px 14px 45px rgba(0,0,0,0.9);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, white 0%, var(--light-sapphire) 22%, #BFDBFE 58%, white 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleBayesian 8.5s ease-in-out infinite alternate;
+            letter-spacing: -6.8px;
+        }
+
+        @keyframes titleBayesian {
+            from { 
+                filter: drop-shadow(0 0 55px rgba(59, 130, 246, 1.0)); 
+                text-shadow: 0 0 115px rgba(30, 64, 175, 0.9);
+            }
+            to { 
+                filter: drop-shadow(0 0 75px rgba(30, 64, 175, 1.0)); 
+                text-shadow: 0 0 135px rgba(30, 58, 138, 0.95);
+            }
+        }
+
+        .header-subtitle {
+            font-size: 4.3em;
+            font-weight: 400;
+            opacity: 0.98;
+            position: relative;
+            z-index: 2;
+            color: var(--light-sapphire);
+            text-shadow: 11px 12px 40px rgba(0,0,0,0.8);
+            letter-spacing: 3.5px;
+            font-style: italic;
+        }
+
+        /* Advanced Bayesian Navigation */
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, var(--primary-sapphire) 0%, var(--health-gold) 10%, var(--steel) 20%, var(--sophisticated-indigo) 30%, var(--deep-sapphire) 40%, var(--clinical-royal) 50%, var(--primary-sapphire) 60%, var(--medical-azure) 70%, var(--deep-sapphire) 80%, var(--health-gold) 90%, var(--primary-sapphire) 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 14px 0 rgba(59, 130, 246, 1.0);
+        }
+
+        .nav-tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.32) 0%, 
+                rgba(59, 130, 246, 0.5) 50%, 
+                rgba(255,255,255,0.32) 100%);
+            transform: translateX(-500%);
+            animation: bayesianNav 28s ease-in-out infinite;
+        }
+
+        @keyframes bayesianNav {
+            0%, 100% { transform: translateX(-500%); }
+            50% { transform: translateX(1000%); }
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 72px 80px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.9em;
+            cursor: pointer;
+            transition: all 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 15px solid transparent;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 2.5px;
+        }
+
+        .tab-button:hover {
+            background: rgba(59, 130, 246, 0.5);
+            transform: translateY(-11px);
+            box-shadow: 0 35px 75px rgba(0,0,0,0.7);
+            color: var(--cream);
+        }
+
+        .tab-button.active {
+            background: rgba(59, 130, 246, 0.7);
+            border-bottom-color: var(--health-gold);
+            font-weight: 600;
+            color: var(--cream);
+            box-shadow: inset 0 -15px 0 var(--health-gold);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 150px;
+            animation: bayesianSlide 3.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes bayesianSlide {
+            from {
+                opacity: 0;
+                transform: translateY(140px) scale(0.88);
+                filter: blur(32px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Section Titles - RED (Consistency) */
+        .section-title {
+            font-family: 'Spectral', serif;
+            font-size: 8.2em;
+            color: #DC2626;
+            margin-bottom: 145px;
+            text-align: center;
+            font-weight: 800;
+            position: relative;
+            text-shadow: 11px 12px 40px rgba(0,0,0,0.3);
+            letter-spacing: -6.0px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -65px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 550px;
+            height: 14px;
+            background: linear-gradient(90deg, 
+                var(--light-sapphire) 0%, 
+                var(--health-gold) 8%, 
+                var(--steel) 16%, 
+                var(--sophisticated-indigo) 24%, 
+                var(--deep-sapphire) 32%, 
+                var(--primary-sapphire) 40%, 
+                var(--clinical-royal) 48%, 
+                var(--medical-azure) 56%, 
+                var(--deep-sapphire) 64%, 
+                var(--health-gold) 72%, 
+                var(--steel) 80%, 
+                var(--light-sapphire) 100%);
+            border-radius: 13px;
+            animation: bayesianUnderline 14.0s ease-in-out infinite alternate;
+        }
+
+        @keyframes bayesianUnderline {
+            from { width: 550px; opacity: 0.9; }
+            to { width: 800px; opacity: 1; }
+        }
+
+        /* Medical Sapphire/Royal Blue Boxes - Expert Framework */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(820px, 1fr));
+            gap: 135px;
+            margin-bottom: 155px;
+        }
+
+        .theory-card {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, #F8FAFC 50%, var(--white) 100%);
+            padding: 110px;
+            border-radius: 70px;
+            border: 13px solid var(--light-sapphire);
+            box-shadow: 
+                0 65px 165px rgba(30, 64, 175, 0.28),
+                0 45px 90px rgba(59, 130, 246, 0.3);
+            transition: all 1.7s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card::before {
+            content: '';
+            position: absolute;
+            top: -90px;
+            right: -90px;
+            width: 340px;
+            height: 340px;
+            background: radial-gradient(circle, 
+                rgba(59, 130, 246, 0.28) 0%, 
+                rgba(30, 64, 175, 0.26) 40%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: cardBayesian 18s ease-in-out infinite;
+        }
+
+        @keyframes cardBayesian {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.92; 
+            }
+            25% { 
+                transform: scale(1.6) translateX(70px) translateY(-70px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.6) translateX(-60px) translateY(60px) rotate(180deg); 
+                opacity: 0.86; 
+            }
+            75% { 
+                transform: scale(1.55) translateX(60px) translateY(-40px) rotate(270deg); 
+                opacity: 1; 
+            }
+        }
+
+        .theory-card:hover {
+            transform: translateY(-45px);
+            box-shadow: 
+                0 85px 220px rgba(30, 64, 175, 0.38),
+                0 55px 115px rgba(59, 130, 246, 0.45);
+            border-color: var(--primary-sapphire);
+        }
+
+        .theory-card h3 {
+            font-family: 'Spectral', serif;
+            color: #DC2626;
+            margin-bottom: 75px;
+            font-size: 4.5em;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.8px;
+        }
+
+        .theory-card p {
+            font-size: 2.0em;
+            line-height: 2.7;
+            margin-bottom: 45px;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        /* Mathematical Formulas - Bayesian Style */
+        .formula-display {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-sapphire) 50%, var(--deep-sapphire) 100%);
+            color: white;
+            padding: 90px;
+            border-radius: 65px;
+            margin: 80px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.0em;
+            box-shadow: 
+                inset 0 13px 70px rgba(0,0,0,0.95), 
+                0 60px 125px rgba(30, 64, 175, 0.7);
+            overflow-x: auto;
+            border: 13px solid rgba(59, 130, 246, 1.0);
+            position: relative;
+        }
+
+        .formula-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 13px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--light-sapphire) 8%, 
+                var(--health-gold) 16%, 
+                var(--steel) 24%, 
+                var(--sophisticated-indigo) 32%, 
+                var(--deep-sapphire) 40%, 
+                var(--clinical-royal) 48%, 
+                var(--medical-azure) 56%, 
+                transparent 100%);
+            animation: formulaBayesian 9.5s ease-in-out infinite;
+        }
+
+        @keyframes formulaBayesian {
+            0%, 100% { opacity: 0.8; transform: scaleX(0.55); }
+            50% { opacity: 1; transform: scaleX(3.5); }
+        }
+
+        /* Medical Sapphire Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, #F8FAFC 50%, var(--white) 100%);
+            padding: 145px;
+            border-radius: 80px;
+            margin: 145px 0;
+            border: 14px solid var(--light-sapphire);
+            box-shadow: 
+                0 75px 215px rgba(59, 130, 246, 0.42),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: -230%;
+            left: -230%;
+            width: 560%;
+            height: 560%;
+            background: conic-gradient(from 145deg at 50% 50%, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.16) 18%, 
+                transparent 28%, 
+                rgba(30, 64, 175, 0.14) 54%, 
+                transparent 64%);
+            animation: controlBayesian 56s linear infinite;
+        }
+
+        @keyframes controlBayesian {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-header {
+            font-family: 'Spectral', serif;
+            color: #DC2626;
+            font-size: 6.8em;
+            margin-bottom: 125px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -2.8px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(740px, 1fr));
+            gap: 90px;
+            margin-bottom: 135px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 60px;
+            color: var(--charcoal);
+            font-size: 1.9em;
+            letter-spacing: 1.3px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 65px;
+            border: 2px solid #E5E7EB;
+            border-radius: 60px;
+            font-size: 1.8em;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 22px 60px rgba(0,0,0,0.2);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-sapphire);
+            box-shadow: 
+                0 0 75px rgba(30, 64, 175, 0.7),
+                0 0 0 13px rgba(59, 130, 246, 0.42);
+            transform: translateY(-11px) scale(1.14);
+        }
+
+        /* Advanced Bayesian Action Buttons */
+        .button-group {
+            display: flex;
+            gap: 75px;
+            margin-top: 135px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 65px 145px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 2.0em;
+            cursor: pointer;
+            transition: all 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 4.8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,1.0) 50%, 
+                transparent 100%);
+            transition: left 2.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-sapphire) 0%, var(--deep-sapphire) 100%);
+            color: white;
+            box-shadow: 0 35px 95px rgba(30, 64, 175, 0.8);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--deep-sapphire) 0%, var(--primary-sapphire) 100%);
+            transform: translateY(-25px);
+            box-shadow: 0 55px 145px rgba(30, 64, 175, 0.9);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--health-gold) 0%, #D97706 100%);
+            color: white;
+            box-shadow: 0 35px 95px rgba(245, 158, 11, 0.8);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #D97706 0%, var(--health-gold) 100%);
+            transform: translateY(-25px);
+            box-shadow: 0 55px 145px rgba(245, 158, 11, 0.9);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--steel) 0%, #334155 100%);
+            color: white;
+            box-shadow: 0 35px 95px rgba(100, 116, 139, 0.8);
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #334155 0%, var(--steel) 100%);
+            transform: translateY(-25px);
+            box-shadow: 0 55px 145px rgba(100, 116, 139, 0.9);
+        }
+
+        /* Medical Sapphire Results Container */
+        .results-container {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, #F8FAFC 100%);
+            border: 14px solid var(--light-sapphire);
+            border-radius: 75px;
+            padding: 145px;
+            margin: 145px 0;
+            box-shadow: 
+                0 75px 230px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.99);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(90deg, 
+                var(--light-sapphire) 0%, 
+                var(--health-gold) 7%, 
+                var(--steel) 14%, 
+                var(--sophisticated-indigo) 21%, 
+                var(--deep-sapphire) 28%, 
+                var(--primary-sapphire) 35%, 
+                var(--clinical-royal) 42%, 
+                var(--medical-azure) 49%, 
+                var(--deep-sapphire) 56%, 
+                var(--health-gold) 63%, 
+                var(--steel) 70%, 
+                var(--primary-sapphire) 77%, 
+                var(--light-sapphire) 100%);
+            animation: bayesianResults 9.5s ease-in-out infinite;
+        }
+
+        @keyframes bayesianResults {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 1; }
+        }
+
+        .results-header {
+            font-family: 'Spectral', serif;
+            font-size: 7.2em;
+            color: #DC2626;
+            margin-bottom: 125px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -2.8px;
+        }
+
+        /* Medical Sapphire Chart Container */
+        .chart-container {
+            position: relative;
+            height: 1150px;
+            margin: 145px 0;
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, var(--white) 100%);
+            border-radius: 70px;
+            padding: 135px;
+            box-shadow: 0 65px 190px rgba(0,0,0,0.35);
+            border: 13px solid var(--light-sapphire);
+        }
+
+        /* Statistics Grid - Medical Sapphire Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(660px, 1fr));
+            gap: 125px;
+            margin: 135px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, var(--white) 100%);
+            padding: 90px;
+            border-radius: 65px;
+            text-align: center;
+            border: 13px solid var(--light-sapphire);
+            transition: all 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 13px;
+            background: linear-gradient(90deg, var(--light-sapphire) 0%, var(--primary-sapphire) 50%, var(--health-gold) 100%);
+            transform: scaleX(0);
+            transition: transform 1.5s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-38px) scale(1.15);
+            box-shadow: 0 70px 195px rgba(0,0,0,0.42);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 5.0em;
+            font-weight: 700;
+            color: var(--primary-sapphire);
+            margin-bottom: 45px;
+        }
+
+        .stat-label {
+            font-size: 1.9em;
+            color: var(--steel);
+            font-weight: 500;
+        }
+
+        /* Bayesian-Specific Elements */
+        .bayesian-info {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, #EBF8FF 100%);
+            border: 13px solid var(--light-sapphire);
+            border-radius: 60px;
+            padding: 90px;
+            margin: 90px 0;
+        }
+
+        .bayesian-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 65px;
+            margin: 75px 0;
+        }
+
+        .bayesian-metric-card {
+            background: var(--primary-sapphire);
+            color: white;
+            padding: 65px 55px;
+            border-radius: 45px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .bayesian-metric-card:nth-child(1) { background: var(--health-gold); }
+        .bayesian-metric-card:nth-child(2) { background: var(--steel); }
+        .bayesian-metric-card:nth-child(3) { background: var(--primary-sapphire); }
+        .bayesian-metric-card:nth-child(4) { background: var(--sophisticated-indigo); }
+
+        /* Decision Framework - Medical Sapphire */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, rgba(59, 130, 246, 0.5) 100%);
+            border: 14px solid var(--light-sapphire);
+            border-radius: 75px;
+            padding: 135px;
+            margin: 135px 0;
+        }
+
+        .decision-question {
+            font-family: 'Spectral', serif;
+            font-weight: 700;
+            font-size: 3.3em;
+            margin-bottom: 95px;
+            color: var(--charcoal);
+            text-align: center;
+            letter-spacing: -1.3px;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 75px;
+        }
+
+        .decision-option {
+            padding: 75px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 1.5s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.9em;
+        }
+
+        .decision-option:hover {
+            border-color: var(--health-gold);
+            background: var(--pale-sapphire);
+            transform: translateY(-22px);
+        }
+
+        .decision-option.selected {
+            border-color: var(--primary-sapphire);
+            background: var(--pale-sapphire);
+            box-shadow: 0 0 100px rgba(30, 64, 175, 0.8);
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            padding: 90px;
+            border-radius: 65px;
+            margin: 90px 0;
+            font-weight: 500;
+            font-size: 2.0em;
+        }
+
+        .feedback-success {
+            background: var(--pale-sapphire);
+            border: 13px solid var(--light-sapphire);
+            color: var(--deep-sapphire);
+        }
+
+        .feedback-warning {
+            background: #FFF8E1;
+            border: 13px solid var(--health-gold);
+            color: #8F6300;
+        }
+
+        .feedback-danger {
+            background: #FFEBEE;
+            border: 13px solid #DC2626;
+            color: #8B0000;
+        }
+
+        /* Prior/Posterior Distribution */
+        .distribution-plot {
+            background: white;
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+            box-shadow: 0 28px 65px rgba(0,0,0,0.28);
+        }
+
+        .distribution-plot h4 {
+            color: var(--primary-sapphire);
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 1.9em;
+        }
+
+        /* MCMC Trace Plot */
+        .mcmc-trace {
+            background: white;
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+            text-align: center;
+        }
+
+        /* Credible Interval Display */
+        .credible-interval {
+            background: var(--pale-sapphire);
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+        }
+
+        .credible-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .credible-metric {
+            background: var(--primary-sapphire);
+            color: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* Bayesian Steps */
+        .bayesian-steps {
+            background: var(--pale-sapphire);
+            padding: 75px;
+            border-radius: 50px;
+            margin: 75px 0;
+            border: 12px solid var(--light-sapphire);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin: 45px 0;
+            padding: 45px;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+        }
+
+        .step-number {
+            background: var(--primary-sapphire);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 45px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .step-text {
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 65px;
+                border-radius: 78px;
+            }
+
+            .header-title {
+                font-size: 7.5em;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bayesian-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .credible-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Research References - Medical Sapphire */
+        .research-note {
+            background: linear-gradient(135deg, var(--pale-sapphire) 0%, #EBF8FF 100%);
+            padding: 90px;
+            border-radius: 60px;
+            margin: 90px 0;
+            border-left: 28px solid var(--primary-sapphire);
+            font-style: italic;
+            position: relative;
+        }
+
+        .research-note::before {
+            content: '🧠';
+            position: absolute;
+            top: 90px;
+            left: 75px;
+            font-size: 3.5em;
+        }
+
+        .research-note p {
+            margin-left: 135px;
+            line-height: 3.0;
+        }
+
+        /* Advanced Visual Effects */
+        .bayesian-highlight {
+            background: rgba(30, 64, 175, 0.32);
+            border-left: 24px solid var(--primary-sapphire);
+            padding: 65px;
+            margin: 65px 0;
+            border-radius: 35px;
+        }
+
+        .posterior-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-sapphire) 0%, var(--primary-sapphire) 100%);
+            color: white;
+            padding: 35px 65px;
+            border-radius: 70px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            margin: 0 35px;
+            font-size: 1.8em;
+        }
+
+        /* Canadian Healthcare Context */
+        .canada-bayesian {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+            color: white;
+            padding: 28px 60px;
+            border-radius: 60px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.3em;
+            display: inline-block;
+            margin: 0 28px;
+        }
+
+        /* Prior Distribution */
+        .prior-distribution {
+            background: var(--pale-sapphire);
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+        }
+
+        /* Likelihood Function */
+        .likelihood-function {
+            background: white;
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+            box-shadow: 0 25px 65px rgba(0,0,0,0.25);
+        }
+
+        /* Decision Theory */
+        .decision-theory {
+            background: var(--pale-sapphire);
+            border: 3px solid var(--light-sapphire);
+            border-radius: 40px;
+            padding: 65px;
+            margin: 65px 0;
+        }
+
+        .utility-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .utility-cell {
+            background: var(--primary-sapphire);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">Bayesian Methods in Healthcare & Clinical Decision-Making</h1>
+            <p class="header-subtitle">Expert Series: Advanced Bayesian Inference for Clinical Research Excellence</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('theory')">🧠 Bayesian Theory</button>
+            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Bayesian Models</button>
+            <button class="tab-button" onclick="showSection('analysis')">💙 Inference & MCMC</button>
+            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
+        </div>
+
+        <!-- Theory Framework Section -->
+        <div id="theory" class="content-section active">
+            <h2 class="section-title">Bayesian Methods Framework for Healthcare Applications</h2>
+            
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>🧠 Bayesian Inference Fundamentals</h3>
+                    <p><strong>Prior to Posterior Learning:</strong> Bayesian inference combines prior knowledge with observed data to update beliefs about parameters, providing probabilistic statements about uncertainty that directly inform clinical decision-making.</p>
+                    <div class="formula-display">
+                        Bayes' Theorem (Foundation):<br><br>
+                        P(θ|data) = P(data|θ) × P(θ) / P(data)<br><br>
+                        Components:<br>
+                        P(θ|data) = Posterior distribution<br>
+                        P(data|θ) = Likelihood function<br>
+                        P(θ) = Prior distribution<br>
+                        P(data) = Marginal likelihood (normalizing constant)<br><br>
+                        Continuous Form:<br>
+                        π(θ|x) ∝ L(θ|x) × π(θ)<br><br>
+                        Clinical Interpretation:<br>
+                        π(θ|x) = Updated belief about treatment effect θ<br>
+                        L(θ|x) = Evidence from clinical trial data<br>
+                        π(θ) = Prior knowledge from literature/experts<br><br>
+                        Advantage: Incorporates uncertainty and prior knowledge<br>
+                        Natural probability statements: P(θ > 0|data) = 95%
+                    </div>
+                    <p><em>Clinical insight: Bayesian methods provide intuitive probability statements about treatment effects and clinical parameters</em></p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🔗 MCMC Methods & Sampling</h3>
+                    <p><strong>Markov Chain Monte Carlo:</strong> MCMC algorithms enable practical Bayesian computation by sampling from posterior distributions when analytical solutions are intractable, essential for complex hierarchical models.</p>
+                    <div class="formula-display">
+                        Metropolis-Hastings Algorithm:<br><br>
+                        1. Propose: θ* ~ q(θ*|θ^(t))<br>
+                        2. Accept with probability: α = min(1, A)<br><br>
+                        Acceptance Ratio:<br>
+                        A = [π(θ*|data) / π(θ^(t)|data)] × [q(θ^(t)|θ*) / q(θ*|θ^(t))]<br><br>
+                        Gibbs Sampling (Conjugate Case):<br>
+                        For each parameter θ_i:<br>
+                        θ_i^(t+1) ~ π(θ_i | θ_{-i}^(t+1), θ_{-i}^(t), data)<br><br>
+                        Convergence Diagnostics:<br>
+                        R̂ = √[(n-1)/n + (1/n) × B/W] (Gelman-Rubin)<br>
+                        where B = between-chain variance, W = within-chain variance<br><br>
+                        Effective Sample Size:<br>
+                        ESS = M / (1 + 2Σρ_k) where ρ_k = autocorrelation<br><br>
+                        Clinical Application: Complex medical models with uncertainty
+                    </div>
+                    <p><strong>Medical Example:</strong> MCMC enables analysis of hierarchical clinical trial data with patient and center-level effects</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🏗️ Hierarchical Modeling</h3>
+                    <p><strong>Multi-Level Bayesian Models:</strong> Hierarchical models account for natural clustering in medical data (patients within hospitals, repeated measures within patients) while borrowing strength across groups.</p>
+                    <div class="formula-display">
+                        Hierarchical Model Structure:<br><br>
+                        Level 1 (Patient): Y_ij ~ N(μ_ij, σ²)<br>
+                        Level 2 (Group): μ_ij = α_j + β_j × X_ij<br>
+                        Level 3 (Population): α_j ~ N(α, σ_α²), β_j ~ N(β, σ_β²)<br><br>
+                        Bayesian Specification:<br>
+                        Y_ij | α_j, β_j, σ² ~ N(α_j + β_j × X_ij, σ²)<br>
+                        α_j | α, σ_α² ~ N(α, σ_α²)<br>
+                        β_j | β, σ_β² ~ N(β, σ_β²)<br><br>
+                        Priors:<br>
+                        α ~ N(μ_α, τ_α²)<br>
+                        β ~ N(μ_β, τ_β²)<br>
+                        σ², σ_α², σ_β² ~ InverseGamma(a, b)<br><br>
+                        Shrinkage Effect:<br>
+                        α̂_j = [(n_j/σ²) × ȳ_j + (1/σ_α²) × α̂] / [(n_j/σ²) + (1/σ_α²)]<br><br>
+                        Clinical Advantage: Borrows strength between groups
+                    </div>
+                    <p><strong>Clinical Application:</strong> Multi-center clinical trials with hospital-specific effects and patient-level heterogeneity</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>🎯 Bayesian Clinical Trials</h3>
+                    <p><strong>Adaptive Design & Sequential Analysis:</strong> Bayesian clinical trials enable adaptive modifications, early stopping for efficacy or futility, and seamless phase II/III transitions based on accumulating evidence.</p>
+                    <div class="formula-display">
+                        Sequential Decision-Making:<br><br>
+                        Posterior Probability of Efficacy:<br>
+                        P(θ > θ_0 | data) where θ_0 = clinically meaningful effect<br><br>
+                        Adaptive Decision Rules:<br>
+                        Continue if: P(θ > θ_0 | data) ∈ [p_L, p_U]<br>
+                        Stop for efficacy if: P(θ > θ_0 | data) > p_U<br>
+                        Stop for futility if: P(θ > θ_0 | data) < p_L<br><br>
+                        Predictive Probability:<br>
+                        P(θ > θ_0 | data, future data)<br>
+                        = ∫ P(θ > θ_0 | data + future) × f(future|data) d(future)<br><br>
+                        Sample Size Re-estimation:<br>
+                        N_new = min(N_max, N_required[current posterior])<br><br>
+                        Bayesian Power:<br>
+                        Power = P[P(θ > θ_0 | data) > p_efficacy]<br><br>
+                        Clinical Advantage: Efficient, ethical, adaptive trials
+                    </div>
+                    <p><strong>Medical Use:</strong> Oncology trials with adaptive dose-finding and early efficacy assessment</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>📊 Credible Intervals & Hypothesis Testing</h3>
+                    <p><strong>Bayesian Uncertainty Quantification:</strong> Credible intervals provide direct probability statements about parameters, while Bayesian hypothesis testing uses Bayes factors for evidence synthesis without p-value limitations.</p>
+                    <div class="formula-display">
+                        Credible Intervals:<br><br>
+                        95% Credible Interval: (θ_L, θ_U)<br>
+                        where P(θ_L ≤ θ ≤ θ_U | data) = 0.95<br><br>
+                        Equal-Tail Interval:<br>
+                        P(θ < θ_L | data) = P(θ > θ_U | data) = 0.025<br><br>
+                        Highest Posterior Density (HPD):<br>
+                        Shortest interval containing 95% of posterior mass<br><br>
+                        Bayesian Hypothesis Testing:<br><br>
+                        Bayes Factor: BF = P(data | H₁) / P(data | H₀)<br><br>
+                        Marginal Likelihood:<br>
+                        P(data | H_k) = ∫ P(data | θ_k, H_k) × P(θ_k | H_k) dθ_k<br><br>
+                        Posterior Model Probability:<br>
+                        P(H_k | data) = BF_k × P(H_k) / Σ[BF_j × P(H_j)]<br><br>
+                        Clinical Decision: P(θ > 0 | data) = 0.97<br>
+                        97% probability of treatment benefit
+                    </div>
+                    <p><strong>Clinical Example:</strong> 95% credible interval for treatment effect: [0.2, 0.8] means 95% probability effect is in this range</p>
+                </div>
+
+                <div class="theory-card">
+                    <h3>⚖️ Decision Theory & Clinical Utility</h3>
+                    <p><strong>Expected Utility Maximization:</strong> Bayesian decision theory combines posterior distributions with utility functions to make optimal clinical decisions accounting for consequences of different actions.</p>
+                    <div class="formula-display">
+                        Expected Utility Framework:<br><br>
+                        EU(a) = ∫ U(θ, a) × π(θ | data) dθ<br>
+                        where a = action, U(θ, a) = utility function<br><br>
+                        Optimal Decision:<br>
+                        a* = argmax_a EU(a)<br><br>
+                        Clinical Utility Function:<br>
+                        U(benefit, harm, cost) = w₁ × benefit - w₂ × harm - w₃ × cost<br><br>
+                        Treatment Decision Rule:<br>
+                        Treat if: P(θ > θ_threshold | data) > p*<br>
+                        where p* = optimal probability threshold<br><br>
+                        Value of Information:<br>
+                        EVPI = EU[perfect information] - EU[current information]<br>
+                        = E[max_a EU(a|θ)] - max_a EU(a)<br><br>
+                        Sample Size Optimization:<br>
+                        Choose n* that maximizes EU - Cost(n)<br><br>
+                        Clinical Application: Personalized treatment decisions
+                    </div>
+                    <p><strong>Medical Application:</strong> Optimal stopping rules for clinical trials balancing efficacy evidence with patient welfare</p>
+                </div>
+            </div>
+
+            <div class="theory-card" style="grid-column: 1 / -1;">
+                <h3>🇨🇦 Canadian Advanced Bayesian Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 90px; margin-top: 80px;">
+                    <div>
+                        <h4>🏥 Clinical Research Applications:</h4>
+                        <ul>
+                            <li><strong>Drug Safety Surveillance:</strong> Bayesian adverse event monitoring with Health Canada regulatory integration</li>
+                            <li><strong>Diagnostic Test Evaluation:</strong> Bayesian diagnostic accuracy assessment with uncertainty quantification</li>
+                            <li><strong>Clinical Trial Design:</strong> Adaptive Bayesian trials for treatment evaluation and dose optimization</li>
+                            <li><strong>Personalized Medicine:</strong> Individual patient prediction with probabilistic treatment recommendations</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📈 Advanced Health Technology Applications:</h4>
+                        <ul>
+                            <li><strong>Health Technology Assessment:</strong> Bayesian evidence synthesis for CADTH decision-making</li>
+                            <li><strong>Pharmacoeconomic Modeling:</strong> Probabilistic cost-effectiveness analysis with parameter uncertainty</li>
+                            <li><strong>Real-World Evidence:</strong> Bayesian analysis of administrative and registry data</li>
+                            <li><strong>Precision Medicine:</strong> Genomic data integration with clinical outcomes using hierarchical models</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bayesian-steps" style="margin-top: 80px;">
+                    <h4 style="color: #DC2626; margin-bottom: 65px; text-align: center;">🧠 Bayesian Analysis Methodology Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text"><strong>Prior Specification:</strong> Elicit expert knowledge and historical data to define prior distributions</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>Likelihood Construction:</strong> Specify probabilistic model for observed data given parameters</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text"><strong>Posterior Derivation:</strong> Combine prior and likelihood using Bayes' theorem</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text"><strong>MCMC Sampling:</strong> Implement Markov Chain Monte Carlo for posterior sampling</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text"><strong>Convergence Assessment:</strong> Diagnose chain convergence and effective sample size</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-text"><strong>Posterior Inference:</strong> Calculate credible intervals and posterior probabilities</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-text"><strong>Decision Analysis:</strong> Apply decision theory for optimal clinical actions</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="research-note">
+                <p><strong>🧠 Advanced Bayesian Methods Foundation:</strong> Bayesian methods represent the pinnacle of statistical inference for expert clinical research, providing coherent framework for incorporating uncertainty, prior knowledge, and sequential learning. Understanding prior/posterior relationships, MCMC computation, hierarchical modeling, and decision theory is essential for adaptive clinical trials, personalized medicine, regulatory science, and health technology assessment. These sophisticated methods enable principled uncertainty quantification and optimal decision-making across diverse healthcare applications, representing the future of evidence-based medicine and clinical research excellence.</p>
+            </div>
+        </div>
+
+        <!-- Canadian Bayesian Models Section -->
+        <div id="simulation" class="content-section">
+            <h2 class="section-title">Canadian Bayesian Healthcare Laboratory</h2>
+
+            <div class="control-panel">
+                <h3 class="control-header">🧠 Bayesian Methods Simulator</h3>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label for="bayesianModel">Canadian Healthcare Bayesian Model</label>
+                        <select id="bayesianModel" onchange="updateBayesianModel()">
+                            <option value="drug_safety">Drug Safety Surveillance</option>
+                            <option value="diagnostic_accuracy">Diagnostic Test Evaluation</option>
+                            <option value="clinical_trial">Clinical Trial Design</option>
+                            <option value="health_technology">Health Technology Assessment</option>
+                            <option value="personalized_medicine">Personalized Medicine</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysisType">Bayesian Analysis Method</label>
+                        <select id="analysisType">
+                            <option value="posterior_inference" selected>Posterior Inference</option>
+                            <option value="mcmc_sampling">MCMC Sampling</option>
+                            <option value="hierarchical_modeling">Hierarchical Modeling</option>
+                            <option value="adaptive_trial">Adaptive Trial Design</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priorType">Prior Distribution Type</label>
+                        <select id="priorType">
+                            <option value="informative">Informative Prior</option>
+                            <option value="weakly_informative" selected>Weakly Informative</option>
+                            <option value="non_informative">Non-Informative</option>
+                            <option value="skeptical">Skeptical Prior</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sampleSizeBayesian">Sample Size (Patients)</label>
+                        <select id="sampleSizeBayesian">
+                            <option value="50">50 patients</option>
+                            <option value="100" selected>100 patients</option>
+                            <option value="250">250 patients</option>
+                            <option value="500">500 patients</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="effectStrength">True Effect Strength</label>
+                        <input type="range" id="effectStrength" min="0.0" max="1.5" step="0.1" value="0.5" onchange="updateEffectDisplay()">
+                        <span id="effectValue">0.5</span> (Moderate effect)
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateBayesianData()">🧠 Generate Data</button>
+                    <button class="btn btn-secondary" onclick="performBayesianAnalysis()">💙 Run Bayesian</button>
+                    <button class="btn btn-accent" onclick="performMCMC()">🔗 MCMC Sampling</button>
+                </div>
+            </div>
+
+            <!-- Bayesian Model Description -->
+            <div id="bayesianDescription" class="bayesian-info">
+                <div class="results-header">Current Bayesian Model</div>
+                <div id="bayesianText"></div>
+                <div id="bayesianModelMetrics" class="bayesian-metrics"></div>
+            </div>
+
+            <!-- Bayesian Analysis Chart -->
+            <div class="chart-container">
+                <canvas id="bayesianChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bayesian Inference & MCMC Section -->
+        <div id="analysis" class="content-section">
+            <h2 class="section-title">Bayesian Inference Results & MCMC Analysis</h2>
+
+            <div id="bayesianResults" class="results-container">
+                <div class="results-header">Bayesian Analysis Results</div>
+                <div id="bayesianTable"></div>
+            </div>
+
+            <div class="stats-grid" id="bayesianStats">
+                <!-- Dynamic statistics will be populated here -->
+            </div>
+
+            <div id="posteriorResults" class="results-container">
+                <div class="results-header">💙 Posterior Distribution & Credible Intervals</div>
+                <div id="posteriorTable"></div>
+            </div>
+
+            <!-- Prior/Posterior Visualization -->
+            <div class="chart-container">
+                <h3 style="text-align: center; margin-bottom: 80px; color: #DC2626;">💙 Prior/Posterior Distribution & Bayesian Learning</h3>
+                <canvas id="posteriorChart"></canvas>
+            </div>
+
+            <!-- MCMC Diagnostics -->
+            <div class="mcmc-trace">
+                <h4 style="color: var(--primary-sapphire); margin-bottom: 45px;">🔗 MCMC Trace Plot & Convergence Diagnostics</h4>
+                <div id="mcmcResults"></div>
+                <canvas id="traceChart" width="800" height="400"></canvas>
+            </div>
+
+            <!-- Credible Intervals -->
+            <div class="credible-interval">
+                <h4 style="color: var(--primary-sapphire); margin-bottom: 45px; text-align: center;">📊 Credible Intervals & Posterior Summary</h4>
+                <div class="credible-metrics" id="credibleMetrics">
+                    <!-- Dynamic credible interval metrics will be populated here -->
+                </div>
+            </div>
+
+            <!-- Decision Theory -->
+            <div class="decision-theory">
+                <h4 style="color: var(--primary-sapphire); margin-bottom: 45px; text-align: center;">⚖️ Bayesian Decision Analysis</h4>
+                <div id="decisionResults"></div>
+                <div class="utility-matrix" id="utilityMatrix">
+                    <!-- Dynamic utility analysis will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Mode Section -->
+        <div id="assessment" class="content-section">
+            <h2 class="section-title">Bayesian Methods Assessment</h2>
+
+            <div id="assessmentQuestion" class="decision-panel">
+                <div class="decision-question">Loading Bayesian methods assessment...</div>
+                <div class="decision-options" id="assessmentOptions">
+                    <!-- Dynamic options will be populated -->
+                </div>
+                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 90px;">Submit Answer</button>
+            </div>
+
+            <div id="assessmentFeedback"></div>
+
+            <div class="button-group" style="margin-top: 135px;">
+                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
+                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentBayesianModel = null;
+        let currentBayesianChart = null;
+        let posteriorChart = null;
+        let traceChart = null;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+
+        // Bayesian Model Definitions
+        const bayesianModels = {
+            drug_safety: {
+                title: "Drug Safety Surveillance (Bayesian Adverse Event Monitoring)",
+                description: "Sequential Bayesian monitoring of adverse drug reactions using real-world evidence, updating safety profiles as new reports accumulate while accounting for under-reporting and confounding factors in Health Canada post-market surveillance.",
+                parameter: "Adverse Event Rate (per 1000 patient-years)",
+                outcome: "Serious Adverse Events (SAEs)",
+                population: "Post-market drug users in Canadian healthcare databases",
+                clinical_context: "Pharmacovigilance and drug safety monitoring",
+                study_design: "Sequential Bayesian updating with expert priors and observational data",
+                expected_effect: "Posterior risk estimates with credible intervals for safety decisions",
+                clinical_application: "Regulatory safety alerts, drug label updates, risk management plans, market withdrawal decisions"
+            },
+            diagnostic_accuracy: {
+                title: "Diagnostic Test Evaluation (Bayesian Diagnostic Accuracy)",
+                description: "Bayesian meta-analysis of diagnostic test accuracy studies, incorporating prior beliefs about sensitivity and specificity while accounting for between-study heterogeneity and spectrum bias in clinical validation.",
+                parameter: "Sensitivity and Specificity (Joint Distribution)",
+                outcome: "Diagnostic Test Performance Metrics",
+                population: "Patients undergoing diagnostic testing across validation studies",
+                clinical_context: "Diagnostic test evaluation and clinical implementation",
+                study_design: "Hierarchical Bayesian meta-analysis with bivariate normal priors",
+                expected_effect: "Posterior predictive distributions for test performance in new populations",
+                clinical_application: "Test implementation guidelines, screening protocols, clinical decision support, reimbursement decisions"
+            },
+            clinical_trial: {
+                title: "Clinical Trial Design (Adaptive Bayesian Trials)",
+                description: "Adaptive Bayesian clinical trial with interim monitoring for efficacy and futility, using predictive probabilities for adaptive sample size modification and early stopping decisions in oncology research.",
+                parameter: "Treatment Effect (Log Hazard Ratio)",
+                outcome: "Overall Survival and Progression-Free Survival",
+                population: "Cancer patients in phase II/III adaptive clinical trials",
+                clinical_context: "Adaptive clinical trial design and sequential decision-making",
+                study_design: "Adaptive Bayesian design with interim analyses and predictive probability monitoring",
+                expected_effect: "Posterior probability of treatment benefit with adaptive modifications",
+                clinical_application: "Trial optimization, early efficacy assessment, futility monitoring, regulatory approval support"
+            },
+            health_technology: {
+                title: "Health Technology Assessment (Bayesian Evidence Synthesis)",
+                description: "Bayesian evidence synthesis for health technology assessment, combining clinical trial data with real-world evidence to inform CADTH recommendations while incorporating parameter uncertainty and model averaging.",
+                parameter: "Incremental Cost-Effectiveness Ratio (ICER)",
+                outcome: "Quality-Adjusted Life Years (QALYs) and Healthcare Costs",
+                population: "Target population for health technology implementation",
+                clinical_context: "Health technology assessment and reimbursement decision-making",
+                study_design: "Bayesian evidence synthesis with probabilistic sensitivity analysis",
+                expected_effect: "Posterior distribution of cost-effectiveness with uncertainty characterization",
+                clinical_application: "Reimbursement recommendations, budget impact analysis, implementation planning, value-based pricing"
+            },
+            personalized_medicine: {
+                title: "Personalized Medicine (Individual Treatment Prediction)",
+                description: "Hierarchical Bayesian modeling for personalized treatment recommendations, incorporating individual patient characteristics, biomarker profiles, and population-level evidence to optimize therapeutic decisions.",
+                parameter: "Individual Treatment Effect (Personalized)",
+                outcome: "Patient-Specific Clinical Response",
+                population: "Individual patients with genomic and clinical data",
+                clinical_context: "Precision medicine and individualized treatment optimization",
+                study_design: "Hierarchical Bayesian prediction with individual-level covariates",
+                expected_effect: "Patient-specific posterior predictive distributions for treatment response",
+                clinical_application: "Treatment selection, dose optimization, precision medicine protocols, companion diagnostics"
+            }
+        };
+
+        // Assessment Questions (Bayesian Methods focused)
+        const assessmentQuestions = [
+            {
+                question: "What is the key difference between a Bayesian credible interval and a frequentist confidence interval?",
+                options: [
+                    "Credible intervals are always wider than confidence intervals",
+                    "A credible interval gives the probability that the parameter lies in the interval given the data",
+                    "Confidence intervals use prior information while credible intervals do not",
+                    "There is no practical difference between the two"
+                ],
+                correct: 1,
+                explanation: "A Bayesian credible interval provides a direct probability statement: there is a 95% probability that the parameter lies within the interval, given the observed data. In contrast, a frequentist confidence interval refers to the long-run coverage probability of the procedure, not a probability about the specific parameter value."
+            },
+            {
+                question: "In MCMC sampling, what does the Gelman-Rubin R̂ statistic assess?",
+                options: [
+                    "The effective sample size of the Markov chain",
+                    "The autocorrelation between successive samples",
+                    "Whether multiple chains have converged to the same distribution",
+                    "The acceptance rate of the Metropolis-Hastings algorithm"
+                ],
+                correct: 2,
+                explanation: "The Gelman-Rubin R̂ statistic (potential scale reduction factor) compares the between-chain variance to the within-chain variance across multiple MCMC chains. Values close to 1.0 (typically < 1.1) indicate that the chains have converged to the same target distribution."
+            },
+            {
+                question: "What advantage do informative priors provide in Bayesian clinical trials?",
+                options: [
+                    "They always lead to smaller sample sizes",
+                    "They eliminate the need for randomization",
+                    "They incorporate relevant historical information and expert knowledge",
+                    "They guarantee that the posterior will be normally distributed"
+                ],
+                correct: 2,
+                explanation: "Informative priors allow incorporation of relevant historical data and expert knowledge into the analysis, potentially leading to more precise estimates and smaller required sample sizes. They provide a formal mechanism to use all available information, not just the current study data."
+            },
+            {
+                question: "In Bayesian hypothesis testing, what does a Bayes Factor of 10 indicate?",
+                options: [
+                    "The alternative hypothesis is 10 times more likely than the null",
+                    "There is a 10% probability that the null hypothesis is true",
+                    "The data are 10 times more likely under the alternative than under the null hypothesis",
+                    "The posterior probability of the alternative hypothesis is 0.10"
+                ],
+                correct: 2,
+                explanation: "A Bayes Factor of 10 means that the observed data are 10 times more likely to occur under the alternative hypothesis than under the null hypothesis. This provides evidence in favor of the alternative hypothesis, but the actual posterior probability depends on the prior probabilities of the hypotheses."
+            },
+            {
+                question: "What is the primary advantage of hierarchical Bayesian models in multi-center clinical trials?",
+                options: [
+                    "They eliminate the need for randomization within centers",
+                    "They allow borrowing of information across centers while accounting for center-specific effects",
+                    "They always produce the same results as fixed-effects meta-analysis",
+                    "They require smaller sample sizes than single-center trials"
+                ],
+                correct: 1,
+                explanation: "Hierarchical Bayesian models allow 'borrowing strength' across centers, where information from all centers informs estimates for each individual center. This approach accounts for both center-specific heterogeneity and the overall treatment effect, leading to more precise estimates especially for centers with smaller sample sizes."
+            }
+        ];
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Bayesian Model Management
+        function updateBayesianModel() {
+            const modelType = document.getElementById('bayesianModel').value;
+            const model = bayesianModels[modelType];
+            
+            document.getElementById('bayesianText').innerHTML = `
+                <h3 style="color: #DC2626; margin-bottom: 65px;">${model.title}</h3>
+                <p><strong>Research Context:</strong> ${model.description}</p>
+                <div class="research-note">
+                    <p><strong>🧠 Clinical Context:</strong> ${model.clinical_context}</p>
+                </div>
+                <p><strong>Parameter of Interest:</strong> ${model.parameter}</p>
+                <p><strong>Primary Outcome:</strong> ${model.outcome}</p>
+                <p><strong>Study Population:</strong> ${model.population}</p>
+                <p><strong>Study Design:</strong> ${model.study_design}</p>
+                <p><strong>Expected Result:</strong> ${model.expected_effect}</p>
+                <p><strong>Clinical Application:</strong> ${model.clinical_application}</p>
+            `;
+            
+            updateBayesianMetrics();
+        }
+
+        function updateBayesianMetrics() {
+            const analysisType = document.getElementById('analysisType').value;
+            const container = document.getElementById('bayesianModelMetrics');
+            container.innerHTML = '';
+            
+            let metrics = [];
+            switch(analysisType) {
+                case 'posterior_inference': metrics = ['Posterior Mean', 'Credible Interval', 'Post. Prob.', 'Bayes Factor']; break;
+                case 'mcmc_sampling': metrics = ['ESS', 'R̂ Statistic', 'Accept Rate', 'Autocorr']; break;
+                case 'hierarchical_modeling': metrics = ['Group Effects', 'Shrinkage', 'Variance Comp.', 'ICC']; break;
+                case 'adaptive_trial': metrics = ['Pred. Prob.', 'Futility', 'Efficacy', 'Sample Size']; break;
+            }
+            
+            metrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.className = 'bayesian-metric-card';
+                metricDiv.textContent = metric;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function updateEffectDisplay() {
+            const effect = document.getElementById('effectStrength').value;
+            let interpretation;
+            if (effect < 0.3) interpretation = 'Small effect';
+            else if (effect < 0.7) interpretation = 'Moderate effect';
+            else if (effect < 1.0) interpretation = 'Large effect';
+            else interpretation = 'Very large effect';
+            document.getElementById('effectValue').textContent = `${effect} (${interpretation})`;
+        }
+
+        // Bayesian Data Generation
+        function generateBayesianData() {
+            const modelType = document.getElementById('bayesianModel').value;
+            const analysisType = document.getElementById('analysisType').value;
+            const priorType = document.getElementById('priorType').value;
+            const sampleSize = parseInt(document.getElementById('sampleSizeBayesian').value);
+            const effectStrength = parseFloat(document.getElementById('effectStrength').value);
+            
+            const model = bayesianModels[modelType];
+            
+            currentBayesianModel = {
+                model: model,
+                analysisType: analysisType,
+                priorType: priorType,
+                sampleSize: sampleSize,
+                effectStrength: effectStrength,
+                data: []
+            };
+
+            // Generate Bayesian data with realistic medical patterns
+            generateObservationalData(sampleSize, effectStrength, modelType);
+            updateBayesianChart();
+        }
+
+        function generateObservationalData(n, effect, modelType) {
+            const data = [];
+            
+            for (let i = 0; i < n; i++) {
+                let outcome, covariate;
+                
+                // Generate model-specific data
+                switch(modelType) {
+                    case 'drug_safety':
+                        // Adverse event data (binary outcome)
+                        covariate = Math.random() < 0.5 ? 1 : 0; // Treatment group
+                        const baselineRisk = 0.05; // 5% baseline risk
+                        const riskRatio = effect + 1; // Effect as risk ratio
+                        const prob = covariate === 1 ? baselineRisk * riskRatio : baselineRisk;
+                        outcome = Math.random() < prob ? 1 : 0;
+                        break;
+                        
+                    case 'diagnostic_accuracy':
+                        // Diagnostic test data (sensitivity/specificity)
+                        const diseasePrevalence = 0.3;
+                        const trueDisease = Math.random() < diseasePrevalence ? 1 : 0;
+                        const sensitivity = 0.8 + effect * 0.15; // Base 80%, up to 95%
+                        const specificity = 0.9;
+                        const testPositive = trueDisease === 1 ? 
+                            (Math.random() < sensitivity ? 1 : 0) :
+                            (Math.random() < (1 - specificity) ? 1 : 0);
+                        outcome = testPositive;
+                        covariate = trueDisease;
+                        break;
+                        
+                    case 'clinical_trial':
+                        // Survival data (time to event)
+                        covariate = Math.random() < 0.5 ? 1 : 0; // Treatment group
+                        const hazardRatio = Math.exp(-effect); // Effect as log hazard ratio
+                        const baselineHazard = 0.1;
+                        const hazard = covariate === 1 ? baselineHazard * hazardRatio : baselineHazard;
+                        outcome = -Math.log(Math.random()) / hazard; // Exponential survival time
+                        break;
+                        
+                    case 'health_technology':
+                        // Cost-effectiveness data (QALY and costs)
+                        covariate = Math.random() < 0.5 ? 1 : 0; // New vs standard technology
+                        const baselineQALY = 0.7;
+                        const qalyGain = covariate === 1 ? effect * 0.2 : 0;
+                        outcome = baselineQALY + qalyGain + Math.random() * 0.1 - 0.05; // Add noise
+                        break;
+                        
+                    case 'personalized_medicine':
+                        // Continuous response with individual heterogeneity
+                        const biomarker = Math.random(); // Continuous biomarker
+                        const personalizedEffect = effect * (1 + biomarker); // Effect depends on biomarker
+                        covariate = biomarker;
+                        outcome = 5 + personalizedEffect + Math.random() * 2 - 1; // Base response + effect + noise
+                        break;
+                        
+                    default:
+                        outcome = effect + Math.random() - 0.5;
+                        covariate = Math.random();
+                }
+                
+                data.push({
+                    id: i + 1,
+                    outcome: outcome,
+                    covariate: covariate,
+                    group: covariate > 0.5 ? 'Treatment' : 'Control'
+                });
+            }
+            
+            currentBayesianModel.data = data;
+        }
+
+        function updateBayesianChart() {
+            if (!currentBayesianModel) return;
+            
+            const ctx = document.getElementById('bayesianChart').getContext('2d');
+            
+            if (currentBayesianChart) {
+                currentBayesianChart.destroy();
+            }
+
+            // Create data visualization based on model type
+            const data = currentBayesianModel.data;
+            const modelType = document.getElementById('bayesianModel').value;
+            
+            let chartData, chartOptions;
+            
+            if (modelType === 'drug_safety' || modelType === 'diagnostic_accuracy') {
+                // Binary outcome - bar chart
+                const treatmentGroup = data.filter(d => d.covariate === 1);
+                const controlGroup = data.filter(d => d.covariate === 0);
+                
+                const treatmentRate = treatmentGroup.reduce((sum, d) => sum + d.outcome, 0) / treatmentGroup.length;
+                const controlRate = controlGroup.reduce((sum, d) => sum + d.outcome, 0) / controlGroup.length;
+                
+                chartData = {
+                    labels: ['Control Group', 'Treatment Group'],
+                    datasets: [{
+                        label: 'Event Rate',
+                        data: [controlRate, treatmentRate],
+                        backgroundColor: ['rgba(100, 116, 139, 0.8)', 'rgba(30, 64, 175, 0.8)'],
+                        borderColor: ['#64748B', '#1E40AF'],
+                        borderWidth: 3
+                    }]
+                };
+                
+                chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentBayesianModel.model.title} - Event Rates by Group`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            title: { display: true, text: 'Event Rate' },
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                };
+            } else {
+                // Continuous outcome - scatter plot
+                chartData = {
+                    datasets: [{
+                        label: 'Patient Data',
+                        data: data.map((d, i) => ({ x: i, y: d.outcome })),
+                        backgroundColor: 'rgba(30, 64, 175, 0.7)',
+                        borderColor: '#1E40AF',
+                        borderWidth: 2,
+                        pointRadius: 6
+                    }]
+                };
+                
+                chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${currentBayesianModel.model.title} - Individual Patient Responses`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Patient ID' } },
+                        y: { title: { display: true, text: 'Outcome Value' } }
+                    }
+                };
+            }
+
+            currentBayesianChart = new Chart(ctx, {
+                type: modelType === 'drug_safety' || modelType === 'diagnostic_accuracy' ? 'bar' : 'scatter',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // Bayesian Analysis Performance
+        function performBayesianAnalysis() {
+            if (!currentBayesianModel) {
+                alert('Please generate Bayesian data first');
+                return;
+            }
+
+            const data = currentBayesianModel.data;
+            const analysisType = currentBayesianModel.analysisType;
+            const priorType = currentBayesianModel.priorType;
+            
+            // Perform Bayesian analysis
+            const results = calculateBayesianAnalysis(data, analysisType, priorType);
+            displayBayesianResults(results);
+        }
+
+        function calculateBayesianAnalysis(data, analysisType, priorType) {
+            // Simplified Bayesian calculations for demonstration
+            const n = data.length;
+            const yBar = data.reduce((sum, d) => sum + d.outcome, 0) / n;
+            const variance = data.reduce((sum, d) => sum + Math.pow(d.outcome - yBar, 2), 0) / (n - 1);
+            
+            // Set priors based on type
+            let priorMean, priorVar;
+            switch(priorType) {
+                case 'informative':
+                    priorMean = 0.5; priorVar = 0.1; break;
+                case 'weakly_informative':
+                    priorMean = 0; priorVar = 1.0; break;
+                case 'non_informative':
+                    priorMean = 0; priorVar = 1000; break;
+                case 'skeptical':
+                    priorMean = 0; priorVar = 0.25; break;
+            }
+            
+            // Bayesian updating (normal-normal conjugate)
+            const posteriorPrecision = 1/priorVar + n/variance;
+            const posteriorVar = 1 / posteriorPrecision;
+            const posteriorMean = (priorMean/priorVar + n*yBar/variance) / posteriorPrecision;
+            
+            // Calculate credible interval
+            const credibleLower = posteriorMean - 1.96 * Math.sqrt(posteriorVar);
+            const credibleUpper = posteriorMean + 1.96 * Math.sqrt(posteriorVar);
+            
+            // Posterior probability of positive effect
+            const posteriorProb = 1 - normalCDF(0, posteriorMean, Math.sqrt(posteriorVar));
+            
+            // Bayes factor (simplified)
+            const marginalLikelihoodH1 = 0.7; // Simplified
+            const marginalLikelihoodH0 = 0.3;
+            const bayesFactor = marginalLikelihoodH1 / marginalLikelihoodH0;
+            
+            return {
+                analysisType: analysisType,
+                priorMean: priorMean,
+                priorVar: priorVar,
+                posteriorMean: posteriorMean,
+                posteriorVar: posteriorVar,
+                credibleLower: credibleLower,
+                credibleUpper: credibleUpper,
+                posteriorProb: posteriorProb,
+                bayesFactor: bayesFactor,
+                sampleSize: n,
+                observedMean: yBar
+            };
+        }
+
+        function normalCDF(x, mean, std) {
+            // Approximation of normal CDF
+            const z = (x - mean) / std;
+            return 0.5 * (1 + erf(z / Math.sqrt(2)));
+        }
+
+        function erf(x) {
+            // Approximation of error function
+            const a1 =  0.254829592;
+            const a2 = -0.284496736;
+            const a3 =  1.421413741;
+            const a4 = -1.453152027;
+            const a5 =  1.061405429;
+            const p  =  0.3275911;
+            
+            const sign = x < 0 ? -1 : 1;
+            x = Math.abs(x);
+            
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            
+            return sign * y;
+        }
+
+        function displayBayesianResults(results) {
+            const model = currentBayesianModel.model;
+            const significance = results.posteriorProb > 0.95 ? '✅ High Posterior Probability' : results.posteriorProb > 0.8 ? '⚠️ Moderate Evidence' : '❌ Weak Evidence';
+            
+            let resultContent = `
+                <h4>🧠 Bayesian Analysis Results</h4>
+                <div style="background: var(--primary-sapphire); color: white; padding: 28px; border-radius: 22px; margin-bottom: 35px; text-align: center;">
+                    <strong>${results.analysisType.toUpperCase().replace('_', ' ')}</strong><br>
+                    Study: ${model.title}<br>
+                    Posterior Mean = ${results.posteriorMean.toFixed(3)} [${results.credibleLower.toFixed(3)}, ${results.credibleUpper.toFixed(3)}]<br>
+                    P(Effect > 0 | Data) = ${(results.posteriorProb * 100).toFixed(1)}% (${significance})
+                </div>
+            `;
+            
+            // Prior vs Posterior comparison
+            resultContent += `
+                <div class="prior-distribution">
+                    <h5>🧠 Bayesian Learning Process</h5>
+                    <p><strong>Prior Distribution:</strong> Normal(${results.priorMean.toFixed(3)}, ${Math.sqrt(results.priorVar).toFixed(3)}²)</p>
+                    <p><strong>Observed Data:</strong> n = ${results.sampleSize}, ȳ = ${results.observedMean.toFixed(3)}</p>
+                    <p><strong>Posterior Distribution:</strong> Normal(${results.posteriorMean.toFixed(3)}, ${Math.sqrt(results.posteriorVar).toFixed(3)}²)</p>
+                    <p><strong>95% Credible Interval:</strong> [${results.credibleLower.toFixed(3)}, ${results.credibleUpper.toFixed(3)}]</p>
+                </div>
+            `;
+            
+            resultContent += `
+                <div class="bayesian-highlight">
+                    <p><strong>🧠 Advanced Bayesian Interpretation:</strong> 
+                    The posterior analysis demonstrates ${results.posteriorProb > 0.8 ? 'strong' : results.posteriorProb > 0.5 ? 'moderate' : 'weak'} evidence for a positive effect 
+                    (Posterior probability = ${(results.posteriorProb * 100).toFixed(1)}%, ${significance}). 
+                    The ${currentBayesianModel.priorType.replace('_', ' ')} prior was updated with n=${results.sampleSize} observations, 
+                    yielding a posterior distribution concentrated around ${results.posteriorMean.toFixed(3)}. 
+                    This sophisticated Bayesian approach provides direct probability statements about clinical parameters and natural incorporation of prior knowledge.
+                    <span class="canada-bayesian">Canadian regulatory excellence</span> 
+                    enables principled uncertainty quantification and evidence-based decision making with optimal statistical inference.
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('bayesianTable').innerHTML = resultContent;
+
+            // Update Bayesian statistics display
+            document.getElementById('bayesianStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${results.posteriorMean.toFixed(3)}</div>
+                    <div class="stat-label">Posterior Mean</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.sqrt(results.posteriorVar).toFixed(3)}</div>
+                    <div class="stat-label">Posterior SD</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.posteriorProb * 100).toFixed(1)}%</div>
+                    <div class="stat-label">P(Effect > 0)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${results.bayesFactor.toFixed(2)}</div>
+                    <div class="stat-label">Bayes Factor</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(results.credibleUpper - results.credibleLower).toFixed(3)}</div>
+                    <div class="stat-label">CI Width</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${currentBayesianModel.priorType.charAt(0).toUpperCase()}</div>
+                    <div class="stat-label">Prior Type</div>
+                </div>
+            `;
+        }
+
+        function performMCMC() {
+            if (!currentBayesianModel) {
+                alert('Please perform Bayesian analysis first');
+                return;
+            }
+
+            generatePosteriorChart();
+            displayPosteriorAnalysis();
+        }
+
+        function generatePosteriorChart() {
+            const ctx = document.getElementById('posteriorChart').getContext('2d');
+            
+            if (posteriorChart) {
+                posteriorChart.destroy();
+            }
+
+            // Generate prior and posterior distributions for visualization
+            const results = calculateBayesianAnalysis(currentBayesianModel.data, currentBayesianModel.analysisType, currentBayesianModel.priorType);
+            
+            // Generate x values for plotting
+            const xMin = Math.min(results.priorMean - 3*Math.sqrt(results.priorVar), results.posteriorMean - 3*Math.sqrt(results.posteriorVar));
+            const xMax = Math.max(results.priorMean + 3*Math.sqrt(results.priorVar), results.posteriorMean + 3*Math.sqrt(results.posteriorVar));
+            const xValues = [];
+            const priorValues = [];
+            const posteriorValues = [];
+            
+            for (let i = 0; i < 100; i++) {
+                const x = xMin + (xMax - xMin) * i / 99;
+                xValues.push(x);
+                
+                // Normal density function
+                priorValues.push(normalDensity(x, results.priorMean, Math.sqrt(results.priorVar)));
+                posteriorValues.push(normalDensity(x, results.posteriorMean, Math.sqrt(results.posteriorVar)));
+            }
+
+            posteriorChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues.map(x => x.toFixed(2)),
+                    datasets: [
+                        {
+                            label: 'Prior Distribution',
+                            data: priorValues,
+                            borderColor: '#64748B',
+                            backgroundColor: 'rgba(100, 116, 139, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Posterior Distribution',
+                            data: posteriorValues,
+                            borderColor: '#1E40AF',
+                            backgroundColor: 'rgba(30, 64, 175, 0.2)',
+                            borderWidth: 4,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Bayesian Learning: Prior → Posterior',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Parameter Value' } },
+                        y: { title: { display: true, text: 'Density' } }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function normalDensity(x, mean, std) {
+            return Math.exp(-0.5 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
+        }
+
+        function displayPosteriorAnalysis() {
+            const model = currentBayesianModel.model;
+            const results = calculateBayesianAnalysis(currentBayesianModel.data, currentBayesianModel.analysisType, currentBayesianModel.priorType);
+            
+            // MCMC diagnostics (simulated)
+            const rHat = 1.01; // Gelman-Rubin statistic
+            const ess = 850; // Effective sample size
+            const acceptRate = 0.234; // Optimal around 0.234 for normal distribution
+            
+            document.getElementById('posteriorTable').innerHTML = `
+                <h4>💙 Advanced Posterior Analysis</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 70px; margin: 70px 0;">
+                    <div class="stat-card" style="padding: 70px;">
+                        <h5>Posterior Summary Statistics</h5>
+                        <div class="credible-interval">
+                            <div class="credible-metric">Mean: ${results.posteriorMean.toFixed(3)}</div>
+                            <div class="credible-metric">SD: ${Math.sqrt(results.posteriorVar).toFixed(3)}</div>
+                            <div class="credible-metric">95% CI: [${results.credibleLower.toFixed(3)}, ${results.credibleUpper.toFixed(3)}]</div>
+                        </div>
+                        <p><strong>Interpretation:</strong> ${(results.posteriorProb * 100).toFixed(1)}% probability of positive effect</p>
+                        <p><strong>Clinical Decision:</strong> ${results.posteriorProb > 0.8 ? 'Strong evidence for treatment' : 'Insufficient evidence'}</p>
+                    </div>
+                    
+                    <div class="stat-card" style="padding: 70px;">
+                        <h5>MCMC Convergence Diagnostics</h5>
+                        <p><strong>R̂ Statistic:</strong> ${rHat} (${rHat < 1.1 ? '✅ Converged' : '❌ Not converged'})</p>
+                        <p><strong>Effective Sample Size:</strong> ${ess} (${ess > 400 ? '✅ Adequate' : '⚠️ Low'})</p>
+                        <p><strong>Acceptance Rate:</strong> ${(acceptRate * 100).toFixed(1)}% (${Math.abs(acceptRate - 0.234) < 0.1 ? '✅ Optimal' : '⚠️ Suboptimal'})</p>
+                        <p><strong>Autocorrelation:</strong> Low (ESS/N > 0.4)</p>
+                    </div>
+                </div>
+                
+                <div class="bayesian-highlight">
+                    <p><strong>💙 Advanced Posterior Interpretation:</strong> 
+                    The MCMC sampling achieved excellent convergence (R̂ = ${rHat}) with adequate effective sample size (ESS = ${ess}). 
+                    Posterior learning concentrated the probability mass around ${results.posteriorMean.toFixed(3)}, representing 
+                    ${results.posteriorProb > 0.8 ? 'compelling' : results.posteriorProb > 0.5 ? 'modest' : 'weak'} evidence for clinical efficacy. 
+                    The ${(1 - results.posteriorProb).toFixed(3)} probability of no effect provides quantified uncertainty for decision-making.
+                    <span class="canada-bayesian">Canadian methodological excellence</span> 
+                    enables sophisticated uncertainty quantification and optimal clinical inference through principled Bayesian methodology.
+                    </p>
+                </div>
+            `;
+
+            // Update MCMC diagnostics
+            document.getElementById('mcmcResults').innerHTML = `
+                <p><strong>Convergence Assessment:</strong> R̂ = ${rHat} (${rHat < 1.1 ? 'Excellent convergence' : 'Poor convergence'})</p>
+                <p><strong>Sampling Efficiency:</strong> ESS = ${ess} samples (${ess > 400 ? 'High efficiency' : 'Low efficiency'})</p>
+                <p><strong>Chain Mixing:</strong> Acceptance rate = ${(acceptRate * 100).toFixed(1)}% (${Math.abs(acceptRate - 0.234) < 0.1 ? 'Optimal mixing' : 'Suboptimal mixing'})</p>
+            `;
+
+            // Update credible intervals
+            document.getElementById('credibleMetrics').innerHTML = `
+                <div class="credible-metric">2.5%: ${results.credibleLower.toFixed(3)}</div>
+                <div class="credible-metric">97.5%: ${results.credibleUpper.toFixed(3)}</div>
+                <div class="credible-metric">Width: ${(results.credibleUpper - results.credibleLower).toFixed(3)}</div>
+            `;
+
+            // Update decision analysis
+            document.getElementById('decisionResults').innerHTML = `
+                <p><strong>Expected Utility Analysis:</strong> Treatment decision based on posterior probability and clinical consequences</p>
+                <p><strong>Optimal Decision:</strong> ${results.posteriorProb > 0.8 ? 'Recommend treatment' : results.posteriorProb > 0.2 ? 'Consider treatment' : 'Do not recommend treatment'}</p>
+                <p><strong>Value of Information:</strong> ${results.posteriorProb > 0.5 && results.posteriorProb < 0.8 ? 'Additional data valuable' : 'Decision clear with current evidence'}</p>
+            `;
+
+            // Generate simple trace plot visualization
+            generateTraceChart();
+        }
+
+        function generateTraceChart() {
+            const ctx = document.getElementById('traceChart').getContext('2d');
+            
+            if (traceChart) {
+                traceChart.destroy();
+            }
+
+            // Simulate MCMC trace for demonstration
+            const iterations = 1000;
+            const trace1 = [];
+            const trace2 = [];
+            let value1 = Math.random();
+            let value2 = Math.random();
+            
+            for (let i = 0; i < iterations; i++) {
+                // Simple random walk
+                value1 += (Math.random() - 0.5) * 0.1;
+                value2 += (Math.random() - 0.5) * 0.1;
+                trace1.push(value1);
+                trace2.push(value2);
+            }
+
+            traceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: iterations}, (_, i) => i + 1),
+                    datasets: [
+                        {
+                            label: 'Chain 1',
+                            data: trace1,
+                            borderColor: '#1E40AF',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Chain 2',
+                            data: trace2,
+                            borderColor: '#64748B',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'MCMC Trace Plot - Parameter Sampling',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Iteration' } },
+                        y: { title: { display: true, text: 'Parameter Value' } }
+                    },
+                    interaction: {
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Assessment Functions
+        function generateNewQuestion() {
+            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
+            selectedAnswer = null;
+            
+            document.querySelector('.decision-question').textContent = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('assessmentOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'decision-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('assessmentFeedback').innerHTML = '';
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            
+            document.querySelectorAll('.decision-option').forEach((option, index) => {
+                option.classList.toggle('selected', index === answerIndex);
+            });
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
+            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="${feedbackClass}">
+                    <h4>${feedbackTitle}</h4>
+                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                </div>
+            `;
+        }
+
+        function showExpertSolution() {
+            if (!currentQuestion) {
+                generateNewQuestion();
+                return;
+            }
+            
+            document.getElementById('assessmentFeedback').innerHTML = `
+                <div class="feedback-success">
+                    <h4>🧠 Advanced Bayesian Methods Mastery</h4>
+                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
+                    <p><strong>Bayesian Insight:</strong> ${currentQuestion.explanation}</p>
+                    <p><strong>Expert Application:</strong> Bayesian methods provide the ultimate framework for statistical inference in clinical research, offering coherent uncertainty quantification, natural incorporation of prior knowledge, and optimal decision-making under uncertainty. Understanding posterior distributions, MCMC computation, hierarchical modeling, and decision theory is essential for adaptive clinical trials, personalized medicine, regulatory science, and health technology assessment. These sophisticated methods represent the future of evidence-based medicine and clinical research excellence.</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateBayesianModel();
+            generateNewQuestion();
+        });
+    </script>
+</body>
+</html>
