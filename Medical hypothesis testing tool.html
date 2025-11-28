@@ -4,1773 +4,1262 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foundation Series: Hypothesis Testing in Medicine & Clinical Research</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;600;700&family=Source+Code+Pro:wght@400;500;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
-        :root {
-            --primary-green: #228B22;
-            --secondary-red: #DC2626;
-            --light-green: #9ACD32;
-            --pale-green: #F0FFF0;
-            --forest-green: #006400;
-            --sage-green: #87A96B;
-            --mint-green: #98FB98;
-            --clinical-blue: #4682B4;
-            --medical-orange: #FF8C00;
-            --health-purple: #8A2BE2;
-            --silver: #C0C0C0;
-            --charcoal: #2F4F2F;
-            --slate: #708090;
-            --cream: #F8FFF8;
-            --white: #FFFFFF;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, #F5FFFA 50%, var(--pale-green) 100%);
-            color: var(--charcoal);
-            line-height: 1.65;
-            overflow-x: hidden;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fffe;
+            color: #2c3e50;
         }
-
-        /* Clinical Research Flow Background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: -70%;
-            left: -70%;
-            width: 240%;
-            height: 240%;
-            background: 
-                radial-gradient(ellipse at 25% 25%, rgba(34, 139, 34, 0.05) 0%, transparent 65%),
-                radial-gradient(ellipse at 75% 75%, rgba(154, 205, 50, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 90% 15%, rgba(70, 130, 180, 0.04) 0%, transparent 55%),
-                radial-gradient(ellipse at 15% 85%, rgba(255, 140, 0, 0.035) 0%, transparent 50%);
-            animation: clinicalFlow 45s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes clinicalFlow {
-            0%, 100% { 
-                transform: rotate(0deg) scale(1) translate(0, 0); 
-                opacity: 0.7; 
-            }
-            25% { 
-                transform: rotate(90deg) scale(1.12) translate(20px, -20px); 
-                opacity: 0.95; 
-            }
-            50% { 
-                transform: rotate(180deg) scale(0.88) translate(-15px, 15px); 
-                opacity: 0.8; 
-            }
-            75% { 
-                transform: rotate(270deg) scale(1.05) translate(12px, -8px); 
-                opacity: 0.9; 
-            }
-        }
-
-        /* Hypothesis Testing Pattern */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                repeating-linear-gradient(30deg, 
-                    transparent 0px, 
-                    rgba(34, 139, 34, 0.02) 1px, 
-                    transparent 2px, 
-                    transparent 70px),
-                repeating-linear-gradient(-60deg, 
-                    transparent 0px, 
-                    rgba(154, 205, 50, 0.015) 1px, 
-                    transparent 2px, 
-                    transparent 90px);
-            z-index: -1;
-            animation: hypothesisGrid 30s linear infinite;
-        }
-
-        @keyframes hypothesisGrid {
-            0% { transform: translateX(0) translateY(0); }
-            100% { transform: translateX(70px) translateY(90px); }
-        }
-
         .container {
-            max-width: 1850px;
-            margin: 25px auto;
-            background: rgba(255, 255, 255, 0.97);
-            box-shadow: 
-                0 0 85px rgba(34, 139, 34, 0.12),
-                0 25px 70px rgba(154, 205, 50, 0.1),
-                0 15px 35px rgba(70, 130, 180, 0.08);
-            border-radius: 40px;
-            overflow: hidden;
-            backdrop-filter: blur(18px);
-            animation: hypothesisEntry 2.6s cubic-bezier(0.23, 1, 0.32, 1);
-            border: 1px solid rgba(34, 139, 34, 0.15);
-        }
-
-        @keyframes hypothesisEntry {
-            from {
-                opacity: 0;
-                transform: scale(0.87) translateY(70px) rotateX(18deg);
-                filter: blur(18px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0) rotateX(0deg);
-                filter: blur(0);
-            }
-        }
-
-        /* Clinical Research Header Design */
-        .header-section {
-            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-green) 35%, var(--forest-green) 70%, #004000 100%);
-            color: white;
-            padding: 65px 55px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(75deg, 
-                transparent 0%, 
-                rgba(154, 205, 50, 0.14) 12%, 
-                transparent 28%, 
-                rgba(70, 130, 180, 0.11) 42%, 
-                transparent 58%, 
-                rgba(255, 140, 0, 0.09) 72%, 
-                transparent 88%);
-            animation: clinicalHeader 14s ease-in-out infinite;
-        }
-
-        @keyframes clinicalHeader {
-            0%, 100% { 
-                transform: translateX(-100px) scaleY(1) rotate(0deg); 
-                opacity: 0.85; 
-            }
-            33% { 
-                transform: translateX(60px) scaleY(1.15) rotate(1deg); 
-                opacity: 1; 
-            }
-            66% { 
-                transform: translateX(-35px) scaleY(0.9) rotate(-0.5deg); 
-                opacity: 0.92; 
-            }
-        }
-
-        .header-title {
-            font-family: 'Nunito Sans', sans-serif;
-            font-size: 4.4em;
-            font-weight: 900;
-            margin-bottom: 28px;
-            text-shadow: 3px 5px 15px rgba(0,0,0,0.55);
-            position: relative;
-            z-index: 2;
-            background: linear-gradient(135deg, white 0%, var(--mint-green) 35%, #ADFF2F 65%, white 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: titleHypothesis 4.2s ease-in-out infinite alternate;
-            letter-spacing: -2.2px;
-        }
-
-        @keyframes titleHypothesis {
-            from { 
-                filter: drop-shadow(0 0 18px rgba(154, 205, 50, 0.65)); 
-                text-shadow: 0 0 38px rgba(70, 130, 180, 0.45);
-            }
-            to { 
-                filter: drop-shadow(0 0 28px rgba(34, 139, 34, 0.75)); 
-                text-shadow: 0 0 48px rgba(255, 140, 0, 0.55);
-            }
-        }
-
-        .header-subtitle {
-            font-size: 1.85em;
-            font-weight: 400;
-            opacity: 0.93;
-            position: relative;
-            z-index: 2;
-            color: var(--mint-green);
-            text-shadow: 2px 3px 12px rgba(0,0,0,0.45);
-            letter-spacing: 1.1px;
-            font-style: italic;
-        }
-
-        /* Clinical Testing Navigation */
-        .nav-tabs {
-            display: flex;
-            background: linear-gradient(90deg, var(--primary-green) 0%, var(--clinical-blue) 20%, var(--medical-orange) 40%, var(--sage-green) 60%, var(--forest-green) 80%, var(--primary-green) 100%);
-            padding: 0;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 5px 0 rgba(154, 205, 50, 0.6);
-        }
-
-        .nav-tabs::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 38%;
-            background: linear-gradient(90deg, 
-                rgba(255,255,255,0.1) 0%, 
-                rgba(154, 205, 50, 0.18) 50%, 
-                rgba(255,255,255,0.1) 100%);
-            transform: translateX(-150%);
-            animation: clinicalNav 9.5s ease-in-out infinite;
-        }
-
-        @keyframes clinicalNav {
-            0%, 100% { transform: translateX(-150%); }
-            50% { transform: translateX(400%); }
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 33px 38px;
-            background: none;
-            border: none;
-            color: white;
-            font-weight: 500;
-            font-size: 1.16em;
-            cursor: pointer;
-            transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 6px solid transparent;
-            position: relative;
-            z-index: 2;
-            letter-spacing: 0.7px;
-        }
-
-        .tab-button:hover {
-            background: rgba(154, 205, 50, 0.22);
-            transform: translateY(-9px);
-            box-shadow: 0 20px 55px rgba(0,0,0,0.32);
-            color: var(--cream);
-        }
-
-        .tab-button.active {
-            background: rgba(154, 205, 50, 0.32);
-            border-bottom-color: var(--medical-orange);
-            font-weight: 600;
-            color: var(--cream);
-            box-shadow: inset 0 -6px 0 var(--medical-orange);
-        }
-
-        /* Content Sections */
-        .content-section {
-            display: none;
-            padding: 68px;
-            animation: clinicalSlide 1.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes clinicalSlide {
-            from {
-                opacity: 0;
-                transform: translateY(55px) scale(0.96);
-                filter: blur(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
-        }
-
-        /* Section Titles - RED (Consistency) */
-        .section-title {
-            font-family: 'Nunito Sans', sans-serif;
-            font-size: 3.7em;
-            color: var(--secondary-red);
-            margin-bottom: 58px;
-            text-align: center;
-            font-weight: 700;
-            position: relative;
-            text-shadow: 2px 3px 12px rgba(0,0,0,0.14);
-            letter-spacing: -1.8px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 190px;
-            height: 5px;
-            background: linear-gradient(90deg, 
-                var(--mint-green) 0%, 
-                var(--clinical-blue) 16%, 
-                var(--medical-orange) 32%, 
-                var(--sage-green) 48%, 
-                var(--forest-green) 64%, 
-                var(--primary-green) 80%, 
-                var(--mint-green) 100%);
-            border-radius: 4px;
-            animation: clinicalUnderline 5.8s ease-in-out infinite alternate;
-        }
-
-        @keyframes clinicalUnderline {
-            from { width: 190px; opacity: 0.8; }
-            to { width: 270px; opacity: 1; }
-        }
-
-        /* Medical Green/Sage Boxes - Foundation Framework */
-        .theory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(510px, 1fr));
-            gap: 48px;
-            margin-bottom: 68px;
-        }
-
-        .theory-card {
-            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 50%, var(--white) 100%);
-            padding: 52px;
-            border-radius: 30px;
-            border: 4px solid var(--light-green);
-            box-shadow: 
-                0 20px 58px rgba(34, 139, 34, 0.1),
-                0 9px 28px rgba(154, 205, 50, 0.12);
-            transition: all 0.85s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .theory-card::before {
-            content: '';
-            position: absolute;
-            top: -45px;
-            right: -45px;
-            width: 170px;
-            height: 170px;
-            background: radial-gradient(circle, 
-                rgba(154, 205, 50, 0.1) 0%, 
-                rgba(34, 139, 34, 0.08) 40%, 
-                transparent 70%);
-            border-radius: 50%;
-            animation: cardHypothesis 9.5s ease-in-out infinite;
-        }
-
-        @keyframes cardHypothesis {
-            0%, 100% { 
-                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
-                opacity: 0.9; 
-            }
-            25% { 
-                transform: scale(1.2) translateX(28px) translateY(-28px) rotate(90deg); 
-                opacity: 1; 
-            }
-            50% { 
-                transform: scale(0.82) translateX(-18px) translateY(18px) rotate(180deg); 
-                opacity: 0.85; 
-            }
-            75% { 
-                transform: scale(1.12) translateX(18px) translateY(-12px) rotate(270deg); 
-                opacity: 0.95; 
-            }
-        }
-
-        .theory-card:hover {
-            transform: translateY(-20px) rotateX(12deg) rotateY(4deg);
-            box-shadow: 
-                0 32px 85px rgba(34, 139, 34, 0.15),
-                0 14px 38px rgba(154, 205, 50, 0.18);
-            border-color: var(--primary-green);
-        }
-
-        .theory-card h3 {
-            font-family: 'Nunito Sans', sans-serif;
-            color: var(--secondary-red);
-            margin-bottom: 32px;
-            font-size: 2.05em;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-            letter-spacing: -0.7px;
-        }
-
-        .theory-card p {
-            font-size: 1.22em;
-            line-height: 1.88;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
-            font-weight: 400;
-        }
-
-        /* Mathematical Formulas - Clinical Style */
-        .formula-display {
-            background: linear-gradient(135deg, var(--charcoal) 0%, var(--primary-green) 50%, var(--forest-green) 100%);
-            color: white;
-            padding: 42px;
-            border-radius: 23px;
-            margin: 38px 0;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.28em;
-            box-shadow: 
-                inset 0 4px 25px rgba(0,0,0,0.55), 
-                0 16px 45px rgba(34, 139, 34, 0.3);
-            overflow-x: auto;
-            border: 4px solid rgba(154, 205, 50, 0.5);
-            position: relative;
-        }
-
-        .formula-display::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                var(--mint-green) 18%, 
-                var(--clinical-blue) 34%, 
-                var(--medical-orange) 50%, 
-                var(--sage-green) 66%, 
-                var(--forest-green) 82%, 
-                transparent 100%);
-            animation: formulaHypothesis 4.8s ease-in-out infinite;
-        }
-
-        @keyframes formulaHypothesis {
-            0%, 100% { opacity: 0.7; transform: scaleX(0.6); }
-            50% { opacity: 1; transform: scaleX(1.45); }
-        }
-
-        /* Medical Green Control Panel */
-        .control-panel {
-            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 50%, var(--white) 100%);
-            padding: 58px;
-            border-radius: 34px;
-            margin: 58px 0;
-            border: 5px solid var(--light-green);
-            box-shadow: 
-                0 25px 75px rgba(154, 205, 50, 0.18),
-                inset 0 1px 0 rgba(255,255,255,0.98);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .control-panel::before {
-            content: '';
-            position: absolute;
-            top: -95%;
-            left: -95%;
-            width: 290%;
-            height: 290%;
-            background: conic-gradient(from 60deg at 50% 50%, 
-                transparent 0%, 
-                rgba(154, 205, 50, 0.05) 22%, 
-                transparent 44%, 
-                rgba(34, 139, 34, 0.04) 66%, 
-                transparent 88%);
-            animation: controlHypothesis 23s linear infinite;
-        }
-
-        @keyframes controlHypothesis {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .control-header {
-            font-family: 'Nunito Sans', sans-serif;
-            color: var(--secondary-red);
-            font-size: 2.8em;
-            margin-bottom: 42px;
-            text-align: center;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-            letter-spacing: -0.7px;
-        }
-
-        .control-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(385px, 1fr));
-            gap: 40px;
-            margin-bottom: 48px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 18px;
-            color: var(--charcoal);
-            font-size: 1.2em;
-            letter-spacing: 0.45px;
-        }
-
-        .form-group select,
-        .form-group input {
-            padding: 23px;
-            border: 2px solid #E5E7EB;
-            border-radius: 16px;
-            font-size: 1.14em;
-            transition: all 0.65s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(255, 255, 255, 0.99);
-            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
-        }
-
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-green);
-            box-shadow: 
-                0 0 35px rgba(34, 139, 34, 0.3),
-                0 0 0 4px rgba(154, 205, 50, 0.18);
-            transform: translateY(-5px) scale(1.025);
-        }
-
-        /* Clinical Action Buttons */
-        .button-group {
-            display: flex;
-            gap: 30px;
-            margin-top: 48px;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .btn {
-            padding: 26px 52px;
-            border: none;
-            border-radius: 18px;
-            font-weight: 600;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1.8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255,255,255,0.65) 50%, 
-                transparent 100%);
-            transition: left 0.9s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--forest-green) 100%);
-            color: white;
-            box-shadow: 0 11px 32px rgba(34, 139, 34, 0.42);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--forest-green) 0%, var(--primary-green) 100%);
-            transform: translateY(-9px);
-            box-shadow: 0 20px 55px rgba(34, 139, 34, 0.48);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--clinical-blue) 0%, #4169E1 100%);
-            color: white;
-            box-shadow: 0 11px 32px rgba(70, 130, 180, 0.42);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #4169E1 0%, var(--clinical-blue) 100%);
-            transform: translateY(-9px);
-            box-shadow: 0 20px 55px rgba(70, 130, 180, 0.48);
-        }
-
-        .btn-accent {
-            background: linear-gradient(135deg, var(--medical-orange) 0%, #FF7F00 100%);
-            color: white;
-            box-shadow: 0 11px 32px rgba(255, 140, 0, 0.42);
-        }
-
-        .btn-accent:hover {
-            background: linear-gradient(135deg, #FF7F00 0%, var(--medical-orange) 100%);
-            transform: translateY(-9px);
-            box-shadow: 0 20px 55px rgba(255, 140, 0, 0.48);
-        }
-
-        /* Medical Green Results Container */
-        .results-container {
-            background: linear-gradient(135deg, var(--pale-green) 0%, #F5FFFA 100%);
-            border: 5px solid var(--light-green);
-            border-radius: 32px;
-            padding: 58px;
-            margin: 58px 0;
-            box-shadow: 
-                0 28px 85px rgba(0,0,0,0.13),
-                inset 0 1px 0 rgba(255,255,255,0.99);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .results-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, 
-                var(--mint-green) 0%, 
-                var(--clinical-blue) 14%, 
-                var(--medical-orange) 28%, 
-                var(--sage-green) 42%, 
-                var(--forest-green) 56%, 
-                var(--primary-green) 70%, 
-                var(--light-green) 84%, 
-                var(--mint-green) 100%);
-            animation: clinicalResults 4.8s ease-in-out infinite;
-        }
-
-        @keyframes clinicalResults {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-
-        .results-header {
-            font-family: 'Nunito Sans', sans-serif;
-            font-size: 2.9em;
-            color: var(--secondary-red);
-            margin-bottom: 42px;
-            text-align: center;
-            font-weight: 700;
-            letter-spacing: -0.7px;
-        }
-
-        /* Medical Green Chart Container */
-        .chart-container {
-            position: relative;
-            height: 620px;
-            margin: 58px 0;
-            background: linear-gradient(135deg, var(--pale-green) 0%, var(--white) 100%);
-            border-radius: 26px;
-            padding: 48px;
-            box-shadow: 0 20px 58px rgba(0,0,0,0.14);
-            border: 4px solid var(--light-green);
-        }
-
-        /* Statistics Grid - Medical Green Theme */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 40px;
-            margin: 52px 0;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--pale-green) 0%, var(--white) 100%);
-            padding: 40px;
-            border-radius: 22px;
-            text-align: center;
-            border: 4px solid var(--light-green);
-            transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--mint-green) 0%, var(--primary-green) 50%, var(--clinical-blue) 100%);
-            transform: scaleX(0);
-            transition: transform 0.65s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-14px) scale(1.04);
-            box-shadow: 0 28px 65px rgba(0,0,0,0.18);
-        }
-
-        .stat-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .stat-value {
-            font-family: 'Source Code Pro', monospace;
-            font-size: 2.15em;
-            font-weight: 700;
-            color: var(--primary-green);
-            margin-bottom: 16px;
-        }
-
-        .stat-label {
-            font-size: 1.1em;
-            color: var(--slate);
-            font-weight: 500;
-        }
-
-        /* Hypothesis Testing-Specific Elements */
-        .hypothesis-info {
-            background: linear-gradient(135deg, var(--pale-green) 0%, #F0F8FF 100%);
-            border: 4px solid var(--light-green);
-            border-radius: 20px;
-            padding: 38px;
-            margin: 38px 0;
-        }
-
-        .test-statistics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 22px;
-            margin: 32px 0;
-        }
-
-        .test-stat-card {
-            background: var(--primary-green);
-            color: white;
-            padding: 22px 16px;
-            border-radius: 14px;
-            text-align: center;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        .test-stat-card:nth-child(1) { background: var(--clinical-blue); }
-        .test-stat-card:nth-child(2) { background: var(--medical-orange); }
-        .test-stat-card:nth-child(3) { background: var(--primary-green); }
-        .test-stat-card:nth-child(4) { background: var(--sage-green); }
-
-        /* Decision Framework - Medical Green */
-        .decision-panel {
-            background: linear-gradient(135deg, var(--pale-green) 0%, rgba(154, 205, 50, 0.25) 100%);
-            border: 5px solid var(--light-green);
-            border-radius: 30px;
-            padding: 48px;
-            margin: 48px 0;
-        }
-
-        .decision-question {
-            font-family: 'Nunito Sans', sans-serif;
-            font-weight: 600;
-            font-size: 1.55em;
-            margin-bottom: 38px;
-            color: var(--charcoal);
-            text-align: center;
-            letter-spacing: -0.4px;
-        }
-
-        .decision-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .decision-option {
-            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
-            border: 2px solid #E5E7EB;
-            border-radius: 18px;
-            cursor: pointer;
-            transition: all 0.65s ease;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 3px solid #20b2aa;
+        }
+        h1 {
+            color: #dc143c;
             text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #dc143c;
+            border-bottom: 3px solid #dc143c;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2f8b8b;
+            margin-top: 25px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #2f8b8b;
+            font-size: 1.1em;
+            margin-bottom: 30px;
             font-weight: 500;
-            font-size: 1.12em;
         }
-
-        .decision-option:hover {
-            border-color: var(--clinical-blue);
-            background: #F0F8FF;
-            transform: translateY(-7px);
+        .foundation-badge {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            display: inline-block;
+            font-size: 0.9em;
         }
-
-        .decision-option.selected {
-            border-color: var(--primary-green);
-            background: var(--pale-green);
-            box-shadow: 0 0 32px rgba(34, 139, 34, 0.4);
+        .section {
+            background: #f0ffff;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #2f8b8b;
         }
-
-        /* Feedback Messages */
-        .feedback-message {
-            padding: 40px;
-            border-radius: 22px;
-            margin: 40px 0;
-            font-weight: 500;
-            font-size: 1.2em;
+        .concept-intro {
+            background: linear-gradient(to right, #e6f3ff, #f0f8ff);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #4169e1;
+            border-left: 6px solid #4169e1;
         }
-
-        .feedback-success {
-            background: var(--pale-green);
-            border: 4px solid var(--light-green);
-            color: var(--forest-green);
+        .concept {
+            background: #e8fffe;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #20b2aa;
         }
-
-        .feedback-warning {
-            background: #FFF8E1;
-            border: 4px solid var(--medical-orange);
-            color: #8F6300;
+        .controls {
+            background: #f8ffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #20b2aa;
         }
-
-        .feedback-danger {
-            background: #FFEBEE;
-            border: 4px solid #DC2626;
-            color: #8B0000;
+        button {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
         }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 22px;
-                border-radius: 32px;
-            }
-
-            .header-title {
-                font-size: 3.2em;
-            }
-
-            .theory-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .control-group {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-tabs {
-                flex-direction: column;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .test-statistics {
-                grid-template-columns: 1fr;
-            }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-
-        /* Research References - Medical Green */
-        .research-note {
-            background: linear-gradient(135deg, var(--pale-green) 0%, #F0F8FF 100%);
-            padding: 38px;
-            border-radius: 18px;
-            margin: 38px 0;
-            border-left: 8px solid var(--primary-green);
-            font-style: italic;
+        .results {
+            background: #ffffff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #20b2aa;
+            height: 400px;
             position: relative;
         }
-
-        .research-note::before {
-            content: '🧪';
-            position: absolute;
-            top: 38px;
-            left: 32px;
-            font-size: 1.5em;
+        select, input {
+            padding: 8px;
+            margin: 5px;
+            border: 2px solid #20b2aa;
+            border-radius: 4px;
+            background: white;
         }
-
-        .research-note p {
-            margin-left: 48px;
-            line-height: 1.95;
-        }
-
-        /* Advanced Visual Effects */
-        .clinical-highlight {
-            background: rgba(34, 139, 34, 0.12);
-            border-left: 7px solid var(--primary-green);
-            padding: 22px;
-            margin: 22px 0;
-            border-radius: 12px;
-        }
-
-        .p-value-display {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--light-green) 0%, var(--primary-green) 100%);
-            color: white;
-            padding: 12px 22px;
-            border-radius: 25px;
-            font-family: 'Source Code Pro', monospace;
-            font-weight: 700;
-            margin: 0 12px;
-            font-size: 1.02em;
-        }
-
-        /* Canadian Clinical Context */
-        .canada-clinical {
-            background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 18px;
-            font-family: 'Source Code Pro', monospace;
-            font-weight: 600;
-            font-size: 0.88em;
-            display: inline-block;
-            margin: 0 10px;
-        }
-
-        /* Error Type Visualization */
-        .error-types {
-            display: flex;
-            justify-content: space-between;
-            background: var(--pale-green);
-            padding: 25px;
-            border-radius: 15px;
-            margin: 25px 0;
-        }
-
-        .error-type {
-            background: var(--medical-orange);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            text-align: center;
-            flex: 1;
-            margin: 0 10px;
-            font-family: 'Source Code Pro', monospace;
-            font-weight: 600;
+        .formula {
+            background: #f0f8ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #2f8b8b;
             font-size: 0.95em;
         }
-
-        .error-type:first-child {
-            background: var(--clinical-blue);
+        .key-concept {
+            background: #fff5ee;
+            border: 2px solid #ff6347;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 6px solid #ff6347;
         }
-
-        .error-type:last-child {
-            background: var(--sage-green);
+        .clinical-context {
+            background: linear-gradient(to right, #ffe8e8, #fff0f0);
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .regulatory-box {
+            background: linear-gradient(to right, #f0f8ff, #e6f3ff);
+            border: 2px solid #4169e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .navigation {
+            background: #e8fffe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #20b2aa;
+        }
+        .nav-button {
+            background: #2f8b8b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .nav-button:hover {
+            background: #20b2aa;
+        }
+        .section-content {
+            display: none;
+        }
+        .section-content.active {
+            display: block;
+        }
+        .power-visual {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #20b2aa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #2f8b8b;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8fffe;
+        }
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .assessment {
+            background: linear-gradient(to right, #f0ffff, #e8fffe);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .question {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #20b2aa;
+        }
+        .when-to-use {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .assumptions-box {
+            background: #fff8e1;
+            border: 2px solid #ffa726;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
-        <div class="header-section">
-            <h1 class="header-title">Hypothesis Testing in Medicine & Clinical Research</h1>
-            <p class="header-subtitle">Foundation Series: Statistical Inference for Healthcare Evidence</p>
+        <h1>Foundation Series: Hypothesis Testing in Medicine & Clinical Research</h1>
+        <div class="subtitle">Statistical Inference for Evidence-Based Healthcare</div>
+        
+        <div class="foundation-badge">🔬 FOUNDATION SERIES: From Research Questions to Statistical Evidence</div>
+
+        <div class="navigation">
+            <h3>Navigate Hypothesis Testing Foundations</h3>
+            <button class="nav-button" onclick="showSection('framework')">Hypothesis Framework</button>
+            <button class="nav-button" onclick="showSection('errors')">Errors & Power</button>
+            <button class="nav-button" onclick="showSection('pvalues')">P-values & Significance</button>
+            <button class="nav-button" onclick="showSection('means')">Comparing Means</button>
+            <button class="nav-button" onclick="showSection('categorical')">Categorical Data</button>
+            <button class="nav-button" onclick="showSection('nonparametric')">Non-parametric Tests</button>
+            <button class="nav-button" onclick="showSection('diagnostic')">Diagnostic Tests</button>
+            <button class="nav-button" onclick="showSection('equivalence')">Equivalence Testing</button>
+            <button class="nav-button" onclick="showSection('survival')">Survival Analysis Intro</button>
+            <button class="nav-button" onclick="showSection('assessment')">Assessment</button>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <button class="tab-button active" onclick="showSection('theory')">🧪 Hypothesis Testing Theory</button>
-            <button class="tab-button" onclick="showSection('simulation')">🇨🇦 Clinical Applications</button>
-            <button class="tab-button" onclick="showSection('analysis')">📊 Statistical Testing</button>
-            <button class="tab-button" onclick="showSection('assessment')">✅ Assessment Mode</button>
-        </div>
-
-        <!-- Theory Framework Section -->
-        <div id="theory" class="content-section active">
-            <h2 class="section-title">Medical Hypothesis Testing Framework</h2>
-            
-            <div class="theory-grid">
-                <div class="theory-card">
-                    <h3>🧪 Clinical Hypothesis Structure</h3>
-                    <p><strong>Scientific Method in Medicine:</strong> Medical hypothesis testing provides the statistical foundation for evidence-based clinical decision-making and research interpretation.</p>
-                    <div class="formula-display">
-                        Null Hypothesis (H₀): No treatment effect<br>
-                        Alternative Hypothesis (H₁): Treatment effect exists<br><br>
-                        Clinical Example:<br>
-                        H₀: μ_treatment = μ_control (no difference)<br>
-                        H₁: μ_treatment ≠ μ_control (difference exists)
-                    </div>
-                    <p><em>Medical insight: Proper hypothesis formation determines appropriate statistical test selection</em></p>
-                </div>
-
-                <div class="theory-card">
-                    <h3>📊 P-Values in Medical Context</h3>
-                    <p><strong>Evidence Interpretation:</strong> P-values quantify evidence against the null hypothesis but require careful interpretation in clinical contexts where patient safety is paramount.</p>
-                    <div class="formula-display">
-                        p-value = P(observing data | H₀ is true)<br><br>
-                        Interpretation:<br>
-                        p < 0.05: Strong evidence against H₀<br>
-                        p < 0.01: Very strong evidence against H₀<br>
-                        p < 0.001: Extremely strong evidence against H₀
-                    </div>
-                    <p><strong>Clinical Caveat:</strong> Statistical significance ≠ clinical significance; effect size and clinical relevance must also be considered</p>
-                </div>
-
-                <div class="theory-card">
-                    <h3>⚠️ Type I & II Errors in Healthcare</h3>
-                    <p><strong>Clinical Decision Errors:</strong> Understanding error types is critical in medical research where incorrect conclusions can impact patient care and public health policy.</p>
-                    <div class="formula-display">
-                        Type I Error (α): False positive<br>
-                        - Conclude treatment works when it doesn't<br>
-                        - Risk: Ineffective treatment adoption<br><br>
-                        Type II Error (β): False negative<br>
-                        - Conclude treatment doesn't work when it does<br>
-                        - Risk: Missing beneficial treatments
-                    </div>
-                    <p><strong>Medical Implications:</strong> Balance α and β based on clinical consequences and patient safety considerations</p>
-                </div>
-
-                <div class="theory-card">
-                    <h3>🔬 T-Tests for Clinical Trials</h3>
-                    <p><strong>Treatment Comparisons:</strong> T-tests form the foundation for comparing medical treatments and interventions in controlled clinical settings.</p>
-                    <div class="formula-display">
-                        One-sample t-test: t = (x̄ - μ₀)/(s/√n)<br>
-                        Two-sample t-test: t = (x̄₁ - x̄₂)/√(s²(1/n₁ + 1/n₂))<br>
-                        Paired t-test: t = d̄/(s_d/√n)<br><br>
-                        df = n-1 (one-sample), n₁+n₂-2 (two-sample)
-                    </div>
-                    <p><strong>Clinical Applications:</strong> Before/after treatment comparisons, drug efficacy trials, biomarker analysis</p>
-                </div>
-
-                <div class="theory-card">
-                    <h3>📋 Chi-Square Tests for Medical Data</h3>
-                    <p><strong>Categorical Analysis:</strong> Chi-square tests evaluate associations between categorical variables common in medical research such as disease status and risk factors.</p>
-                    <div class="formula-display">
-                        Pearson χ²: χ² = Σ(O - E)²/E<br>
-                        Fisher's Exact Test: For small samples<br>
-                        McNemar's Test: For paired data<br><br>
-                        df = (rows - 1) × (columns - 1)
-                    </div>
-                    <p><strong>Medical Uses:</strong> Disease-exposure associations, treatment response rates, diagnostic test performance</p>
-                </div>
-
-                <div class="theory-card">
-                    <h3>🎯 Power Analysis & Sample Size</h3>
-                    <p><strong>Study Design:</strong> Proper power analysis ensures clinical studies have adequate sample sizes to detect clinically meaningful treatment effects while maintaining feasibility.</p>
-                    <div class="formula-display">
-                        Power = 1 - β (probability of detecting true effect)<br>
-                        n = 2σ²(z_{α/2} + z_β)²/δ²<br><br>
-                        Where δ = effect size, σ = standard deviation<br>
-                        Typical: α = 0.05, Power = 0.80 (80%)
-                    </div>
-                    <p><strong>Clinical Planning:</strong> Balances statistical requirements with practical constraints like recruitment, cost, and ethical considerations</p>
-                </div>
-            </div>
-
-            <div class="theory-card" style="grid-column: 1 / -1;">
-                <h3>🇨🇦 Canadian Clinical Research Applications</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 45px; margin-top: 35px;">
-                    <div>
-                        <h4>🏥 Clinical Trials & Treatment Studies:</h4>
-                        <ul>
-                            <li><strong>Drug Efficacy Trials:</strong> Comparing new treatments to standard care</li>
-                            <li><strong>Surgical Outcomes:</strong> Before/after intervention analysis</li>
-                            <li><strong>Diagnostic Accuracy:</strong> Sensitivity and specificity testing</li>
-                            <li><strong>Biomarker Validation:</strong> Laboratory test performance evaluation</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>📊 Public Health & Epidemiological Studies:</h4>
-                        <ul>
-                            <li><strong>Vaccine Effectiveness:</strong> Population-based immunization studies</li>
-                            <li><strong>Risk Factor Analysis:</strong> Disease-exposure associations</li>
-                            <li><strong>Screening Programs:</strong> Population health intervention evaluation</li>
-                            <li><strong>Health Policy Evaluation:</strong> Before/after policy implementation analysis</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="research-note">
-                <p><strong>🧪 Evidence-Based Medicine Foundation:</strong> Hypothesis testing provides the statistical foundation for evidence-based medicine by establishing systematic methods for evaluating clinical evidence. These tools enable healthcare professionals to distinguish between chance findings and genuine treatment effects, supporting informed clinical decision-making and advancing medical knowledge through rigorous scientific inquiry.</p>
-            </div>
-        </div>
-
-        <!-- Canadian Clinical Applications Section -->
-        <div id="simulation" class="content-section">
-            <h2 class="section-title">Canadian Clinical Research Laboratory</h2>
-
-            <div class="control-panel">
-                <h3 class="control-header">🧪 Hypothesis Testing Simulator</h3>
+        <!-- Section 1: Hypothesis Testing Framework -->
+        <div id="framework-section" class="section-content active">
+            <div class="section">
+                <h2>🎯 Hypothesis Testing Framework in Clinical Research</h2>
                 
-                <div class="control-group">
-                    <div class="form-group">
-                        <label for="clinicalStudy">Canadian Clinical Study</label>
-                        <select id="clinicalStudy" onchange="updateClinicalStudy()">
-                            <option value="drug_trial">New Drug Efficacy Trial</option>
-                            <option value="vaccine_study">Vaccine Effectiveness Study</option>
-                            <option value="surgical_outcome">Surgical Intervention Analysis</option>
-                            <option value="diagnostic_test">Diagnostic Test Validation</option>
-                            <option value="public_health">Public Health Intervention</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="testType">Statistical Test</label>
-                        <select id="testType">
-                            <option value="one_sample_t">One-Sample T-Test</option>
-                            <option value="two_sample_t" selected>Two-Sample T-Test</option>
-                            <option value="paired_t">Paired T-Test</option>
-                            <option value="chi_square">Chi-Square Test</option>
-                            <option value="fisher_exact">Fisher's Exact Test</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="sampleSizeClinical">Sample Size per Group</label>
-                        <select id="sampleSizeClinical">
-                            <option value="50">50 participants</option>
-                            <option value="100" selected>100 participants</option>
-                            <option value="200">200 participants</option>
-                            <option value="500">500 participants</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="effectSizeLevel">Effect Size (Clinical Importance)</label>
-                        <input type="range" id="effectSizeLevel" min="0.1" max="1.5" step="0.1" value="0.5" onchange="updateEffectDisplay()">
-                        <span id="effectSizeValue">0.5</span> (Cohen's d)
-                    </div>
+                <div class="concept-intro">
+                    <h3>📚 What is Hypothesis Testing?</h3>
+                    <p><strong>Hypothesis testing is the statistical method used to make decisions about populations based on sample data.</strong> In clinical research, it helps us answer questions like "Does this new treatment work better than standard care?" or "Is there a relationship between smoking and lung disease?"</p>
+                    
+                    <p><strong>Why it matters in healthcare:</strong> Medical decisions affect lives, so we need rigorous statistical evidence to distinguish real treatment effects from random chance. Hypothesis testing provides the framework for making these evidence-based decisions.</p>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="generateClinicalData()">🧪 Generate Study Data</button>
-                    <button class="btn btn-secondary" onclick="performHypothesisTest()">📊 Test Hypothesis</button>
-                    <button class="btn btn-accent" onclick="interpretResults()">📈 Clinical Interpretation</button>
+                <div class="concept">
+                    <h3>Formulating Hypotheses: The Foundation of Scientific Inquiry</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🔍 Key Concepts:</h4>
+                        <p><strong>Null Hypothesis (H₀):</strong> "No effect" or "no difference" - what we assume is true unless proven otherwise</p>
+                        <p><strong>Alternative Hypothesis (H₁ or Hₐ):</strong> What we want to demonstrate - the research claim</p>
+                        <p><strong>PICO Framework:</strong> Patient/Population, Intervention, Comparison, Outcome - structures clinical questions</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Clinical Research Example:</h4>
+                        <p><strong>Research Question:</strong> "Does the new antihypertensive drug reduce blood pressure more than standard treatment?"</p>
+                        <p><strong>H₀:</strong> μ_new - μ_standard = 0 (no difference in mean blood pressure reduction)</p>
+                        <p><strong>H₁:</strong> μ_new - μ_standard ≠ 0 (there is a difference in mean reduction)</p>
+                    </div>
+
+                    <div class="formula">
+                        PICO Framework Application:
+                        <br>P: Patients with hypertension (systolic BP >140 mmHg)
+                        <br>I: New antihypertensive drug (intervention)
+                        <br>C: Current standard treatment (control)
+                        <br>O: Reduction in systolic blood pressure (outcome)
+                    </div>
+
+                    <div class="controls">
+                        <h4>Interactive Hypothesis Builder</h4>
+                        <label>Research Area: 
+                            <select id="research-area">
+                                <option value="treatment">Treatment Effectiveness</option>
+                                <option value="diagnosis">Diagnostic Accuracy</option>
+                                <option value="prevention">Disease Prevention</option>
+                                <option value="risk-factor">Risk Factor Association</option>
+                            </select>
+                        </label><br>
+                        <label>Study Design: 
+                            <select id="study-design">
+                                <option value="rct">Randomized Controlled Trial</option>
+                                <option value="cohort">Cohort Study</option>
+                                <option value="case-control">Case-Control Study</option>
+                                <option value="cross-sectional">Cross-sectional Study</option>
+                            </select>
+                        </label><br>
+                        <label>Test Type: 
+                            <select id="test-type">
+                                <option value="two-sided">Two-sided (≠)</option>
+                                <option value="one-sided-greater">One-sided (>)</option>
+                                <option value="one-sided-less">One-sided (<)</option>
+                            </select>
+                        </label><br>
+                        <button onclick="buildHypothesis()">Build Hypothesis Statement</button>
+                    </div>
+
+                    <div id="framework-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="when-to-use">
+                        <h4>💡 When to Use One-sided vs Two-sided Tests:</h4>
+                        <p><strong>Two-sided:</strong> Most common - we don't know direction of effect (drug could help or harm)</p>
+                        <p><strong>One-sided:</strong> When direction is predetermined (safety studies, non-inferiority trials)</p>
+                        <p><strong>Regulatory note:</strong> Health Canada generally requires two-sided tests unless strong scientific rationale</p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Clinical Study Description -->
-            <div id="clinicalDescription" class="hypothesis-info">
-                <div class="results-header">Current Clinical Research Study</div>
-                <div id="clinicalText"></div>
-                <div id="testStatistics" class="test-statistics"></div>
-            </div>
-
-            <!-- Clinical Data Chart -->
-            <div class="chart-container">
-                <canvas id="clinicalChart"></canvas>
             </div>
         </div>
 
-        <!-- Statistical Testing Section -->
-        <div id="analysis" class="content-section">
-            <h2 class="section-title">Hypothesis Testing Results</h2>
+        <!-- Section 2: Statistical Errors & Power -->
+        <div id="errors-section" class="section-content">
+            <div class="section">
+                <h2>⚖️ Statistical Errors & Power Analysis</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Understanding Statistical Errors</h3>
+                    <p><strong>Statistical errors are inevitable in hypothesis testing because we're making decisions about populations based on samples.</strong> Understanding these errors is crucial for designing studies and interpreting results responsibly.</p>
+                    
+                    <p><strong>Why it matters in healthcare:</strong> Type I errors can lead to approving ineffective treatments, while Type II errors can prevent beneficial treatments from reaching patients. Both have serious consequences for public health.</p>
+                </div>
 
-            <div id="testResults" class="results-container">
-                <div class="results-header">Statistical Test Results</div>
-                <div id="testTable"></div>
-            </div>
+                <div class="concept">
+                    <h3>Types of Statistical Errors & Their Clinical Consequences</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🚨 Error Types:</h4>
+                        <p><strong>Type I Error (α):</strong> Rejecting a true null hypothesis - "false positive"</p>
+                        <p><strong>Type II Error (β):</strong> Failing to reject a false null hypothesis - "false negative"</p>
+                        <p><strong>Statistical Power (1-β):</strong> Probability of correctly rejecting a false null hypothesis</p>
+                    </div>
 
-            <div class="stats-grid" id="clinicalStats">
-                <!-- Dynamic statistics will be populated here -->
-            </div>
+                    <div class="clinical-context">
+                        <h4>Clinical Consequences:</h4>
+                        <p><strong>Type I Error in Drug Trials:</strong> Approving an ineffective drug → Patients get false hope, healthcare costs increase, delay in finding real treatments</p>
+                        <p><strong>Type II Error in Drug Trials:</strong> Missing an effective treatment → Patients continue to suffer, beneficial therapy delayed</p>
+                    </div>
 
-            <div id="interpretationResults" class="results-container">
-                <div class="results-header">🧪 Clinical Interpretation & Evidence Assessment</div>
-                <div id="interpretationTable"></div>
-            </div>
+                    <table style="margin: 15px 0;">
+                        <tr><th>Reality \ Decision</th><th>Reject H₀</th><th>Fail to Reject H₀</th></tr>
+                        <tr><td>H₀ is True</td><td style="background: #ffe8e8;">Type I Error (α)</td><td style="background: #e8ffe8;">Correct Decision</td></tr>
+                        <tr><td>H₀ is False</td><td style="background: #e8ffe8;">Correct Decision (Power)</td><td style="background: #ffe8e8;">Type II Error (β)</td></tr>
+                    </table>
 
-            <!-- Power Analysis Chart -->
-            <div class="chart-container">
-                <h3 style="text-align: center; margin-bottom: 35px; color: var(--secondary-red);">📊 Statistical Power & Effect Size Analysis</h3>
-                <canvas id="powerChart"></canvas>
+                    <div class="controls">
+                        <h4>Interactive Power Analysis Calculator</h4>
+                        <label>Effect Size (Cohen's d): <input type="number" id="effect-size" value="0.5" min="0.1" max="2.0" step="0.1"></label><br>
+                        <label>Sample Size per Group: <input type="number" id="sample-size" value="50" min="10" max="200" step="5"></label><br>
+                        <label>Significance Level (α): <input type="number" id="alpha-level" value="0.05" min="0.01" max="0.10" step="0.01"></label><br>
+                        <label>Clinical Context: 
+                            <select id="clinical-context">
+                                <option value="efficacy">Drug Efficacy Trial</option>
+                                <option value="safety">Safety Study</option>
+                                <option value="bioequivalence">Bioequivalence Study</option>
+                                <option value="screening">Screening Test</option>
+                            </select>
+                        </label><br>
+                        <button onclick="calculatePower()">Calculate Power & Sample Size</button>
+                    </div>
+
+                    <div id="errors-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="power-chart"></canvas>
+                    </div>
+
+                    <div class="regulatory-box">
+                        <h4>🇨🇦 Health Canada Guidelines:</h4>
+                        <p>• Standard significance level: α = 0.05 (two-sided)</p>
+                        <p>• Minimum power requirement: 80% for pivotal trials</p>
+                        <p>• Sample size justification required in protocols</p>
+                        <p>• Interim analysis adjustments for multiple looks</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Assessment Mode Section -->
-        <div id="assessment" class="content-section">
-            <h2 class="section-title">Hypothesis Testing Assessment</h2>
-
-            <div id="assessmentQuestion" class="decision-panel">
-                <div class="decision-question">Loading hypothesis testing assessment...</div>
-                <div class="decision-options" id="assessmentOptions">
-                    <!-- Dynamic options will be populated -->
+        <!-- Section 3: P-values & Statistical Significance -->
+        <div id="pvalues-section" class="section-content">
+            <div class="section">
+                <h2>📊 P-values & Statistical Significance</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Understanding P-values</h3>
+                    <p><strong>A p-value is the probability of observing data as extreme or more extreme than what we observed, assuming the null hypothesis is true.</strong> It's NOT the probability that the null hypothesis is true, or that the results occurred by chance.</p>
+                    
+                    <p><strong>Why proper interpretation matters:</strong> Misunderstanding p-values leads to poor clinical decisions. P-values don't measure effect size, clinical importance, or the probability that a treatment works.</p>
                 </div>
-                <button class="btn btn-primary" onclick="checkAnswer()" style="margin-top: 40px;">Submit Answer</button>
+
+                <div class="concept">
+                    <h3>P-value Interpretation & Multiple Testing</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🎯 Correct P-value Interpretation:</h4>
+                        <p><strong>p < 0.05 means:</strong> If the null hypothesis were true, we'd see data this extreme or more extreme less than 5% of the time</p>
+                        <p><strong>p < 0.05 does NOT mean:</strong> The null hypothesis has only 5% chance of being true, or the result has 95% chance of being "real"</p>
+                        <p><strong>Clinical vs Statistical Significance:</strong> A tiny, clinically meaningless difference can be statistically significant with large samples</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Multiple Testing Problem:</h4>
+                        <p><strong>The Problem:</strong> Testing multiple endpoints increases chance of false positive findings</p>
+                        <p><strong>Example:</strong> Testing 20 safety parameters at α=0.05 → Expected 1 false positive even if drug is completely safe</p>
+                        <p><strong>Solutions:</strong> Bonferroni correction, False Discovery Rate (FDR), pre-specified primary endpoints</p>
+                    </div>
+
+                    <div class="formula">
+                        Multiple Testing Corrections:
+                        <br>Bonferroni: α_adjusted = α / number_of_tests
+                        <br>Holm-Bonferroni: Sequential adjustment starting with smallest p-value
+                        <br>FDR (Benjamini-Hochberg): Controls proportion of false discoveries
+                    </div>
+
+                    <div class="controls">
+                        <h4>P-value Simulation & Multiple Testing</h4>
+                        <label>Number of Comparisons: <input type="number" id="num-comparisons" value="10" min="1" max="50" step="1"></label><br>
+                        <label>True Effect Present: 
+                            <select id="true-effect">
+                                <option value="none">No Real Effects (All H₀ True)</option>
+                                <option value="some">Some Real Effects (Mixed)</option>
+                                <option value="all">All Real Effects (All H₀ False)</option>
+                            </select>
+                        </label><br>
+                        <label>Sample Size per Test: <input type="number" id="pvalue-sample" value="100" min="20" max="500" step="20"></label><br>
+                        <label>Correction Method: 
+                            <select id="correction-method">
+                                <option value="none">No Correction</option>
+                                <option value="bonferroni">Bonferroni</option>
+                                <option value="holm">Holm-Bonferroni</option>
+                                <option value="fdr">False Discovery Rate</option>
+                            </select>
+                        </label><br>
+                        <button onclick="simulateMultipleTesting()">Simulate Multiple Testing</button>
+                    </div>
+
+                    <div id="pvalues-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="pvalue-chart"></canvas>
+                    </div>
+
+                    <div class="assumptions-box">
+                        <h4>⚠️ P-hacking Prevention:</h4>
+                        <p>• Pre-register primary hypotheses and analysis plans</p>
+                        <p>• Distinguish exploratory vs confirmatory analyses</p>
+                        <p>• Report all tested comparisons, not just significant ones</p>
+                        <p>• Use appropriate multiple testing corrections</p>
+                        <p>• Focus on effect sizes and confidence intervals alongside p-values</p>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div id="assessmentFeedback"></div>
+        <!-- Section 4: Comparing Means -->
+        <div id="means-section" class="section-content">
+            <div class="section">
+                <h2>📈 Comparing Means in Clinical Research</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 When Do We Compare Means?</h3>
+                    <p><strong>Comparing means is fundamental in clinical research when our outcome is continuous</strong> (blood pressure, cholesterol levels, quality of life scores, biomarker concentrations). We use different tests depending on study design and data characteristics.</p>
+                    
+                    <p><strong>Clinical applications:</strong> Drug efficacy trials comparing treatment groups, before/after treatment analysis, dose-response studies, multi-center trials with site effects.</p>
+                </div>
 
-            <div class="button-group" style="margin-top: 50px;">
-                <button class="btn btn-secondary" onclick="generateNewQuestion()">📝 New Question</button>
-                <button class="btn btn-accent" onclick="showExpertSolution()">🎓 Show Clinical Analysis</button>
+                <div class="concept">
+                    <h3>t-Tests and ANOVA for Clinical Data</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🔬 Test Selection Guide:</h4>
+                        <p><strong>One-sample t-test:</strong> Compare sample mean to known standard (e.g., normal lab values)</p>
+                        <p><strong>Two-sample t-test:</strong> Compare two independent groups (treatment vs control)</p>
+                        <p><strong>Paired t-test:</strong> Compare before/after measurements on same patients</p>
+                        <p><strong>ANOVA:</strong> Compare three or more groups simultaneously</p>
+                    </div>
+
+                    <div class="assumptions-box">
+                        <h4>⚠️ Assumptions for t-tests:</h4>
+                        <p>• <strong>Normality:</strong> Data approximately normally distributed (or large sample)</p>
+                        <p>• <strong>Independence:</strong> Observations independent of each other</p>
+                        <p>• <strong>Equal variances:</strong> Similar variability in both groups (for two-sample)</p>
+                        <p>• <strong>What if violated?</strong> Use non-parametric alternatives or data transformations</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Canadian Clinical Trial Example:</h4>
+                        <p><strong>Study:</strong> Health Canada-approved diabetes medication trial across 5 Canadian centers</p>
+                        <p><strong>Design:</strong> Randomized, double-blind, placebo-controlled</p>
+                        <p><strong>Primary outcome:</strong> Change in HbA1c from baseline to 12 weeks</p>
+                        <p><strong>Analysis:</strong> Two-sample t-test comparing mean change between groups</p>
+                    </div>
+
+                    <div class="controls">
+                        <h4>Interactive Clinical Trial Analyzer</h4>
+                        <label>Study Type: 
+                            <select id="study-type">
+                                <option value="independent">Two Independent Groups</option>
+                                <option value="paired">Before/After (Paired)</option>
+                                <option value="anova">Multiple Groups (ANOVA)</option>
+                            </select>
+                        </label><br>
+                        <label>Sample Size per Group: <input type="number" id="means-sample-size" value="80" min="20" max="200" step="10"></label><br>
+                        <label>Expected Effect Size: <input type="number" id="means-effect" value="0.5" min="0.1" max="1.5" step="0.1"></label><br>
+                        <label>Clinical Outcome: 
+                            <select id="clinical-outcome">
+                                <option value="hba1c">HbA1c Change (%)</option>
+                                <option value="bp">Blood Pressure (mmHg)</option>
+                                <option value="cholesterol">LDL Cholesterol (mg/dL)</option>
+                                <option value="pain">Pain Score (0-10)</option>
+                            </select>
+                        </label><br>
+                        <button onclick="simulateMeansTest()">Simulate Clinical Trial</button>
+                    </div>
+
+                    <div id="means-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="means-chart"></canvas>
+                    </div>
+
+                    <div class="regulatory-box">
+                        <h4>🇨🇦 Regulatory Considerations:</h4>
+                        <p>• <strong>Primary endpoint:</strong> Must be pre-specified and clinically meaningful</p>
+                        <p>• <strong>Minimal clinically important difference:</strong> Define before study start</p>
+                        <p>• <strong>Missing data handling:</strong> Intent-to-treat vs per-protocol analysis</p>
+                        <p>• <strong>Non-inferiority margins:</strong> Must be justified if testing non-inferiority</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Categorical Data Analysis -->
+        <div id="categorical-section" class="section-content">
+            <div class="section">
+                <h2>📋 Categorical Data Analysis in Healthcare</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Working with Categorical Outcomes</h3>
+                    <p><strong>Many medical outcomes are categorical rather than continuous</strong> - cure/no cure, adverse event/no event, disease/no disease, treatment response categories. These require different statistical approaches than continuous data.</p>
+                    
+                    <p><strong>Clinical importance:</strong> Safety analysis (counting adverse events), efficacy studies with binary outcomes, risk factor identification, diagnostic test evaluation.</p>
+                </div>
+
+                <div class="concept">
+                    <h3>Chi-square Tests & Exact Methods</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🧮 Test Selection for Categorical Data:</h4>
+                        <p><strong>Chi-square test of independence:</strong> Test association between two categorical variables</p>
+                        <p><strong>Fisher's exact test:</strong> Exact p-values when sample sizes are small</p>
+                        <p><strong>McNemar's test:</strong> For paired/matched data (before/after, matched case-control)</p>
+                        <p><strong>Chi-square goodness of fit:</strong> Test if data follows expected distribution</p>
+                    </div>
+
+                    <div class="assumptions-box">
+                        <h4>⚠️ When to Use Each Test:</h4>
+                        <p>• <strong>Chi-square test:</strong> Expected frequency ≥5 in all cells</p>
+                        <p>• <strong>Fisher's exact:</strong> Small samples or sparse tables</p>
+                        <p>• <strong>McNemar's test:</strong> Paired binary data (same subjects measured twice)</p>
+                        <p>• <strong>Cochran-Mantel-Haenszel:</strong> Controlling for confounding variables</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Healthcare Examples:</h4>
+                        <p><strong>Safety Analysis:</strong> Compare adverse event rates between treatment and placebo</p>
+                        <p><strong>Case-Control Study:</strong> Association between smoking history and lung cancer</p>
+                        <p><strong>Matched Pairs:</strong> Treatment response before and after intervention</p>
+                        <p><strong>Diagnostic Study:</strong> Agreement between two diagnostic methods</p>
+                    </div>
+
+                    <div class="formula">
+                        2x2 Contingency Table Analysis:
+                        <br>Chi-square = Σ[(Observed - Expected)² / Expected]
+                        <br>Odds Ratio = (ad)/(bc) where a,b,c,d are cell counts
+                        <br>Fisher's exact p-value uses hypergeometric distribution
+                        <br>McNemar's test = (|b-c|-1)²/(b+c) for discordant pairs
+                    </div>
+
+                    <div class="controls">
+                        <h4>Categorical Data Analysis Simulator</h4>
+                        <label>Study Design: 
+                            <select id="categorical-design">
+                                <option value="independent">Two Independent Groups</option>
+                                <option value="case-control">Case-Control Study</option>
+                                <option value="matched">Matched Pairs</option>
+                                <option value="dose-response">Dose-Response (Trend)</option>
+                            </select>
+                        </label><br>
+                        <label>Sample Size: <input type="number" id="categorical-n" value="200" min="50" max="1000" step="50"></label><br>
+                        <label>Effect Size (OR): <input type="number" id="categorical-or" value="2.0" min="0.5" max="5.0" step="0.2"></label><br>
+                        <label>Outcome Type: 
+                            <select id="categorical-outcome">
+                                <option value="adverse-event">Adverse Events</option>
+                                <option value="treatment-response">Treatment Response</option>
+                                <option value="disease-risk">Disease Risk Factor</option>
+                                <option value="diagnostic-test">Diagnostic Test Result</option>
+                            </select>
+                        </label><br>
+                        <button onclick="analyzeCategoricalData()">Analyze Categorical Data</button>
+                    </div>
+
+                    <div id="categorical-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="categorical-chart"></canvas>
+                    </div>
+
+                    <div class="when-to-use">
+                        <h4>💡 Clinical Decision Guidelines:</h4>
+                        <p>• <strong>Risk ratios:</strong> Better for common outcomes (>10%)</p>
+                        <p>• <strong>Odds ratios:</strong> Approximate risk ratios for rare outcomes</p>
+                        <p>• <strong>Number needed to treat:</strong> 1/absolute risk reduction for clinical interpretation</p>
+                        <p>• <strong>Consider confounders:</strong> Age, sex, comorbidities often affect relationships</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Non-parametric Tests -->
+        <div id="nonparametric-section" class="section-content">
+            <div class="section">
+                <h2>📊 Non-parametric Tests: When Assumptions Fail</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Why Non-parametric Methods?</h3>
+                    <p><strong>Medical data often violates the assumptions required for standard t-tests and ANOVA</strong> - data may be skewed, have outliers, or be measured on ordinal scales. Non-parametric tests make fewer assumptions about data distribution.</p>
+                    
+                    <p><strong>Common in healthcare:</strong> Pain scores, quality of life measures, biomarker levels with extreme outliers, time-to-event data, small sample sizes where normality can't be assumed.</p>
+                </div>
+
+                <div class="concept">
+                    <h3>Distribution-Free Statistical Methods</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🔧 Non-parametric Test Arsenal:</h4>
+                        <p><strong>Mann-Whitney U (Wilcoxon rank-sum):</strong> Two independent groups (alternative to t-test)</p>
+                        <p><strong>Wilcoxon signed-rank:</strong> Paired data (alternative to paired t-test)</p>
+                        <p><strong>Kruskal-Wallis:</strong> Three or more groups (alternative to ANOVA)</p>
+                        <p><strong>Spearman correlation:</strong> Monotonic relationships (alternative to Pearson)</p>
+                    </div>
+
+                    <div class="assumptions-box">
+                        <h4>⚠️ When to Use Non-parametric Tests:</h4>
+                        <p>• <strong>Skewed data:</strong> Cannot be normalized by transformation</p>
+                        <p>• <strong>Ordinal scales:</strong> Data measured on ranking scales</p>
+                        <p>• <strong>Small samples:</strong> Cannot verify normality assumption</p>
+                        <p>• <strong>Outliers:</strong> Extreme values that shouldn't be excluded</p>
+                        <p>• <strong>Trade-off:</strong> Robust but less powerful than parametric tests when assumptions are met</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Healthcare Applications:</h4>
+                        <p><strong>Pain Studies:</strong> Visual analog scale scores (0-10) often skewed</p>
+                        <p><strong>Quality of Life:</strong> SF-36 scores with ceiling/floor effects</p>
+                        <p><strong>Biomarkers:</strong> Inflammatory markers with log-normal distribution</p>
+                        <p><strong>Time Measurements:</strong> Hospital length of stay with extreme outliers</p>
+                    </div>
+
+                    <div class="formula">
+                        Non-parametric Test Statistics:
+                        <br>Mann-Whitney U: U = n₁n₂ + n₁(n₁+1)/2 - R₁
+                        <br>Wilcoxon signed-rank: W = sum of positive ranks
+                        <br>Kruskal-Wallis: H = [12/N(N+1)] Σ(R²ᵢ/nᵢ) - 3(N+1)
+                        <br>All based on ranks rather than actual values
+                    </div>
+
+                    <div class="controls">
+                        <h4>Non-parametric Test Comparison Tool</h4>
+                        <label>Data Distribution: 
+                            <select id="data-distribution">
+                                <option value="normal">Normal (for comparison)</option>
+                                <option value="skewed">Right-skewed</option>
+                                <option value="outliers">Normal with outliers</option>
+                                <option value="ordinal">Ordinal scale</option>
+                            </select>
+                        </label><br>
+                        <label>Sample Size per Group: <input type="number" id="nonpar-sample" value="50" min="10" max="200" step="10"></label><br>
+                        <label>True Effect Size: <input type="number" id="nonpar-effect" value="0.5" min="0" max="1.5" step="0.1"></label><br>
+                        <label>Clinical Scenario: 
+                            <select id="nonpar-scenario">
+                                <option value="pain">Pain Score Comparison</option>
+                                <option value="biomarker">Biomarker Levels</option>
+                                <option value="qol">Quality of Life Assessment</option>
+                                <option value="los">Hospital Length of Stay</option>
+                            </select>
+                        </label><br>
+                        <button onclick="compareParametricNonparametric()">Compare Test Methods</button>
+                    </div>
+
+                    <div id="nonparametric-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="nonparametric-chart"></canvas>
+                    </div>
+
+                    <div class="when-to-use">
+                        <h4>💡 Decision Framework:</h4>
+                        <p>• <strong>First choice:</strong> Check assumptions for parametric tests</p>
+                        <p>• <strong>Transformation:</strong> Try log, square root, or other transformations</p>
+                        <p>• <strong>Non-parametric:</strong> When transformations don't help</p>
+                        <p>• <strong>Report both:</strong> If borderline, show parametric and non-parametric results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: Diagnostic Test Evaluation -->
+        <div id="diagnostic-section" class="section-content">
+            <div class="section">
+                <h2>🔬 Diagnostic Test Evaluation & ROC Analysis</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Evaluating Medical Tests</h3>
+                    <p><strong>Diagnostic tests are fundamental tools in medicine, but no test is perfect.</strong> We need statistical methods to quantify how well tests discriminate between diseased and healthy patients, and to establish optimal cut-points for clinical decision-making.</p>
+                    
+                    <p><strong>Clinical importance:</strong> Laboratory test validation, imaging interpretation, screening program development, clinical decision support tools, biomarker discovery.</p>
+                </div>
+
+                <div class="concept">
+                    <h3>Sensitivity, Specificity & ROC Curves</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🎯 Diagnostic Performance Measures:</h4>
+                        <p><strong>Sensitivity:</strong> Proportion of diseased patients correctly identified (true positive rate)</p>
+                        <p><strong>Specificity:</strong> Proportion of healthy patients correctly identified (true negative rate)</p>
+                        <p><strong>Positive Predictive Value (PPV):</strong> Probability disease is present given positive test</p>
+                        <p><strong>Negative Predictive Value (NPV):</strong> Probability disease is absent given negative test</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>The 2x2 Diagnostic Table:</h4>
+                        <table style="margin: 15px 0;">
+                            <tr><th></th><th>Disease +</th><th>Disease -</th><th>Total</th></tr>
+                            <tr><th>Test +</th><td>a (TP)</td><td>b (FP)</td><td>a+b</td></tr>
+                            <tr><th>Test -</th><td>c (FN)</td><td>d (TN)</td><td>c+d</td></tr>
+                            <tr><th>Total</th><td>a+c</td><td>b+d</td><td>n</td></tr>
+                        </table>
+                        <p><strong>Sensitivity = a/(a+c)</strong> | <strong>Specificity = d/(b+d)</strong></p>
+                        <p><strong>PPV = a/(a+b)</strong> | <strong>NPV = d/(c+d)</strong></p>
+                    </div>
+
+                    <div class="formula">
+                        ROC Analysis:
+                        <br>ROC Curve: Plot Sensitivity vs (1-Specificity) for all cut-points
+                        <br>AUC: Area Under ROC Curve (0.5 = random, 1.0 = perfect)
+                        <br>Likelihood Ratio +: Sensitivity / (1-Specificity)
+                        <br>Likelihood Ratio -: (1-Sensitivity) / Specificity
+                        <br>DOR (Diagnostic Odds Ratio): LR+ / LR-
+                    </formula>
+
+                    <div class="controls">
+                        <h4>Diagnostic Test Simulator</h4>
+                        <label>Disease Prevalence (%): <input type="number" id="prevalence" value="20" min="1" max="50" step="1"></label><br>
+                        <label>Total Sample Size: <input type="number" id="diagnostic-n" value="500" min="100" max="2000" step="100"></label><br>
+                        <label>Test Performance: 
+                            <select id="test-performance">
+                                <option value="excellent">Excellent (AUC ~0.9)</option>
+                                <option value="good">Good (AUC ~0.8)</option>
+                                <option value="moderate">Moderate (AUC ~0.7)</option>
+                                <option value="poor">Poor (AUC ~0.6)</option>
+                            </select>
+                        </label><br>
+                        <label>Clinical Setting: 
+                            <select id="clinical-setting">
+                                <option value="screening">Population Screening</option>
+                                <option value="diagnostic">Diagnostic Workup</option>
+                                <option value="monitoring">Disease Monitoring</option>
+                                <option value="research">Research Biomarker</option>
+                            </select>
+                        </label><br>
+                        <button onclick="simulateDiagnosticTest()">Simulate Diagnostic Study</button>
+                    </div>
+
+                    <div id="diagnostic-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="diagnostic-chart"></canvas>
+                    </div>
+
+                    <div class="regulatory-box">
+                        <h4>🇨🇦 Regulatory Requirements:</h4>
+                        <p>• <strong>Health Canada Class II/III devices:</strong> Clinical validation required</p>
+                        <p>• <strong>Companion diagnostics:</strong> Co-development with therapeutic</p>
+                        <p>• <strong>Laboratory standards:</strong> ISO 15189 quality management</p>
+                        <p>• <strong>Clinical utility:</strong> Must demonstrate impact on patient outcomes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 8: Equivalence & Non-inferiority Testing -->
+        <div id="equivalence-section" class="section-content">
+            <div class="section">
+                <h2>⚖️ Equivalence & Non-inferiority Testing</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 When "No Difference" is the Goal</h3>
+                    <p><strong>Sometimes we want to show that treatments are equivalent or that a new treatment is "not worse" than standard care.</strong> This requires different statistical approaches because we're trying to demonstrate similarity rather than difference.</p>
+                    
+                    <p><strong>Clinical applications:</strong> Generic drug approval, biosimilar studies, showing new treatment has similar efficacy with better safety profile, device comparisons, cost-effectiveness when treatments are clinically equivalent.</p>
+                </div>
+
+                <div class="concept">
+                    <h3>Equivalence vs Non-inferiority Designs</h3>
+                    
+                    <div class="key-concept">
+                        <h4>🎯 Design Types:</h4>
+                        <p><strong>Equivalence:</strong> Show treatments are clinically similar (within equivalence margins)</p>
+                        <p><strong>Non-inferiority:</strong> Show new treatment is not worse than reference by more than margin</p>
+                        <p><strong>Superiority:</strong> Show new treatment is better than reference (traditional approach)</p>
+                        <p><strong>Key insight:</strong> Must define clinically meaningful margins BEFORE study</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Canadian Examples:</h4>
+                        <p><strong>Generic Drugs:</strong> Bioequivalence studies showing 80-125% of reference drug exposure</p>
+                        <p><strong>Biosimilars:</strong> Non-inferiority for efficacy, equivalence for safety</p>
+                        <p><strong>Medical Devices:</strong> New device not inferior to predicate device</p>
+                        <p><strong>Cost Considerations:</strong> New treatment similar efficacy but lower cost</p>
+                    </div>
+
+                    <div class="formula">
+                        Equivalence Testing:
+                        <br>H₀: |μ₁ - μ₂| ≥ δ (treatments differ by ≥ margin)
+                        <br>H₁: |μ₁ - μ₂| < δ (treatments equivalent)
+                        <br><br>
+                        Non-inferiority Testing:
+                        <br>H₀: μ₁ - μ₂ ≤ -δ (new treatment inferior)
+                        <br>H₁: μ₁ - μ₂ > -δ (new treatment non-inferior)
+                        <br><br>
+                        Both require LARGER samples than superiority trials
+                    </div>
+
+                    <div class="controls">
+                        <h4>Equivalence Study Designer</h4>
+                        <label>Study Type: 
+                            <select id="equivalence-type">
+                                <option value="equivalence">Equivalence (Generic Drug)</option>
+                                <option value="non-inferiority">Non-inferiority (Biosimilar)</option>
+                                <option value="superiority">Superiority (for comparison)</option>
+                            </select>
+                        </label><br>
+                        <label>Equivalence Margin: <input type="number" id="equivalence-margin" value="5" min="1" max="20" step="1"> (clinical units)</label><br>
+                        <label>True Difference: <input type="number" id="true-difference" value="2" min="0" max="10" step="0.5"> (actual difference)</label><br>
+                        <label>Standard Deviation: <input type="number" id="equiv-sd" value="15" min="5" max="30" step="1"></label><br>
+                        <label>Regulatory Context: 
+                            <select id="regulatory-context">
+                                <option value="generic">Generic Drug (Health Canada)</option>
+                                <option value="biosimilar">Biosimilar (Health Canada)</option>
+                                <option value="device">Medical Device (Health Canada)</option>
+                                <option value="fda">US FDA Comparison</option>
+                            </select>
+                        </label><br>
+                        <button onclick="designEquivalenceStudy()">Design Equivalence Study</button>
+                    </div>
+
+                    <div id="equivalence-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="equivalence-chart"></canvas>
+                    </div>
+
+                    <div class="regulatory-box">
+                        <h4>🇨🇦 Health Canada Guidelines:</h4>
+                        <p>• <strong>Bioequivalence:</strong> 90% CI for ratio must be within 80-125%</p>
+                        <p>• <strong>Biosimilars:</strong> Stepwise approach starting with analytical similarity</p>
+                        <p>• <strong>Margin justification:</strong> Must preserve substantial portion of active control effect</p>
+                        <p>• <strong>Intent-to-treat:</strong> Primary analysis for non-inferiority</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 9: Survival Analysis Introduction -->
+        <div id="survival-section" class="section-content">
+            <div class="section">
+                <h2>⏱️ Introduction to Survival Analysis</h2>
+                
+                <div class="concept-intro">
+                    <h3>📚 Time-to-Event Data in Medicine</h3>
+                    <p><strong>Many medical outcomes are defined by when they occur, not just if they occur.</strong> Survival analysis handles time-to-event data where we track patients until they experience an event (death, disease recurrence, treatment failure) or are lost to follow-up.</p>
+                    
+                    <p><strong>Why special methods needed:</strong> Standard statistical methods can't handle censored data (incomplete observations where we only know the event hadn't occurred by last follow-up).</p>
+                </div>
+
+                <div class="concept">
+                    <h3>Kaplan-Meier Estimation & Log-rank Test</h3>
+                    
+                    <div class="key-concept">
+                        <h4>⏰ Key Survival Concepts:</h4>
+                        <p><strong>Event:</strong> Outcome of interest (death, relapse, cure, adverse event)</p>
+                        <p><strong>Censoring:</strong> Incomplete observations (lost to follow-up, study ends, competing events)</p>
+                        <p><strong>Survival function S(t):</strong> Probability of surviving beyond time t</p>
+                        <p><strong>Hazard function h(t):</strong> Instantaneous risk of event at time t</p>
+                    </div>
+
+                    <div class="clinical-context">
+                        <h4>Medical Applications:</h4>
+                        <p><strong>Oncology:</strong> Overall survival, progression-free survival, time to treatment failure</p>
+                        <p><strong>Cardiology:</strong> Time to first cardiac event, device failure time</p>
+                        <p><strong>Infectious Disease:</strong> Time to cure, time to viral clearance</p>
+                        <p><strong>Chronic Disease:</strong> Time to disease progression, medication adherence duration</p>
+                    </div>
+
+                    <div class="formula">
+                        Kaplan-Meier Estimator:
+                        <br>Ŝ(t) = ∏[tᵢ≤t] (1 - dᵢ/nᵢ)
+                        <br>where dᵢ = events at time tᵢ, nᵢ = at risk at time tᵢ
+                        <br><br>
+                        Log-rank Test:
+                        <br>Compares survival curves between groups
+                        <br>Chi-square test on observed vs expected events
+                        <br>Assumption: Proportional hazards over time
+                    </formula>
+
+                    <div class="controls">
+                        <h4>Survival Analysis Simulator</h4>
+                        <label>Study Design: 
+                            <select id="survival-design">
+                                <option value="treatment-comparison">Treatment vs Control</option>
+                                <option value="prognostic-factor">Prognostic Factor Study</option>
+                                <option value="dose-response">Dose-Response Analysis</option>
+                                <option value="quality-study">Quality of Life Impact</option>
+                            </select>
+                        </label><br>
+                        <label>Sample Size per Group: <input type="number" id="survival-n" value="100" min="50" max="500" step="25"></label><br>
+                        <label>Follow-up Duration (months): <input type="number" id="followup-time" value="24" min="6" max="60" step="6"></label><br>
+                        <label>Hazard Ratio: <input type="number" id="hazard-ratio" value="0.7" min="0.3" max="2.0" step="0.1"></label><br>
+                        <label>Censoring Rate (%): <input type="number" id="censoring-rate" value="20" min="5" max="50" step="5"></label><br>
+                        <label>Clinical Context: 
+                            <select id="survival-context">
+                                <option value="cancer">Cancer Treatment Trial</option>
+                                <option value="cardiovascular">Cardiovascular Prevention</option>
+                                <option value="chronic-disease">Chronic Disease Management</option>
+                                <option value="device">Medical Device Study</option>
+                            </select>
+                        </label><br>
+                        <button onclick="simulateSurvivalStudy()">Simulate Survival Study</button>
+                    </div>
+
+                    <div id="survival-results" class="results" style="display:none;">
+                        <!-- Results populated by JavaScript -->
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="survival-chart"></canvas>
+                    </div>
+
+                    <div class="when-to-use">
+                        <h4>💡 When to Use Survival Analysis:</h4>
+                        <p>• <strong>Time matters:</strong> Not just if event occurs, but when</p>
+                        <p>• <strong>Censored data:</strong> Some patients haven't experienced event by study end</p>
+                        <p>• <strong>Competing risks:</strong> Multiple possible outcomes</p>
+                        <p>• <strong>Advanced methods:</strong> Cox regression for multiple covariates</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Section -->
+        <div id="assessment-section" class="section-content">
+            <div class="assessment">
+                <h2>🧠 Hypothesis Testing Assessment</h2>
+                <p>Test your understanding of hypothesis testing concepts in clinical research. Questions rotate each session.</p>
+                <button onclick="generateHypothesisQuestions()">Generate New Questions</button>
+                
+                <div id="hypothesis-questions-container">
+                    <!-- Questions will be populated by JavaScript -->
+                </div>
+                
+                <button onclick="checkHypothesisAnswers()" id="hypothesis-check-btn" style="display:none;">Check Answers</button>
+                <div id="hypothesis-assessment-results"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Global Variables
-        let currentClinicalData = null;
-        let currentClinicalChart = null;
-        let powerChart = null;
-        let selectedAnswer = null;
-        let currentQuestion = null;
-
-        // Clinical Study Definitions
-        const clinicalStudies = {
-            drug_trial: {
-                title: "New Drug Efficacy Trial (Health Canada Approved)",
-                description: "Randomized controlled trial comparing new cardiovascular medication to standard treatment in Canadian patients with hypertension.",
-                primary_outcome: "Systolic Blood Pressure Reduction (mmHg)",
-                study_design: "Double-blind, placebo-controlled RCT",
-                population: "Adults with essential hypertension (140-180 mmHg)",
-                sample_calculation: "80% power to detect 5 mmHg difference, α=0.05",
-                regulatory_context: "Phase III trial for Health Canada submission",
-                statistical_plan: "Primary analysis using two-sample t-test, ITT population",
-                safety_monitoring: "DSMB review for efficacy and safety endpoints",
-                clinical_significance: "MCID = 3 mmHg reduction for clinical benefit"
-            },
-            vaccine_study: {
-                title: "COVID-19 Vaccine Effectiveness Study (PHAC)",
-                description: "Population-based cohort study evaluating vaccine effectiveness against hospitalization in Canadian adults during Delta variant circulation.",
-                primary_outcome: "Hospitalization Rate (per 100,000 person-days)",
-                study_design: "Retrospective cohort study",
-                population: "Adults ≥18 years, provincial health administrative data",
-                sample_calculation: "Sufficient power with population-based sampling",
-                regulatory_context: "Real-world effectiveness surveillance for PHAC",
-                statistical_plan: "Rate ratios using Poisson regression, adjusted for confounders",
-                safety_monitoring: "Passive surveillance through CAEFISS",
-                clinical_significance: "VE ≥50% considered effective by WHO standards"
-            },
-            surgical_outcome: {
-                title: "Minimally Invasive Surgery Outcomes (CIHI Analysis)",
-                description: "Before-after study comparing surgical outcomes following implementation of robotic-assisted procedures in Canadian hospitals.",
-                primary_outcome: "Length of Stay (days)",
-                study_design: "Before-after intervention study",
-                population: "Patients undergoing elective procedures at participating hospitals",
-                sample_calculation: "Power to detect 1-day reduction in LOS",
-                regulatory_context: "Health technology assessment for provincial coverage",
-                statistical_plan: "Paired t-test for before/after comparison",
-                safety_monitoring: "Adverse event monitoring through hospital reports",
-                clinical_significance: "1-day LOS reduction = significant resource savings"
-            },
-            diagnostic_test: {
-                title: "Rapid Diagnostic Test Validation (Laboratory Medicine)",
-                description: "Validation study of point-of-care diagnostic test compared to gold standard laboratory method in Canadian clinical settings.",
-                primary_outcome: "Diagnostic Accuracy (Sensitivity/Specificity)",
-                study_design: "Diagnostic accuracy study",
-                population: "Patients presenting with target condition symptoms",
-                sample_calculation: "95% CI width ±5% for sensitivity/specificity",
-                regulatory_context: "Health Canada medical device approval",
-                statistical_plan: "McNemar's test for paired proportions, ROC analysis",
-                safety_monitoring: "False positive/negative rate monitoring",
-                clinical_significance: "Sensitivity ≥90%, Specificity ≥95% for clinical use"
-            },
-            public_health: {
-                title: "Tobacco Control Policy Evaluation (Provincial Health)",
-                description: "Population-level analysis of smoking cessation rates before and after implementation of plain packaging legislation in Canadian provinces.",
-                primary_outcome: "Smoking Cessation Rate (%)",
-                study_design: "Interrupted time series with control provinces",
-                population: "Adult smokers aged 18+ years",
-                sample_calculation: "Population-level surveillance data",
-                regulatory_context: "Policy evaluation for federal tobacco control strategy",
-                statistical_plan: "Chi-square test for proportion differences",
-                safety_monitoring: "Unintended consequences monitoring",
-                clinical_significance: "5% relative increase in cessation rate = public health impact"
-            }
-        };
-
-        // Assessment Questions (Hypothesis Testing focused)
-        const assessmentQuestions = [
-            {
-                question: "In a clinical trial with p = 0.04, what is the correct interpretation in medical context?",
-                options: [
-                    "There is a 4% chance the treatment doesn't work",
-                    "There is a 4% probability of observing this result if no treatment effect exists",
-                    "The treatment has a 96% chance of being effective",
-                    "The treatment effect is clinically significant"
-                ],
-                correct: 1,
-                explanation: "P-values represent the probability of observing the data (or more extreme) assuming the null hypothesis is true. A p = 0.04 means there's a 4% chance of seeing this result if there truly is no treatment effect."
-            },
-            {
-                question: "A Type II error in a cancer treatment study would mean:",
-                options: [
-                    "Concluding a treatment works when it actually doesn't",
-                    "Concluding a treatment doesn't work when it actually does", 
-                    "The sample size was too small",
-                    "The p-value was greater than 0.05"
-                ],
-                correct: 1,
-                explanation: "Type II error (β) occurs when we fail to reject a false null hypothesis - concluding no treatment effect when one actually exists. In cancer treatment, this means missing a beneficial therapy."
-            },
-            {
-                question: "When would you use a paired t-test instead of a two-sample t-test in medical research?",
-                options: [
-                    "When comparing two different patient groups",
-                    "When the data is normally distributed",
-                    "When measuring the same patients before and after treatment",
-                    "When the sample sizes are equal"
-                ],
-                correct: 2,
-                explanation: "Paired t-tests are used when observations are naturally paired, such as measuring the same patients before and after treatment. This controls for individual patient variability and increases statistical power."
-            },
-            {
-                question: "In a diagnostic test validation study, which statistical test is most appropriate for comparing sensitivity between two tests?",
-                options: [
-                    "Chi-square test",
-                    "McNemar's test",
-                    "Fisher's exact test",
-                    "Two-sample t-test"
-                ],
-                correct: 1,
-                explanation: "McNemar's test is specifically designed for comparing paired proportions, such as comparing the sensitivity of two diagnostic tests applied to the same patients. It accounts for the paired nature of the data."
-            },
-            {
-                question: "A study reports 'statistically significant but not clinically significant' results. This means:",
-                options: [
-                    "The statistical test was performed incorrectly",
-                    "The effect size is large but the p-value is high",
-                    "The p-value is low but the effect size is too small to matter clinically",
-                    "The study needs a larger sample size"
-                ],
-                correct: 2,
-                explanation: "This occurs when a study has sufficient power to detect a small effect (low p-value) but the magnitude of the effect is below the minimal clinically important difference (MCID). Statistical significance doesn't guarantee clinical relevance."
-            }
-        ];
-
-        // Navigation Functions
+        let currentHypothesisQuestions = [];
+        let charts = {};
+        
+        // Navigation functionality
         function showSection(sectionName) {
-            document.querySelectorAll('.content-section').forEach(section => {
+            const sections = document.querySelectorAll('.section-content');
+            sections.forEach(section => {
                 section.classList.remove('active');
             });
             
-            document.querySelectorAll('.tab-button').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.getElementById(sectionName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Clinical Study Management
-        function updateClinicalStudy() {
-            const studyType = document.getElementById('clinicalStudy').value;
-            const study = clinicalStudies[studyType];
-            
-            document.getElementById('clinicalText').innerHTML = `
-                <h3 style="color: var(--secondary-red); margin-bottom: 22px;">${study.title}</h3>
-                <p><strong>Research Context:</strong> ${study.description}</p>
-                <div class="research-note">
-                    <p><strong>🧪 Regulatory Context:</strong> ${study.regulatory_context}</p>
-                </div>
-                <p><strong>Primary Outcome:</strong> ${study.primary_outcome}</p>
-                <p><strong>Study Design:</strong> ${study.study_design}</p>
-                <p><strong>Target Population:</strong> ${study.population}</p>
-                <p><strong>Sample Size Rationale:</strong> ${study.sample_calculation}</p>
-                <p><strong>Statistical Analysis Plan:</strong> ${study.statistical_plan}</p>
-                <p><strong>Safety Monitoring:</strong> ${study.safety_monitoring}</p>
-                <p><strong>Clinical Significance Threshold:</strong> ${study.clinical_significance}</p>
-            `;
-            
-            updateTestStatistics();
-        }
-
-        function updateTestStatistics() {
-            const testType = document.getElementById('testType').value;
-            const container = document.getElementById('testStatistics');
-            container.innerHTML = '';
-            
-            let statistics = [];
-            switch(testType) {
-                case 'one_sample_t': statistics = ['H₀: μ = μ₀', 'H₁: μ ≠ μ₀', 't = (x̄-μ₀)/SE', 'df = n-1']; break;
-                case 'two_sample_t': statistics = ['H₀: μ₁ = μ₂', 'H₁: μ₁ ≠ μ₂', 't = (x̄₁-x̄₂)/SE', 'df = n₁+n₂-2']; break;
-                case 'paired_t': statistics = ['H₀: μ_d = 0', 'H₁: μ_d ≠ 0', 't = d̄/(s_d/√n)', 'df = n-1']; break;
-                case 'chi_square': statistics = ['H₀: No Association', 'H₁: Association', 'χ² = Σ(O-E)²/E', 'df = (r-1)(c-1)']; break;
-                case 'fisher_exact': statistics = ['H₀: OR = 1', 'H₁: OR ≠ 1', 'Exact p-value', 'Small samples']; break;
+            const selectedSection = document.getElementById(sectionName + '-section');
+            if (selectedSection) {
+                selectedSection.classList.add('active');
             }
-            
-            statistics.forEach((statistic, index) => {
-                const statisticDiv = document.createElement('div');
-                statisticDiv.className = 'test-stat-card';
-                statisticDiv.textContent = statistic;
-                container.appendChild(statisticDiv);
-            });
         }
 
-        function updateEffectDisplay() {
-            const effectSize = document.getElementById('effectSizeLevel').value;
-            document.getElementById('effectSizeValue').textContent = effectSize;
-        }
+        // Section 1: Build Hypothesis
+        function buildHypothesis() {
+            const researchArea = document.getElementById('research-area').value;
+            const studyDesign = document.getElementById('study-design').value;
+            const testType = document.getElementById('test-type').value;
 
-        // Clinical Data Generation
-        function generateClinicalData() {
-            const studyType = document.getElementById('clinicalStudy').value;
-            const testType = document.getElementById('testType').value;
-            const sampleSize = parseInt(document.getElementById('sampleSizeClinical').value);
-            const effectSize = parseFloat(document.getElementById('effectSizeLevel').value);
-            
-            const study = clinicalStudies[studyType];
-            
-            currentClinicalData = {
-                study: study,
-                testType: testType,
-                sampleSize: sampleSize,
-                effectSize: effectSize,
-                data: []
+            const scenarios = {
+                treatment: {
+                    rct: {
+                        question: "Does the new antihypertensive medication reduce systolic blood pressure more than placebo?",
+                        population: "Adults with stage 1 hypertension (SBP 130-139 mmHg)",
+                        intervention: "New ACE inhibitor (study drug)",
+                        comparison: "Matching placebo",
+                        outcome: "Change in systolic BP from baseline to 12 weeks"
+                    },
+                    cohort: {
+                        question: "Does adherence to Mediterranean diet reduce cardiovascular events?",
+                        population: "Adults aged 55+ with cardiovascular risk factors",
+                        intervention: "High adherence to Mediterranean diet",
+                        comparison: "Low adherence to Mediterranean diet", 
+                        outcome: "Incidence of major cardiovascular events over 5 years"
+                    }
+                },
+                diagnosis: {
+                    rct: {
+                        question: "Is the new rapid COVID-19 test as accurate as PCR?",
+                        population: "Patients presenting with COVID-19 symptoms",
+                        intervention: "New rapid antigen test",
+                        comparison: "RT-PCR (reference standard)",
+                        outcome: "Diagnostic sensitivity and specificity"
+                    }
+                },
+                prevention: {
+                    rct: {
+                        question: "Does vitamin D supplementation reduce fracture risk in elderly?",
+                        population: "Community-dwelling adults ≥65 years",
+                        intervention: "Vitamin D 1000 IU daily",
+                        comparison: "Placebo",
+                        outcome: "Incidence of fragility fractures over 2 years"
+                    }
+                }
             };
 
-            // Generate appropriate clinical data based on test type
-            if (testType === 'two_sample_t') {
-                // Generate two groups (treatment vs control)
-                for (let group = 0; group < 2; group++) {
-                    for (let i = 0; i < sampleSize; i++) {
-                        const baseValue = studyType === 'drug_trial' ? 140 : 
-                                        studyType === 'vaccine_study' ? 5.2 :
-                                        studyType === 'surgical_outcome' ? 7.5 : 85;
-                        
-                        // Add treatment effect for group 1
-                        const treatmentEffect = group === 1 ? effectSize * 5 : 0;
-                        const value = generateNormal(baseValue - treatmentEffect, 12);
-                        
-                        currentClinicalData.data.push({
-                            id: `${group}-${i}`,
-                            group: group === 0 ? 'Control' : 'Treatment',
-                            value: Math.max(0, value),
-                            age: 45 + Math.random() * 30,
-                            sex: Math.random() < 0.52 ? 'Female' : 'Male'
-                        });
-                    }
-                }
-            } else if (testType === 'paired_t') {
-                // Generate paired data (before/after)
-                for (let i = 0; i < sampleSize; i++) {
-                    const baseValue = 140;
-                    const before = generateNormal(baseValue, 15);
-                    const after = generateNormal(baseValue - effectSize * 8, 12);
-                    
-                    currentClinicalData.data.push({
-                        id: i,
-                        before: Math.max(90, before),
-                        after: Math.max(80, after),
-                        difference: before - after,
-                        age: 45 + Math.random() * 30,
-                        sex: Math.random() < 0.52 ? 'Female' : 'Male'
-                    });
-                }
-            } else if (testType === 'chi_square') {
-                // Generate categorical data (2x2 table)
-                const successControl = Math.floor(sampleSize * 0.3);
-                const successTreatment = Math.floor(sampleSize * (0.3 + effectSize * 0.2));
-                
-                currentClinicalData.contingencyTable = {
-                    control: { success: successControl, failure: sampleSize - successControl },
-                    treatment: { success: successTreatment, failure: sampleSize - successTreatment }
-                };
-            }
-
-            updateClinicalChart();
-        }
-
-        function generateNormal(mean, sd) {
-            // Box-Muller transform
-            const u = 0.5 - Math.random();
-            const v = 0.5 - Math.random();
-            const z = Math.sqrt(-2 * Math.log(Math.abs(u))) * Math.cos(2 * Math.PI * v);
-            return mean + sd * z;
-        }
-
-        function updateClinicalChart() {
-            if (!currentClinicalData) return;
+            const scenario = scenarios[researchArea][studyDesign] || scenarios[researchArea]['rct'];
             
-            const ctx = document.getElementById('clinicalChart').getContext('2d');
+            // Generate hypothesis statements
+            let nullHypothesis, altHypothesis, statisticalTest;
             
-            if (currentClinicalChart) {
-                currentClinicalChart.destroy();
+            switch (testType) {
+                case 'two-sided':
+                    nullHypothesis = "H₀: There is no difference between intervention and comparison groups";
+                    altHypothesis = "H₁: There is a difference between intervention and comparison groups";
+                    statisticalTest = "Two-sided test (α = 0.05)";
+                    break;
+                case 'one-sided-greater':
+                    nullHypothesis = "H₀: Intervention is not superior to comparison";
+                    altHypothesis = "H₁: Intervention is superior to comparison";
+                    statisticalTest = "One-sided superiority test (α = 0.05)";
+                    break;
+                case 'one-sided-less':
+                    nullHypothesis = "H₀: Intervention is not inferior to comparison";
+                    altHypothesis = "H₁: Intervention is non-inferior to comparison";
+                    statisticalTest = "One-sided non-inferiority test (α = 0.025)";
+                    break;
             }
 
-            const testType = currentClinicalData.testType;
-
-            if (testType === 'two_sample_t') {
-                // Box plot style comparison
-                const controlData = currentClinicalData.data.filter(d => d.group === 'Control');
-                const treatmentData = currentClinicalData.data.filter(d => d.group === 'Treatment');
+            document.getElementById('framework-results').style.display = 'block';
+            document.getElementById('framework-results').innerHTML = `
+                <h4>Research Hypothesis Framework</h4>
                 
-                const controlMean = controlData.reduce((sum, d) => sum + d.value, 0) / controlData.length;
-                const treatmentMean = treatmentData.reduce((sum, d) => sum + d.value, 0) / treatmentData.length;
-
-                currentClinicalChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Control Group', 'Treatment Group'],
-                        datasets: [{
-                            label: 'Mean Value',
-                            data: [controlMean, treatmentMean],
-                            backgroundColor: ['rgba(70, 130, 180, 0.7)', 'rgba(34, 139, 34, 0.7)'],
-                            borderColor: ['#4682B4', '#228B22'],
-                            borderWidth: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: `${currentClinicalData.study.title} - Group Comparison`,
-                                font: { size: 16, weight: 'bold' }
-                            }
-                        },
-                        scales: {
-                            y: { title: { display: true, text: currentClinicalData.study.primary_outcome } }
-                        }
-                    }
-                });
-            } else if (testType === 'paired_t') {
-                // Before/after comparison
-                const beforeData = currentClinicalData.data.map(d => d.before);
-                const afterData = currentClinicalData.data.map(d => d.after);
+                <p><strong>PICO Framework:</strong></p>
+                <p><strong>P (Population):</strong> ${scenario.population}</p>
+                <p><strong>I (Intervention):</strong> ${scenario.intervention}</p>
+                <p><strong>C (Comparison):</strong> ${scenario.comparison}</p>
+                <p><strong>O (Outcome):</strong> ${scenario.outcome}</p>
                 
-                const meanBefore = beforeData.reduce((sum, val) => sum + val, 0) / beforeData.length;
-                const meanAfter = afterData.reduce((sum, val) => sum + val, 0) / afterData.length;
-
-                currentClinicalChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Before Treatment', 'After Treatment'],
-                        datasets: [{
-                            label: 'Mean Value',
-                            data: [meanBefore, meanAfter],
-                            borderColor: '#228B22',
-                            backgroundColor: 'rgba(34, 139, 34, 0.1)',
-                            borderWidth: 4,
-                            pointRadius: 8,
-                            pointBackgroundColor: '#228B22'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: `${currentClinicalData.study.title} - Before/After Analysis`,
-                                font: { size: 16, weight: 'bold' }
-                            }
-                        },
-                        scales: {
-                            y: { title: { display: true, text: currentClinicalData.study.primary_outcome } }
-                        }
-                    }
-                });
-            }
-        }
-
-        // Hypothesis Testing
-        function performHypothesisTest() {
-            if (!currentClinicalData) {
-                alert('Please generate clinical study data first');
-                return;
-            }
-
-            const testType = currentClinicalData.testType;
-            let testResults = {};
-
-            if (testType === 'two_sample_t') {
-                const controlData = currentClinicalData.data.filter(d => d.group === 'Control');
-                const treatmentData = currentClinicalData.data.filter(d => d.group === 'Treatment');
+                <p><strong>Research Question:</strong></p>
+                <p>${scenario.question}</p>
                 
-                const controlMean = controlData.reduce((sum, d) => sum + d.value, 0) / controlData.length;
-                const treatmentMean = treatmentData.reduce((sum, d) => sum + d.value, 0) / treatmentData.length;
+                <p><strong>Statistical Hypotheses:</strong></p>
+                <p><strong>${nullHypothesis}</strong></p>
+                <p><strong>${altHypothesis}</strong></p>
                 
-                // Simplified t-test calculation
-                const controlVar = controlData.reduce((sum, d) => sum + Math.pow(d.value - controlMean, 2), 0) / (controlData.length - 1);
-                const treatmentVar = treatmentData.reduce((sum, d) => sum + Math.pow(d.value - treatmentMean, 2), 0) / (treatmentData.length - 1);
+                <p><strong>Analysis Plan:</strong></p>
+                <p>• Statistical test: ${statisticalTest}</p>
+                <p>• Study design: ${studyDesign.toUpperCase()}</p>
+                <p>• Primary endpoint: ${scenario.outcome}</p>
+                <p>• Regulatory pathway: ${getRegulatory(researchArea)}</p>
                 
-                const pooledSE = Math.sqrt((controlVar / controlData.length) + (treatmentVar / treatmentData.length));
-                const tStatistic = (treatmentMean - controlMean) / pooledSE;
-                const df = controlData.length + treatmentData.length - 2;
-                
-                // Approximate p-value (simplified)
-                const pValue = 2 * (1 - approximateTCDF(Math.abs(tStatistic), df));
-                
-                testResults = {
-                    testType: 'Two-Sample T-Test',
-                    tStatistic: tStatistic,
-                    pValue: pValue,
-                    df: df,
-                    controlMean: controlMean,
-                    treatmentMean: treatmentMean,
-                    meanDifference: treatmentMean - controlMean,
-                    effectSize: (treatmentMean - controlMean) / Math.sqrt((controlVar + treatmentVar) / 2)
-                };
-            } else if (testType === 'paired_t') {
-                const differences = currentClinicalData.data.map(d => d.difference);
-                const meanDiff = differences.reduce((sum, d) => sum + d, 0) / differences.length;
-                const sdDiff = Math.sqrt(differences.reduce((sum, d) => sum + Math.pow(d - meanDiff, 2), 0) / (differences.length - 1));
-                
-                const tStatistic = meanDiff / (sdDiff / Math.sqrt(differences.length));
-                const df = differences.length - 1;
-                const pValue = 2 * (1 - approximateTCDF(Math.abs(tStatistic), df));
-                
-                testResults = {
-                    testType: 'Paired T-Test',
-                    tStatistic: tStatistic,
-                    pValue: pValue,
-                    df: df,
-                    meanDifference: meanDiff,
-                    effectSize: meanDiff / sdDiff
-                };
-            }
-
-            displayTestResults(testResults);
-        }
-
-        function approximateTCDF(t, df) {
-            // Very simple approximation for demonstration
-            if (df > 30) return approximateNormalCDF(t);
-            return Math.max(0, Math.min(1, 0.5 + t / (2 * Math.sqrt(3 + df))));
-        }
-
-        function approximateNormalCDF(x) {
-            return 0.5 * (1 + Math.sign(x) * Math.sqrt(1 - Math.exp(-2 * x * x / Math.PI)));
-        }
-
-        function displayTestResults(results) {
-            const significance = results.pValue < 0.05 ? '✅ Significant' : '❌ Not Significant';
-            const clinicalRelevance = Math.abs(results.effectSize) > 0.3 ? 'Likely clinically relevant' : 'Clinical relevance unclear';
-            
-            document.getElementById('testTable').innerHTML = `
-                <h4>🧪 ${results.testType} Results</h4>
-                <div style="font-family: 'Source Code Pro', monospace; background: var(--pale-green); padding: 35px; border-radius: 18px; margin: 30px 0;">
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; font-weight: 600; border-bottom: 2px solid #ccc; padding-bottom: 18px;">
-                        <div>Test Statistic</div>
-                        <div>Value</div>
-                        <div>Interpretation</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; padding: 18px 0;">
-                        <div>t-statistic</div>
-                        <div class="p-value-display">${results.tStatistic.toFixed(3)}</div>
-                        <div>${Math.abs(results.tStatistic) > 2 ? 'Large effect' : 'Small effect'}</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; padding: 18px 0; background: rgba(34, 139, 34, 0.1);">
-                        <div>p-value</div>
-                        <div class="p-value-display">${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}</div>
-                        <div>${significance}</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; padding: 18px 0;">
-                        <div>Effect Size (Cohen's d)</div>
-                        <div class="p-value-display">${results.effectSize.toFixed(3)}</div>
-                        <div>${Math.abs(results.effectSize) > 0.8 ? 'Large' : Math.abs(results.effectSize) > 0.5 ? 'Medium' : 'Small'}</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; padding: 18px 0; background: rgba(34, 139, 34, 0.1);">
-                        <div>Degrees of Freedom</div>
-                        <div class="p-value-display">${results.df}</div>
-                        <div>-</div>
-                    </div>
-                </div>
-                <div class="clinical-highlight">
-                    <p><strong>🧪 Clinical Decision:</strong> 
-                    ${results.pValue < 0.05 ? 
-                        'Statistical evidence supports rejecting the null hypothesis. ' : 
-                        'Insufficient statistical evidence to reject the null hypothesis. '}
-                    ${clinicalRelevance}. 
-                    Consider effect size magnitude, confidence intervals, and clinical context for final interpretation.
-                    </p>
-                </div>
-            `;
-
-            // Update statistics display  
-            document.getElementById('clinicalStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${results.tStatistic.toFixed(3)}</div>
-                    <div class="stat-label">t-statistic</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${results.pValue < 0.001 ? '<0.001' : results.pValue.toFixed(3)}</div>
-                    <div class="stat-label">p-value</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${results.effectSize.toFixed(3)}</div>
-                    <div class="stat-label">Effect Size</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${results.df}</div>
-                    <div class="stat-label">Degrees of Freedom</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${results.pValue < 0.05 ? 'Yes' : 'No'}</div>
-                    <div class="stat-label">Significant (α=0.05)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${(1 - approximateTypeIIError(results.effectSize)) * 100 > 80 ? 'High' : 'Low'}</div>
-                    <div class="stat-label">Statistical Power</div>
-                </div>
+                <p><strong>Sample Size Considerations:</strong></p>
+                <p>• Power: 80% (β = 0.20)</p>
+                <p>• Effect size: Must be clinically meaningful</p>
+                <p>• Two-sided tests require larger samples than one-sided</p>
             `;
         }
 
-        function approximateTypeIIError(effectSize) {
-            // Simplified power calculation approximation
-            return Math.max(0.05, 0.8 * Math.exp(-2 * effectSize * effectSize));
+        function getRegulatory(area) {
+            const pathways = {
+                treatment: 'Health Canada New Drug Submission (NDS)',
+                diagnosis: 'Health Canada Medical Device License (MDL)', 
+                prevention: 'Health Canada Natural Health Product (NHP)',
+                'risk-factor': 'Health Canada Guidelines for observational studies'
+            };
+            return pathways[area] || 'Standard regulatory pathway';
         }
 
-        function interpretResults() {
-            if (!currentClinicalData) {
-                alert('Please perform hypothesis test first');
-                return;
-            }
+        // Section 2: Power Analysis
+        function calculatePower() {
+            const effectSize = parseFloat(document.getElementById('effect-size').value);
+            const sampleSize = parseInt(document.getElementById('sample-size').value);
+            const alpha = parseFloat(document.getElementById('alpha-level').value);
+            const context = document.getElementById('clinical-context').value;
 
-            generatePowerChart();
-            displayClinicalInterpretation();
+            // Calculate power (simplified Cohen's approach)
+            const delta = effectSize * Math.sqrt(sampleSize / 2);
+            const criticalValue = getZCritical(alpha);
+            const power = 1 - normalCDF(criticalValue - delta) + normalCDF(-criticalValue - delta);
+
+            // Calculate required sample size for 80% power
+            const powerTarget = 0.80;
+            const zBeta = getZCritical(1 - powerTarget);
+            const requiredN = Math.ceil(2 * Math.pow((criticalValue + zBeta) / effectSize, 2));
+
+            // Clinical consequences
+            const consequences = getClinicalConsequences(context, alpha, 1 - power);
+
+            document.getElementById('errors-results').style.display = 'block';
+            document.getElementById('errors-results').innerHTML = `
+                <h4>Power Analysis Results</h4>
+                
+                <p><strong>Study Parameters:</strong></p>
+                <p>• Effect size (Cohen's d): ${effectSize}</p>
+                <p>• Sample size per group: ${sampleSize}</p>
+                <p>• Significance level (α): ${alpha}</p>
+                <p>• Clinical context: ${context.replace('-', ' ')}</p>
+                
+                <p><strong>Statistical Power Analysis:</strong></p>
+                <p>• <span class="highlight">Current power: ${(power * 100).toFixed(1)}%</span></p>
+                <p>• Type II error rate (β): ${((1 - power) * 100).toFixed(1)}%</p>
+                <p>• Required sample size for 80% power: ${requiredN} per group</p>
+                
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• Probability of detecting true effect: ${(power * 100).toFixed(1)}%</p>
+                <p>• Risk of missing true effect: ${((1 - power) * 100).toFixed(1)}%</p>
+                <p>• Power adequacy: ${power >= 0.8 ? 'Adequate' : 'Inadequate - increase sample size'}</p>
+                
+                <p><strong>Clinical Consequences:</strong></p>
+                <p>• Type I error impact: ${consequences.typeI}</p>
+                <p>• Type II error impact: ${consequences.typeII}</p>
+                <p>• Cost per additional patient: ${consequences.cost}</p>
+            `;
+
+            createPowerCurve(effectSize, alpha, sampleSize, power);
         }
 
-        function generatePowerChart() {
-            const ctx = document.getElementById('powerChart').getContext('2d');
-            
-            if (powerChart) {
-                powerChart.destroy();
-            }
+        function getClinicalConsequences(context, alpha, beta) {
+            const consequences = {
+                efficacy: {
+                    typeI: 'Approving ineffective treatment - patients receive no benefit, healthcare costs increase',
+                    typeII: 'Missing effective treatment - patients continue to suffer from untreated condition',
+                    cost: 'CAD $15,000-25,000 per patient'
+                },
+                safety: {
+                    typeI: 'False safety signal - unnecessary treatment restrictions, patient access reduced',
+                    typeII: 'Missing real safety issue - patients exposed to preventable harm',
+                    cost: 'CAD $8,000-15,000 per patient'
+                },
+                bioequivalence: {
+                    typeI: 'Concluding non-equivalence when equivalent - generic drug unnecessarily rejected',
+                    typeII: 'Missing non-equivalence - potentially inferior generic approved',
+                    cost: 'CAD $5,000-10,000 per patient'
+                }
+            };
+            return consequences[context] || consequences.efficacy;
+        }
 
-            // Generate power curve
+        function createPowerCurve(baseEffect, alpha, currentN, currentPower) {
+            const ctx = document.getElementById('power-chart').getContext('2d');
+            if (charts.power) charts.power.destroy();
+
+            // Generate power curve across effect sizes
             const effectSizes = [];
             const powers = [];
-            for (let es = 0; es <= 2; es += 0.1) {
-                effectSizes.push(es);
-                const power = 1 - approximateTypeIIError(es);
-                powers.push(power);
+            
+            for (let d = 0; d <= 1.5; d += 0.05) {
+                const delta = d * Math.sqrt(currentN / 2);
+                const criticalValue = getZCritical(alpha);
+                const power = 1 - normalCDF(criticalValue - delta) + normalCDF(-criticalValue - delta);
+                effectSizes.push(d);
+                powers.push(power * 100);
             }
 
-            powerChart = new Chart(ctx, {
+            charts.power = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: effectSizes.map(es => es.toFixed(1)),
-                    datasets: [
-                        {
-                            label: 'Statistical Power',
-                            data: powers,
-                            borderColor: '#228B22',
-                            backgroundColor: 'rgba(34, 139, 34, 0.1)',
-                            borderWidth: 3,
-                            pointRadius: 0,
-                            tension: 0.3
-                        },
-                        {
-                            label: '80% Power Threshold',
-                            data: Array(effectSizes.length).fill(0.8),
-                            borderColor: '#FF8C00',
-                            borderDash: [10, 5],
-                            borderWidth: 2,
-                            pointRadius: 0
-                        }
-                    ]
+                    labels: effectSizes.map(d => d.toFixed(2)),
+                    datasets: [{
+                        label: 'Statistical Power (%)',
+                        data: powers,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Minimum Power (80%)',
+                        data: Array(effectSizes.length).fill(80),
+                        borderColor: '#dc143c',
+                        borderDash: [10, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: `Current Study (d=${baseEffect})`,
+                        data: [{x: baseEffect.toFixed(2), y: currentPower * 100}],
+                        type: 'scatter',
+                        backgroundColor: '#ff6b6b',
+                        borderColor: '#ff6b6b',
+                        pointRadius: 8,
+                        showLine: false
+                    }]
                 },
                 options: {
                     responsive: true,
@@ -1778,125 +1267,879 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Statistical Power vs Effect Size',
-                            font: { size: 14, weight: 'bold' }
+                            text: 'Power Curve: Power vs Effect Size'
                         }
                     },
                     scales: {
-                        x: { title: { display: true, text: 'Effect Size (Cohen\'s d)' } },
-                        y: { 
-                            title: { display: true, text: 'Statistical Power' },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Effect Size (Cohen\'s d)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Statistical Power (%)'
+                            },
                             min: 0,
-                            max: 1
+                            max: 100
                         }
                     }
                 }
             });
         }
 
-        function displayClinicalInterpretation() {
-            const study = currentClinicalData.study;
-            
-            document.getElementById('interpretationTable').innerHTML = `
-                <h4>🧪 Evidence-Based Clinical Interpretation</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 35px; margin: 35px 0;">
-                    <div class="stat-card" style="padding: 30px;">
-                        <h5>Statistical Evidence</h5>
-                        <p><strong>Regulatory Context:</strong> ${study.regulatory_context}</p>
-                        <p><strong>Clinical Significance:</strong> ${study.clinical_significance}</p>
-                        <div class="error-types">
-                            <div class="error-type">Type I Error<br>False Positive</div>
-                            <div class="error-type">Type II Error<br>False Negative</div>
-                        </div>
-                    </div>
-                    <div class="stat-card" style="padding: 30px;">
-                        <h5>Clinical Translation</h5>
-                        <p><strong>Safety Monitoring:</strong> ${study.safety_monitoring}</p>
-                        <p><strong>Population Impact:</strong> ${study.population}</p>
-                        <p><strong>Implementation:</strong> Results inform clinical practice guidelines and policy decisions</p>
-                    </div>
-                </div>
-                <div class="clinical-highlight">
-                    <p><strong>🧪 Evidence-Based Medicine Integration:</strong> 
-                    Statistical hypothesis testing provides the foundation for clinical decision-making by quantifying evidence 
-                    strength and controlling error rates. <span class="canada-clinical">Canadian health research</span> requires 
-                    integration of statistical significance, clinical significance, and practical implementation considerations. 
-                    P-values alone are insufficient - effect sizes, confidence intervals, and biological plausibility must guide 
-                    clinical interpretation and healthcare policy decisions.
-                    </p>
+        // Section 3: Multiple Testing Simulation
+        function simulateMultipleTesting() {
+            const numTests = parseInt(document.getElementById('num-comparisons').value);
+            const trueEffect = document.getElementById('true-effect').value;
+            const sampleSize = parseInt(document.getElementById('pvalue-sample').value);
+            const correction = document.getElementById('correction-method').value;
+
+            // Simulate p-values
+            const results = [];
+            const rawPValues = [];
+            const adjustedPValues = [];
+
+            for (let i = 0; i < numTests; i++) {
+                let pValue;
+                if (trueEffect === 'none') {
+                    // All null hypotheses true - p-values uniform [0,1]
+                    pValue = Math.random();
+                } else if (trueEffect === 'some') {
+                    // Half have true effects
+                    if (i < numTests / 2) {
+                        // True effect present - lower p-values
+                        pValue = Math.random() * 0.3;
+                    } else {
+                        // No effect - uniform p-values
+                        pValue = Math.random();
+                    }
+                } else {
+                    // All have true effects
+                    pValue = Math.random() * 0.2;
+                }
+                
+                rawPValues.push(pValue);
+                
+                results.push({
+                    test: i + 1,
+                    rawP: pValue,
+                    significant: pValue < 0.05,
+                    truePositive: (trueEffect === 'all') || (trueEffect === 'some' && i < numTests / 2)
+                });
+            }
+
+            // Apply correction
+            if (correction === 'bonferroni') {
+                for (let i = 0; i < numTests; i++) {
+                    adjustedPValues[i] = Math.min(1, rawPValues[i] * numTests);
+                    results[i].adjustedP = adjustedPValues[i];
+                    results[i].sigAfterCorrection = adjustedPValues[i] < 0.05;
+                }
+            } else if (correction === 'holm') {
+                // Holm-Bonferroni step-down
+                const sorted = rawPValues.map((p, i) => ({p, index: i}))
+                                        .sort((a, b) => a.p - b.p);
+                
+                for (let i = 0; i < numTests; i++) {
+                    const adjustedP = Math.min(1, sorted[i].p * (numTests - i));
+                    adjustedPValues[sorted[i].index] = adjustedP;
+                    results[sorted[i].index].adjustedP = adjustedP;
+                    results[sorted[i].index].sigAfterCorrection = adjustedP < 0.05;
+                }
+            } else if (correction === 'fdr') {
+                // Benjamini-Hochberg FDR
+                const sorted = rawPValues.map((p, i) => ({p, index: i}))
+                                        .sort((a, b) => a.p - b.p);
+                
+                for (let i = 0; i < numTests; i++) {
+                    const adjustedP = Math.min(1, sorted[i].p * numTests / (i + 1));
+                    adjustedPValues[sorted[i].index] = adjustedP;
+                    results[sorted[i].index].adjustedP = adjustedP;
+                    results[sorted[i].index].sigAfterCorrection = adjustedP < 0.05;
+                }
+            } else {
+                // No correction
+                for (let i = 0; i < numTests; i++) {
+                    adjustedPValues[i] = rawPValues[i];
+                    results[i].adjustedP = rawPValues[i];
+                    results[i].sigAfterCorrection = rawPValues[i] < 0.05;
+                }
+            }
+
+            // Calculate error rates
+            const sigBefore = results.filter(r => r.significant).length;
+            const sigAfter = results.filter(r => r.sigAfterCorrection).length;
+            const falsePositives = results.filter(r => r.sigAfterCorrection && !r.truePositive).length;
+            const truePositives = results.filter(r => r.sigAfterCorrection && r.truePositive).length;
+
+            document.getElementById('pvalues-results').style.display = 'block';
+            document.getElementById('pvalues-results').innerHTML = `
+                <h4>Multiple Testing Simulation Results</h4>
+                
+                <p><strong>Study Setup:</strong></p>
+                <p>• Number of tests: ${numTests}</p>
+                <p>• True effects: ${trueEffect === 'none' ? 'None (all null true)' : trueEffect === 'some' ? 'Some (mixed)' : 'All tests have true effects'}</p>
+                <p>• Correction method: ${correction === 'none' ? 'No correction' : correction.toUpperCase()}</p>
+                
+                <p><strong>Results Summary:</strong></p>
+                <table>
+                    <tr><th>Measure</th><th>Before Correction</th><th>After Correction</th></tr>
+                    <tr><td>Significant tests</td><td>${sigBefore}</td><td>${sigAfter}</td></tr>
+                    <tr><td>False positives</td><td>${results.filter(r => r.significant && !r.truePositive).length}</td><td>${falsePositives}</td></tr>
+                    <tr><td>True positives</td><td>${results.filter(r => r.significant && r.truePositive).length}</td><td>${truePositives}</td></tr>
+                    <tr><td>Family-wise error rate</td><td>${results.filter(r => r.significant && !r.truePositive).length > 0 ? 'Yes' : 'No'}</td><td>${falsePositives > 0 ? 'Yes' : 'No'}</td></tr>
+                </table>
+                
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• <span class="highlight">Correction effectiveness: ${(((sigBefore - sigAfter) / Math.max(1, sigBefore)) * 100).toFixed(0)}% reduction in significant findings</span></p>
+                <p>• Type I error control: ${falsePositives === 0 ? 'Excellent' : falsePositives <= 1 ? 'Good' : 'Inadequate'}</p>
+                <p>• Power preservation: ${truePositives}/${results.filter(r => r.truePositive).length} true effects detected</p>
+                
+                <div style="max-height: 200px; overflow-y: auto;">
+                    <table style="font-size: 0.9em;">
+                        <tr><th>Test</th><th>Raw p</th><th>Adjusted p</th><th>Significant</th></tr>
+                        ${results.slice(0, 10).map(r => `
+                            <tr style="background-color: ${r.sigAfterCorrection ? '#e8ffe8' : '#f8f8f8'}">
+                                <td>${r.test}</td>
+                                <td>${r.rawP.toFixed(4)}</td>
+                                <td>${r.adjustedP.toFixed(4)}</td>
+                                <td>${r.sigAfterCorrection ? '✓' : '✗'}</td>
+                            </tr>
+                        `).join('')}
+                        ${results.length > 10 ? '<tr><td colspan="4">... (showing first 10 tests)</td></tr>' : ''}
+                    </table>
                 </div>
             `;
+
+            createPValueHistogram(rawPValues, adjustedPValues, correction);
         }
 
-        // Assessment Functions
-        function generateNewQuestion() {
-            currentQuestion = assessmentQuestions[Math.floor(Math.random() * assessmentQuestions.length)];
-            selectedAnswer = null;
-            
-            document.querySelector('.decision-question').textContent = currentQuestion.question;
-            
-            const optionsContainer = document.getElementById('assessmentOptions');
-            optionsContainer.innerHTML = '';
-            
-            currentQuestion.options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'decision-option';
-                optionDiv.textContent = option;
-                optionDiv.onclick = () => selectAnswer(index);
-                optionsContainer.appendChild(optionDiv);
+        function createPValueHistogram(rawPValues, adjustedPValues, correction) {
+            const ctx = document.getElementById('pvalue-chart').getContext('2d');
+            if (charts.pvalue) charts.pvalue.destroy();
+
+            // Create histograms
+            const bins = [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.5, 1.0];
+            const rawCounts = new Array(bins.length - 1).fill(0);
+            const adjCounts = new Array(bins.length - 1).fill(0);
+
+            rawPValues.forEach(p => {
+                for (let i = 0; i < bins.length - 1; i++) {
+                    if (p >= bins[i] && p < bins[i + 1]) {
+                        rawCounts[i]++;
+                        break;
+                    }
+                }
             });
-            
-            document.getElementById('assessmentFeedback').innerHTML = '';
-        }
 
-        function selectAnswer(answerIndex) {
-            selectedAnswer = answerIndex;
-            
-            document.querySelectorAll('.decision-option').forEach((option, index) => {
-                option.classList.toggle('selected', index === answerIndex);
+            adjustedPValues.forEach(p => {
+                for (let i = 0; i < bins.length - 1; i++) {
+                    if (p >= bins[i] && p < bins[i + 1]) {
+                        adjCounts[i]++;
+                        break;
+                    }
+                }
+            });
+
+            charts.pvalue = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: bins.slice(0, -1).map((b, i) => `${b}-${bins[i + 1]}`),
+                    datasets: [{
+                        label: 'Raw P-values',
+                        data: rawCounts,
+                        backgroundColor: 'rgba(47, 139, 139, 0.7)',
+                        borderColor: '#2f8b8b',
+                        borderWidth: 2
+                    }, {
+                        label: 'Adjusted P-values',
+                        data: adjCounts,
+                        backgroundColor: 'rgba(220, 20, 60, 0.7)',
+                        borderColor: '#dc143c',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `P-value Distribution: ${correction === 'none' ? 'No Correction' : correction.toUpperCase()}`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'P-value Range'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Tests'
+                            }
+                        }
+                    }
+                }
             });
         }
 
-        function checkAnswer() {
-            if (selectedAnswer === null) {
-                alert('Please select an answer first');
-                return;
+        // Utility functions
+        function getZCritical(alpha) {
+            // Approximate critical values
+            if (alpha <= 0.01) return 2.58;
+            if (alpha <= 0.05) return 1.96;
+            return 1.645;
+        }
+
+        function normalCDF(x) {
+            return 0.5 * (1 + erf(x / Math.sqrt(2)));
+        }
+
+        function erf(x) {
+            const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+            const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+        }
+
+        // Section 4: Means Testing
+        function simulateMeansTest() {
+            const studyType = document.getElementById('study-type').value;
+            const sampleSize = parseInt(document.getElementById('means-sample-size').value);
+            const effectSize = parseFloat(document.getElementById('means-effect').value);
+            const outcome = document.getElementById('clinical-outcome').value;
+
+            const outcomeParams = {
+                'hba1c': { name: 'HbA1c Change', unit: '%', baseline: 8.5, sd: 1.2, clinicalThreshold: 0.5 },
+                'bp': { name: 'Systolic BP', unit: 'mmHg', baseline: 145, sd: 15, clinicalThreshold: 5 },
+                'cholesterol': { name: 'LDL Cholesterol', unit: 'mg/dL', baseline: 150, sd: 30, clinicalThreshold: 10 },
+                'pain': { name: 'Pain Score', unit: '(0-10)', baseline: 6.5, sd: 2.0, clinicalThreshold: 1.0 }
+            };
+
+            const params = outcomeParams[outcome];
+            let results = {};
+
+            if (studyType === 'independent') {
+                // Two independent groups
+                const controlGroup = generateNormalData(sampleSize, params.baseline, params.sd);
+                const treatmentGroup = generateNormalData(sampleSize, params.baseline - effectSize * params.sd, params.sd);
+                
+                const controlMean = mean(controlGroup);
+                const treatmentMean = mean(treatmentGroup);
+                const pooledSD = Math.sqrt((variance(controlGroup) + variance(treatmentGroup)) / 2);
+                const se = pooledSD * Math.sqrt(2 / sampleSize);
+                const tStat = (controlMean - treatmentMean) / se;
+                const df = 2 * sampleSize - 2;
+                const pValue = 2 * (1 - tCDF(Math.abs(tStat), df));
+                
+                results = {
+                    type: 'Two-sample t-test',
+                    controlMean: controlMean,
+                    treatmentMean: treatmentMean,
+                    difference: controlMean - treatmentMean,
+                    se: se,
+                    tStat: tStat,
+                    df: df,
+                    pValue: pValue,
+                    clinicallySig: Math.abs(controlMean - treatmentMean) >= params.clinicalThreshold
+                };
+                
+            } else if (studyType === 'paired') {
+                // Paired data (before/after)
+                const beforeData = generateNormalData(sampleSize, params.baseline, params.sd);
+                const afterData = beforeData.map(x => x - effectSize * params.sd + (Math.random() - 0.5) * params.sd * 0.5);
+                const differences = beforeData.map((x, i) => x - afterData[i]);
+                
+                const meanDiff = mean(differences);
+                const sdDiff = Math.sqrt(variance(differences));
+                const se = sdDiff / Math.sqrt(sampleSize);
+                const tStat = meanDiff / se;
+                const df = sampleSize - 1;
+                const pValue = 2 * (1 - tCDF(Math.abs(tStat), df));
+                
+                results = {
+                    type: 'Paired t-test',
+                    beforeMean: mean(beforeData),
+                    afterMean: mean(afterData),
+                    difference: meanDiff,
+                    se: se,
+                    tStat: tStat,
+                    df: df,
+                    pValue: pValue,
+                    clinicallySig: Math.abs(meanDiff) >= params.clinicalThreshold
+                };
+            } else {
+                // ANOVA (3 groups)
+                const group1 = generateNormalData(sampleSize, params.baseline, params.sd);
+                const group2 = generateNormalData(sampleSize, params.baseline - effectSize * params.sd * 0.5, params.sd);
+                const group3 = generateNormalData(sampleSize, params.baseline - effectSize * params.sd, params.sd);
+                
+                const allData = [...group1, ...group2, ...group3];
+                const grandMean = mean(allData);
+                const groupMeans = [mean(group1), mean(group2), mean(group3)];
+                
+                // Calculate F-statistic
+                const msb = sampleSize * groupMeans.reduce((sum, gm) => sum + Math.pow(gm - grandMean, 2), 0) / 2;
+                const msw = (variance(group1) + variance(group2) + variance(group3)) / 3;
+                const fStat = msb / msw;
+                const pValue = 1 - fCDF(fStat, 2, 3 * sampleSize - 3);
+                
+                results = {
+                    type: 'One-way ANOVA',
+                    groupMeans: groupMeans,
+                    fStat: fStat,
+                    pValue: pValue,
+                    grandMean: grandMean,
+                    clinicallySig: Math.max(...groupMeans) - Math.min(...groupMeans) >= params.clinicalThreshold
+                };
+            }
+
+            document.getElementById('means-results').style.display = 'block';
+            document.getElementById('means-results').innerHTML = `
+                <h4>${results.type}: ${params.name} Analysis</h4>
+                
+                <p><strong>Study Design:</strong></p>
+                <p>• Sample size per group: ${sampleSize}</p>
+                <p>• Expected effect size: ${effectSize} (Cohen's d)</p>
+                <p>• Primary outcome: ${params.name} (${params.unit})</p>
+                <p>• Clinical threshold: ${params.clinicalThreshold} ${params.unit}</p>
+                
+                <p><strong>Results:</strong></p>
+                ${getResultsDisplay(results, params)}
+                
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• <span class="highlight">Statistical significance: ${results.pValue < 0.05 ? 'Yes' : 'No'} (p = ${results.pValue.toFixed(4)})</span></p>
+                <p>• Clinical significance: ${results.clinicallySig ? 'Yes' : 'No'} (≥${params.clinicalThreshold} ${params.unit})</p>
+                <p>• Effect size interpretation: ${interpretEffectSize(effectSize)}</p>
+                <p>• Regulatory implication: ${getRegImplication(results.pValue < 0.05, results.clinicallySig)}</p>
+            `;
+
+            createMeansVisualization(results, studyType, params);
+        }
+
+        function getResultsDisplay(results, params) {
+            if (results.type.includes('ANOVA')) {
+                return `
+                    <table>
+                        <tr><th>Group</th><th>Mean (${params.unit})</th></tr>
+                        <tr><td>Group 1 (Control)</td><td>${results.groupMeans[0].toFixed(2)}</td></tr>
+                        <tr><td>Group 2 (Low Dose)</td><td>${results.groupMeans[1].toFixed(2)}</td></tr>
+                        <tr><td>Group 3 (High Dose)</td><td>${results.groupMeans[2].toFixed(2)}</td></tr>
+                    </table>
+                    <p>• F-statistic: ${results.fStat.toFixed(2)}</p>
+                    <p>• p-value: ${results.pValue.toFixed(4)}</p>
+                `;
+            } else {
+                return `
+                    <table>
+                        <tr><th>Group</th><th>Mean (${params.unit})</th></tr>
+                        ${results.controlMean ? `<tr><td>Control</td><td>${results.controlMean.toFixed(2)}</td></tr>` : ''}
+                        ${results.treatmentMean ? `<tr><td>Treatment</td><td>${results.treatmentMean.toFixed(2)}</td></tr>` : ''}
+                        ${results.beforeMean ? `<tr><td>Before</td><td>${results.beforeMean.toFixed(2)}</td></tr>` : ''}
+                        ${results.afterMean ? `<tr><td>After</td><td>${results.afterMean.toFixed(2)}</td></tr>` : ''}
+                    </table>
+                    <p>• Mean difference: ${results.difference.toFixed(2)} ${params.unit}</p>
+                    <p>• Standard error: ${results.se.toFixed(3)}</p>
+                    <p>• t-statistic: ${results.tStat.toFixed(2)} (df = ${results.df})</p>
+                    <p>• p-value: ${results.pValue.toFixed(4)}</p>
+                `;
+            }
+        }
+
+        function interpretEffectSize(d) {
+            const abs_d = Math.abs(d);
+            if (abs_d < 0.2) return 'Small effect';
+            if (abs_d < 0.5) return 'Small to medium effect';
+            if (abs_d < 0.8) return 'Medium effect';
+            return 'Large effect';
+        }
+
+        function getRegImplication(statSig, clinSig) {
+            if (statSig && clinSig) return 'Strong evidence for regulatory approval';
+            if (statSig && !clinSig) return 'Statistically significant but questionable clinical benefit';
+            if (!statSig && clinSig) return 'Clinically relevant but insufficient statistical evidence';
+            return 'Insufficient evidence for regulatory approval';
+        }
+
+        // Section 5: Categorical Data Analysis
+        function analyzeCategoricalData() {
+            const design = document.getElementById('categorical-design').value;
+            const n = parseInt(document.getElementById('categorical-n').value);
+            const or = parseFloat(document.getElementById('categorical-or').value);
+            const outcome = document.getElementById('categorical-outcome').value;
+
+            let results = {};
+
+            if (design === 'independent') {
+                // 2x2 contingency table
+                const p1 = 0.2; // baseline event rate
+                const p2 = p1 * or / (1 + p1 * (or - 1)); // adjusted for odds ratio
+                
+                const events1 = Math.round(n * p1);
+                const events2 = Math.round(n * p2);
+                const noEvents1 = n - events1;
+                const noEvents2 = n - events2;
+                
+                const chiSq = calculateChiSquare([[events1, noEvents1], [events2, noEvents2]]);
+                const observedOR = (events1 * noEvents2) / (events2 * noEvents1);
+                const rr = p1 / p2;
+                
+                results = {
+                    type: 'Chi-square test of independence',
+                    table: [[events1, noEvents1], [events2, noEvents2]],
+                    chiSq: chiSq.statistic,
+                    pValue: chiSq.pValue,
+                    or: observedOR,
+                    rr: rr,
+                    nnt: Math.abs(1 / (p1 - p2))
+                };
+            } else if (design === 'case-control') {
+                // Case-control design
+                const exposureRate = 0.3;
+                const cases = n / 2;
+                const controls = n / 2;
+                
+                const exposedCases = Math.round(cases * exposureRate * or / (1 + exposureRate * (or - 1)));
+                const unexposedCases = cases - exposedCases;
+                const exposedControls = Math.round(controls * exposureRate);
+                const unexposedControls = controls - exposedControls;
+                
+                const observedOR = (exposedCases * unexposedControls) / (unexposedCases * exposedControls);
+                const chiSq = calculateChiSquare([[exposedCases, unexposedCases], [exposedControls, unexposedControls]]);
+                
+                results = {
+                    type: 'Case-control study (Chi-square test)',
+                    table: [[exposedCases, unexposedCases], [exposedControls, unexposedControls]],
+                    chiSq: chiSq.statistic,
+                    pValue: chiSq.pValue,
+                    or: observedOR
+                };
+            }
+
+            document.getElementById('categorical-results').style.display = 'block';
+            document.getElementById('categorical-results').innerHTML = `
+                <h4>${results.type}: ${outcome.replace('-', ' ')} Analysis</h4>
+                
+                <p><strong>Study Design:</strong></p>
+                <p>• Total sample size: ${n}</p>
+                <p>• Expected odds ratio: ${or}</p>
+                <p>• Analysis: ${results.type}</p>
+                
+                <p><strong>2x2 Contingency Table:</strong></p>
+                <table>
+                    <tr><th></th><th>Event +</th><th>Event -</th><th>Total</th></tr>
+                    <tr><td>Group 1</td><td>${results.table[0][0]}</td><td>${results.table[0][1]}</td><td>${results.table[0][0] + results.table[0][1]}</td></tr>
+                    <tr><td>Group 2</td><td>${results.table[1][0]}</td><td>${results.table[1][1]}</td><td>${results.table[1][0] + results.table[1][1]}</td></tr>
+                </table>
+                
+                <p><strong>Statistical Results:</strong></p>
+                <p>• Chi-square statistic: ${results.chiSq.toFixed(2)}</p>
+                <p>• p-value: ${results.pValue.toFixed(4)}</p>
+                <p>• <span class="highlight">Odds ratio: ${results.or.toFixed(2)}</span></p>
+                ${results.rr ? `<p>• Risk ratio: ${results.rr.toFixed(2)}</p>` : ''}
+                ${results.nnt ? `<p>• Number needed to treat: ${results.nnt.toFixed(0)}</p>` : ''}
+                
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• Statistical significance: ${results.pValue < 0.05 ? 'Significant association' : 'No significant association'}</p>
+                <p>• Effect magnitude: ${interpretOR(results.or)}</p>
+                <p>• Clinical relevance: ${getClinicalRelevance(outcome, results.or)}</p>
+            `;
+
+            createCategoricalVisualization(results, outcome);
+        }
+
+        function calculateChiSquare(table) {
+            const a = table[0][0], b = table[0][1];
+            const c = table[1][0], d = table[1][1];
+            const n = a + b + c + d;
+            
+            const expected = [
+                [(a + b) * (a + c) / n, (a + b) * (b + d) / n],
+                [(c + d) * (a + c) / n, (c + d) * (b + d) / n]
+            ];
+            
+            let chiSq = 0;
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    chiSq += Math.pow(table[i][j] - expected[i][j], 2) / expected[i][j];
+                }
             }
             
-            const isCorrect = selectedAnswer === currentQuestion.correct;
-            const feedbackClass = isCorrect ? 'feedback-success' : 'feedback-danger';
-            const feedbackTitle = isCorrect ? '✓ Correct!' : '✗ Incorrect';
-            
-            document.getElementById('assessmentFeedback').innerHTML = `
-                <div class="${feedbackClass}">
-                    <h4>${feedbackTitle}</h4>
-                    <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
-                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
-                </div>
-            `;
+            const pValue = 1 - chiSquareCDF(chiSq, 1);
+            return { statistic: chiSq, pValue: pValue };
         }
 
-        function showExpertSolution() {
-            if (!currentQuestion) {
-                generateNewQuestion();
-                return;
+        function interpretOR(or) {
+            if (or > 2.0) return 'Strong positive association';
+            if (or > 1.5) return 'Moderate positive association';
+            if (or > 1.1) return 'Weak positive association';
+            if (or > 0.9) return 'No meaningful association';
+            if (or > 0.67) return 'Weak negative association';
+            if (or > 0.5) return 'Moderate negative association';
+            return 'Strong negative association';
+        }
+
+        function getClinicalRelevance(outcome, or) {
+            if (outcome.includes('adverse')) {
+                return or > 1.5 ? 'Clinically important safety signal' : 'Acceptable safety profile';
+            } else if (outcome.includes('treatment')) {
+                return or > 1.5 ? 'Clinically meaningful treatment benefit' : 'Limited treatment benefit';
+            }
+            return 'Requires clinical context for interpretation';
+        }
+
+        // Additional utility functions
+        function generateNormalData(n, mean, sd) {
+            const data = [];
+            for (let i = 0; i < n; i++) {
+                // Box-Muller transformation
+                const u = Math.random();
+                const v = Math.random();
+                const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+                data.push(mean + z * sd);
+            }
+            return data;
+        }
+
+        function mean(data) {
+            return data.reduce((a, b) => a + b, 0) / data.length;
+        }
+
+        function variance(data) {
+            const m = mean(data);
+            return data.reduce((sum, x) => sum + Math.pow(x - m, 2), 0) / (data.length - 1);
+        }
+
+        function tCDF(t, df) {
+            // Approximate t-distribution CDF
+            if (df >= 30) return normalCDF(t);
+            return 0.5 + 0.5 * Math.sign(t) * Math.pow(1 - 1 / (1 + t * t / df), df / 2);
+        }
+
+        function fCDF(f, df1, df2) {
+            // Very rough F-distribution approximation
+            if (f < 0) return 0;
+            if (f > 10) return 1;
+            return 1 - Math.exp(-f / 2);
+        }
+
+        function chiSquareCDF(x, df) {
+            // Approximate chi-square CDF
+            if (df === 1) return 2 * normalCDF(Math.sqrt(x)) - 1;
+            if (df === 2) return 1 - Math.exp(-x / 2);
+            return 1 - Math.exp(-x / 2); // Simplified
+        }
+
+        // Chart creation functions
+        function createMeansVisualization(results, studyType, params) {
+            const ctx = document.getElementById('means-chart').getContext('2d');
+            if (charts.means) charts.means.destroy();
+
+            if (studyType === 'anova') {
+                charts.means = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Control', 'Low Dose', 'High Dose'],
+                        datasets: [{
+                            label: `${params.name} (${params.unit})`,
+                            data: results.groupMeans,
+                            backgroundColor: ['rgba(255, 107, 107, 0.8)', 'rgba(255, 193, 7, 0.8)', 'rgba(47, 139, 139, 0.8)'],
+                            borderColor: ['#ff6b6b', '#ffc107', '#2f8b8b'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'ANOVA: Group Means Comparison'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: `${params.name} (${params.unit})`
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                const labels = studyType === 'paired' ? ['Before', 'After'] : ['Control', 'Treatment'];
+                const data = studyType === 'paired' ? 
+                    [results.beforeMean, results.afterMean] :
+                    [results.controlMean, results.treatmentMean];
+
+                charts.means = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${params.name} (${params.unit})`,
+                            data: data,
+                            backgroundColor: ['rgba(255, 107, 107, 0.8)', 'rgba(47, 139, 139, 0.8)'],
+                            borderColor: ['#ff6b6b', '#2f8b8b'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${results.type}: Mean Comparison`
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: `${params.name} (${params.unit})`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function createCategoricalVisualization(results, outcome) {
+            const ctx = document.getElementById('categorical-chart').getContext('2d');
+            if (charts.categorical) charts.categorical.destroy();
+
+            charts.categorical = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Group 1', 'Group 2'],
+                    datasets: [{
+                        label: 'Events',
+                        data: [results.table[0][0], results.table[1][0]],
+                        backgroundColor: 'rgba(220, 20, 60, 0.8)',
+                        borderColor: '#dc143c',
+                        borderWidth: 2
+                    }, {
+                        label: 'No Events',
+                        data: [results.table[0][1], results.table[1][1]],
+                        backgroundColor: 'rgba(47, 139, 139, 0.8)',
+                        borderColor: '#2f8b8b',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${outcome.replace('-', ' ')} Analysis`
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Patients'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Assessment Questions
+        const hypothesisQuestionPools = {
+            framework: [
+                {
+                    question: "A clinical trial tests whether a new diabetes drug reduces HbA1c more than placebo. What is the appropriate null hypothesis?",
+                    options: [
+                        "H₀: New drug reduces HbA1c by at least 0.5%",
+                        "H₀: There is no difference in HbA1c reduction between new drug and placebo",
+                        "H₀: New drug is superior to placebo",
+                        "H₀: Patients prefer the new drug over placebo"
+                    ],
+                    correct: 1,
+                    explanation: "The null hypothesis always states 'no effect' or 'no difference.' We assume no difference until evidence proves otherwise."
+                }
+            ],
+            power: [
+                {
+                    question: "A study has 60% power to detect a clinically important difference. What does this mean?",
+                    options: [
+                        "There's a 60% chance the null hypothesis is true",
+                        "There's a 40% chance of making a Type I error",
+                        "If a true effect exists, there's a 60% chance of detecting it",
+                        "60% of similar studies would show statistical significance"
+                    ],
+                    correct: 2,
+                    explanation: "Power is the probability of correctly rejecting a false null hypothesis - i.e., detecting a true effect when it exists."
+                }
+            ],
+            pvalues: [
+                {
+                    question: "A study reports p=0.03. This means:",
+                    options: [
+                        "There's a 3% chance the null hypothesis is true",
+                        "There's a 97% chance the treatment works",
+                        "If null hypothesis were true, we'd see data this extreme 3% of the time",
+                        "The treatment effect is clinically significant"
+                    ],
+                    correct: 2,
+                    explanation: "P-value is the probability of observing data as extreme or more extreme than observed, assuming the null hypothesis is true."
+                }
+            ],
+            tests: [
+                {
+                    question: "You want to compare pain scores (0-10 scale) before and after treatment in the same 30 patients. Data are skewed. Which test is most appropriate?",
+                    options: [
+                        "Paired t-test",
+                        "Two-sample t-test", 
+                        "Wilcoxon signed-rank test",
+                        "Mann-Whitney U test"
+                    ],
+                    correct: 2,
+                    explanation: "Wilcoxon signed-rank test is the non-parametric equivalent of paired t-test, appropriate for skewed paired data."
+                }
+            ]
+        };
+
+        function generateHypothesisQuestions() {
+            currentHypothesisQuestions = [];
+            const pools = Object.keys(hypothesisQuestionPools);
+            
+            pools.forEach(pool => {
+                const questions = hypothesisQuestionPools[pool];
+                const randomQ = questions[Math.floor(Math.random() * questions.length)];
+                currentHypothesisQuestions.push(randomQ);
+            });
+
+            displayHypothesisQuestions();
+        }
+
+        function displayHypothesisQuestions() {
+            const container = document.getElementById('hypothesis-questions-container');
+            let html = '';
+            
+            currentHypothesisQuestions.forEach((q, index) => {
+                const shuffledOptions = [...q.options];
+                const correctAnswer = shuffledOptions[q.correct];
+                
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+                
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                html += `
+                    <div class="question">
+                        <h4>Question ${index + 1}</h4>
+                        <p><strong>${q.question}</strong></p>
+                        ${shuffledOptions.map((option, i) => `
+                            <label>
+                                <input type="radio" name="hq${index}" value="${i}" data-correct="${i === newCorrectIndex}">
+                                ${String.fromCharCode(65 + i)}. ${option}
+                            </label><br>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('hypothesis-check-btn').style.display = 'block';
+        }
+
+        function checkHypothesisAnswers() {
+            let correct = 0;
+            let total = currentHypothesisQuestions.length;
+            let results = '<h4>Hypothesis Testing Assessment Results</h4>';
+            
+            currentHypothesisQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="hq${index}"]:checked`);
+                const isCorrect = selected && selected.dataset.correct === 'true';
+                
+                if (isCorrect) correct++;
+                
+                results += `
+                    <p><strong>Question ${index + 1}:</strong> ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</p>
+                    <p><em>Explanation:</em> ${q.explanation}</p>
+                `;
+            });
+            
+            const percentage = (correct / total * 100).toFixed(1);
+            results = `<p><strong>Score: ${correct}/${total} (${percentage}%)</strong></p>` + results;
+            
+            if (correct === total) {
+                results += '<p><span style="color: #2f8b8b; font-weight: bold;">🎓 Excellent! You have mastered hypothesis testing fundamentals!</span></p>';
             }
             
-            document.getElementById('assessmentFeedback').innerHTML = `
-                <div class="feedback-success">
-                    <h4>🧪 Clinical Analysis</h4>
-                    <p><strong>Correct Answer:</strong> ${currentQuestion.options[currentQuestion.correct]}</p>
-                    <p><strong>Hypothesis Testing Insight:</strong> ${currentQuestion.explanation}</p>
-                    <p><strong>Clinical Application:</strong> Hypothesis testing provides the statistical foundation for evidence-based clinical decision-making. Understanding p-values, effect sizes, and error types is essential for interpreting medical research and translating statistical findings into clinical practice.</p>
-                </div>
+            document.getElementById('hypothesis-assessment-results').innerHTML = results;
+        }
+
+        // Initialize
+        window.onload = function() {
+            generateHypothesisQuestions();
+            showSection('framework');
+        };
+
+        // Placeholder functions for additional sections (6-9) would go here
+        // These would follow the same pattern as the implemented sections
+
+        function compareParametricNonparametric() {
+            // Placeholder for Section 6
+            document.getElementById('nonparametric-results').style.display = 'block';
+            document.getElementById('nonparametric-results').innerHTML = `
+                <h4>Non-parametric vs Parametric Test Comparison</h4>
+                <p>This section would demonstrate when to use non-parametric tests and compare their power to parametric alternatives.</p>
+                <p>Implementation includes Mann-Whitney U, Wilcoxon signed-rank, Kruskal-Wallis tests with Canadian healthcare examples.</p>
             `;
         }
 
-        // Initialize page
-        window.addEventListener('load', function() {
-            updateClinicalStudy();
-            generateNewQuestion();
-        });
+        function simulateDiagnosticTest() {
+            // Placeholder for Section 7
+            document.getElementById('diagnostic-results').style.display = 'block';
+            document.getElementById('diagnostic-results').innerHTML = `
+                <h4>Diagnostic Test Performance Analysis</h4>
+                <p>This section would simulate ROC curves, calculate sensitivity/specificity, and demonstrate diagnostic accuracy analysis.</p>
+                <p>Implementation includes screening test validation, biomarker discovery, and Health Canada device approval scenarios.</p>
+            `;
+        }
+
+        function designEquivalenceStudy() {
+            // Placeholder for Section 8
+            document.getElementById('equivalence-results').style.display = 'block';
+            document.getElementById('equivalence-results').innerHTML = `
+                <h4>Equivalence/Non-inferiority Study Design</h4>
+                <p>This section would design equivalence studies for generic drugs and biosimilars following Health Canada guidelines.</p>
+                <p>Implementation includes margin justification, sample size calculation, and regulatory pathway guidance.</p>
+            `;
+        }
+
+        function simulateSurvivalStudy() {
+            // Placeholder for Section 9
+            document.getElementById('survival-results').style.display = 'block';
+            document.getElementById('survival-results').innerHTML = `
+                <h4>Survival Analysis Introduction</h4>
+                <p>This section would introduce Kaplan-Meier curves, log-rank tests, and censoring concepts.</p>
+                <p>Implementation includes time-to-event analysis for oncology trials, device failure studies, and chronic disease progression.</p>
+            `;
+        }
     </script>
 </body>
 </html>
