@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool #16: Advanced Clinical Trial Design - Medical Biostatistics Tools</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fffe;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 3px solid #20b2aa;
+        }
+        h1 {
+            color: #dc143c;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #dc143c;
+            border-bottom: 3px solid #dc143c;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2f8b8b;
+            margin-top: 25px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #2f8b8b;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .expert-badge {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+        .completion-badge {
+            background: linear-gradient(45deg, #dc143c, #ff6b6b);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            display: block;
+            font-size: 1.1em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .design-section {
+            background: #f0ffff;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #2f8b8b;
+        }
+        .scenario {
+            background: #e8fffe;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #20b2aa;
+        }
+        .controls {
+            background: #f8ffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #20b2aa;
+        }
+        button {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .results {
+            background: #ffffff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #20b2aa;
+            height: 400px;
+            position: relative;
+        }
+        select, input {
+            padding: 8px;
+            margin: 5px;
+            border: 2px solid #20b2aa;
+            border-radius: 4px;
+            background: white;
+        }
+        .formula {
+            background: #f0f8ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #2f8b8b;
+        }
+        .trial-diagram {
+            background: #ffffff;
+            border: 2px solid #20b2aa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .assessment {
+            background: linear-gradient(to right, #f0ffff, #e8fffe);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .question {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #20b2aa;
+        }
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .adaptive-stage {
+            background: #f9f9f9;
+            border: 1px solid #20b2aa;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #20b2aa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #2f8b8b;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8fffe;
+        }
+        .series-summary {
+            background: linear-gradient(to right, #e8fffe, #f0ffff);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            border: 3px solid #2f8b8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tool #16: Advanced Clinical Trial Design</h1>
+        <div class="subtitle">Expert Series Finale: Innovative Trial Methodologies in Modern Medicine</div>
+        
+        <div class="expert-badge">🏥 EXPERT SERIES: Sophisticated Trial Design & Implementation</div>
+        <div class="completion-badge">🎓 EXPERT SERIES COMPLETE: Master-Level Medical Research Toolkit</div>
+
+        <div class="design-section">
+            <h2>🧬 Advanced Trial Design Framework</h2>
+            <p>Modern clinical trials employ sophisticated designs that go beyond traditional parallel-group RCTs to address complex research questions more efficiently and ethically.</p>
+            
+            <div class="trial-diagram">
+                <h4>Advanced Design Categories</h4>
+                <p><strong>Adaptive:</strong> Modify trial based on accumulating data</p>
+                <p><strong>Platform:</strong> Multiple treatments, shared infrastructure</p>
+                <p><strong>Precision:</strong> Biomarker-driven patient selection</p>
+                <p><strong>Pragmatic:</strong> Real-world effectiveness studies</p>
+            </div>
+
+            <div class="formula">
+                Key Design Principles:
+                <br>• Efficiency: Reduce time, cost, and patient exposure
+                <br>• Ethics: Maximize benefit-risk for participants  
+                <br>• Innovation: Enable precision medicine approaches
+                <br>• Flexibility: Adapt to emerging evidence
+            </div>
+        </div>
+
+        <div class="design-section">
+            <h2>🎯 Design 1: Adaptive Dose-Finding Trial</h2>
+            
+            <div class="scenario">
+                <h3>Application: Health Canada Oncology Drug Development</h3>
+                <p>Continual Reassessment Method (CRM) for finding maximum tolerated dose of novel cancer therapy</p>
+                
+                <div class="controls">
+                    <label>Patient Cohorts: <input type="number" id="adaptive-cohorts" value="8" min="4" max="15" step="1"></label>
+                    <label>Cohort Size: <input type="number" id="adaptive-size" value="3" min="1" max="6" step="1"></label>
+                    <label>Target Toxicity Rate: <input type="number" id="adaptive-target" value="0.25" min="0.15" max="0.35" step="0.05"></label>
+                    <label>Starting Dose (mg/m²): <input type="number" id="adaptive-start" value="50" min="25" max="100" step="5"></label>
+                    <button onclick="runAdaptive()">Simulate Adaptive Trial</button>
+                </div>
+                
+                <div id="adaptive-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="adaptive-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-section">
+            <h2>🔬 Design 2: Platform Trial</h2>
+            
+            <div class="scenario">
+                <h3>Application: Canadian COVID-19 Immunity Task Force Platform</h3>
+                <p>Master protocol testing multiple COVID treatments with shared control arm and infrastructure</p>
+                
+                <div class="controls">
+                    <label>Control Allocation: <input type="number" id="platform-control" value="40" min="20" max="60" step="5">%</label>
+                    <label>Treatment Arms: <input type="number" id="platform-arms" value="4" min="2" max="6" step="1"></label>
+                    <label>Monthly Enrollment: <input type="number" id="platform-enroll" value="120" min="60" max="200" step="20"></label>
+                    <label>Interim Intervals (weeks): <input type="number" id="platform-interim" value="4" min="2" max="8" step="1"></label>
+                    <button onclick="runPlatform()">Simulate Platform Trial</button>
+                </div>
+                
+                <div id="platform-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="platform-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-section">
+            <h2>🧪 Design 3: Basket Trial</h2>
+            
+            <div class="scenario">
+                <h3>Application: Canadian Cancer Genomics Consortium</h3>
+                <p>Test targeted therapy across multiple cancer types sharing common biomarker</p>
+                
+                <div class="controls">
+                    <label>Cancer Types: <input type="number" id="basket-types" value="6" min="3" max="8" step="1"></label>
+                    <label>Patients per Type: <input type="number" id="basket-n" value="25" min="15" max="40" step="5"></label>
+                    <label>Response Threshold: <input type="number" id="basket-threshold" value="20" min="10" max="30" step="2">%</label>
+                    <label>Biomarker Prevalence: <input type="number" id="basket-prev" value="15" min="5" max="25" step="2">%</label>
+                    <button onclick="runBasket()">Analyze Basket Design</button>
+                </div>
+                
+                <div id="basket-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="basket-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-section">
+            <h2>⚖️ Design 4: Sequential Trial</h2>
+            
+            <div class="scenario">
+                <h3>Application: Manitoba Centre for Health Policy Sequential RCT</h3>
+                <p>Sequential probability ratio test for early stopping based on accumulating evidence</p>
+                
+                <div class="controls">
+                    <label>Type I Error (α): <input type="number" id="seq-alpha" value="0.05" min="0.01" max="0.10" step="0.01"></label>
+                    <label>Power (1-β): <input type="number" id="seq-power" value="0.80" min="0.70" max="0.95" step="0.05"></label>
+                    <label>Expected Effect Size: <input type="number" id="seq-effect" value="0.25" min="0.10" max="0.50" step="0.05"></label>
+                    <label>Maximum Sample Size: <input type="number" id="seq-maxn" value="400" min="200" max="800" step="50"></label>
+                    <button onclick="runSequential()">Design Sequential Boundaries</button>
+                </div>
+                
+                <div id="seq-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="seq-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-section">
+            <h2>🔄 Design 5: Cluster Randomized Trial</h2>
+            
+            <div class="scenario">
+                <h3>Application: Ontario Primary Care Practice-Based Research Network</h3>
+                <p>Randomize family medicine practices to implement new diabetes care protocol</p>
+                
+                <div class="controls">
+                    <label>Number of Clusters: <input type="number" id="cluster-k" value="40" min="20" max="80" step="4"></label>
+                    <label>Cluster Size: <input type="number" id="cluster-m" value="50" min="20" max="100" step="10"></label>
+                    <label>Intracluster Correlation: <input type="number" id="cluster-icc" value="0.05" min="0.01" max="0.20" step="0.01"></label>
+                    <label>Expected Effect: <input type="number" id="cluster-effect" value="0.8" min="0.3" max="1.5" step="0.1">% HbA1c</label>
+                    <button onclick="runCluster()">Analyze Cluster Design</button>
+                </div>
+                
+                <div id="cluster-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="cluster-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="series-summary">
+            <h2>🎓 Expert Series Complete: Medical Biostatistics Mastery</h2>
+            <p><strong>You have completed all four Expert Series tools covering advanced medical research methodology:</strong></p>
+            
+            <table style="margin: 20px 0;">
+                <tr><th>Tool</th><th>Focus Area</th><th>Key Methods</th></tr>
+                <tr><td>Tool #13</td><td>Bayesian Methods</td><td>Prior elicitation, MCMC, clinical decision-making</td></tr>
+                <tr><td>Tool #14</td><td>Machine Learning</td><td>Predictive modeling, validation, feature selection</td></tr>
+                <tr><td>Tool #15</td><td>Causal Inference</td><td>RCTs, IV, RD, DiD, propensity scores</td></tr>
+                <tr><td>Tool #16</td><td>Advanced Trials</td><td>Adaptive, platform, basket, sequential designs</td></tr>
+            </table>
+            
+            <p>These tools represent <strong>master-level expertise</strong> in medical biostatistics, providing sophisticated methodological training for advanced healthcare research.</p>
+        </div>
+
+        <div class="assessment">
+            <h2>🧠 Expert Assessment: Advanced Clinical Trial Design</h2>
+            <p>Final assessment covering sophisticated trial methodologies. Questions rotate each session.</p>
+            <button onclick="generateQuestions()">Generate New Questions</button>
+            
+            <div id="questions-container">
+                <!-- Questions will be populated by JavaScript -->
+            </div>
+            
+            <button onclick="checkAnswers()" id="check-btn" style="display:none;">Check Answers</button>
+            <div id="assessment-results"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestions = [];
+        let charts = {};
+
+        // Question pools for dynamic assessment
+        const questionPools = {
+            adaptive: [
+                {
+                    question: "In a Continual Reassessment Method (CRM) dose-finding trial for Health Canada approval, what is the primary advantage over traditional 3+3 design?",
+                    options: [
+                        "CRM requires fewer patients and provides more precise MTD estimates",
+                        "Traditional 3+3 design is more statistically rigorous than CRM",
+                        "CRM eliminates all possibility of dose-limiting toxicities",
+                        "Traditional 3+3 allows for more flexible dose escalation rules"
+                    ],
+                    correct: 0,
+                    explanation: "CRM uses all available data and statistical modeling to make more informed dose decisions, typically requiring 30-50% fewer patients while providing more precise MTD estimates."
+                },
+                {
+                    question: "A Canadian adaptive trial for COVID therapeutics plans interim efficacy analysis after 50% enrollment. What type of statistical adjustment is essential?",
+                    options: [
+                        "No adjustment needed since it's pre-planned",
+                        "Alpha spending function to control family-wise error rate",
+                        "Post-hoc power analysis to justify early stopping",
+                        "Bonferroni correction applied to final p-value only"
+                    ],
+                    correct: 1,
+                    explanation: "Alpha spending functions allocate Type I error across interim looks, preventing inflation of false positive rate due to multiple testing in adaptive designs."
+                },
+                {
+                    question: "In an adaptive seamless Phase II/III oncology trial, what characterizes the 'seamless' aspect?",
+                    options: [
+                        "Patients can switch treatments without washout periods",
+                        "Phase II data contributes to Phase III efficacy analysis",
+                        "No regulatory approval needed between phases",
+                        "Same endpoints used for both dose-finding and efficacy"
+                    ],
+                    correct: 1,
+                    explanation: "Seamless designs allow Phase II patients to contribute to Phase III analysis, improving efficiency and reducing overall development time while maintaining statistical rigor."
+                }
+            ],
+            
+            platform: [
+                {
+                    question: "In the Canadian COVID-19 platform trial, why is response-adaptive randomization (RAR) particularly valuable?",
+                    options: [
+                        "RAR eliminates the need for control groups in platform trials",
+                        "RAR allocates more patients to promising treatments as evidence accumulates",
+                        "RAR reduces regulatory review time for new treatment arms",
+                        "RAR allows unlimited addition of treatment arms without planning"
+                    ],
+                    correct: 1,
+                    explanation: "RAR dynamically adjusts randomization probabilities based on interim results, allocating more patients to beneficial treatments while maintaining scientific validity."
+                },
+                {
+                    question: "What is the primary statistical challenge when adding new treatment arms to an ongoing platform trial?",
+                    options: [
+                        "Controlling Type I error across multiple comparisons and time points",
+                        "Ensuring adequate power for each individual treatment comparison",
+                        "Matching baseline characteristics across all treatment arms",
+                        "Obtaining sufficient recruitment for newly added arms"
+                    ],
+                    correct: 0,
+                    explanation: "Platform trials face complex multiple testing issues as new arms are added over time, requiring sophisticated statistical methods to control false positive rates."
+                },
+                {
+                    question: "In platform trials, what advantage does a shared control arm provide beyond efficiency?",
+                    options: [
+                        "Eliminates need for stratification in randomization",
+                        "Enables historical controls for all future comparisons",
+                        "Allows direct comparison between experimental treatments",
+                        "Reduces regulatory requirements for new treatment arms"
+                    ],
+                    correct: 2,
+                    explanation: "Shared controls enable indirect comparisons between experimental treatments tested in different time periods, providing valuable comparative effectiveness data."
+                }
+            ],
+
+            precision: [
+                {
+                    question: "A Canadian cancer basket trial tests a BRAF inhibitor across tumors with BRAF mutations. What statistical approach handles heterogeneity between cancer types?",
+                    options: [
+                        "Pool all cancer types and ignore heterogeneity for simplicity",
+                        "Bayesian hierarchical modeling with borrowing across cancer types",
+                        "Separate analysis for each cancer type with no information sharing",
+                        "Meta-analysis after completing each cancer type separately"
+                    ],
+                    correct: 1,
+                    explanation: "Bayesian hierarchical models allow optimal borrowing of information across cancer types while accounting for heterogeneity, improving precision where appropriate."
+                },
+                {
+                    question: "In umbrella trial designs, what distinguishes them from basket trials in biomarker-driven research?",
+                    options: [
+                        "Umbrella trials test one treatment across multiple biomarkers",
+                        "Basket trials are only for rare diseases, umbrella for common",
+                        "Umbrella trials test multiple treatments within one cancer type",
+                        "Basket trials require larger sample sizes than umbrella trials"
+                    ],
+                    correct: 2,
+                    explanation: "Umbrella trials test multiple biomarker-matched treatments within a single cancer type, while basket trials test one treatment across multiple cancer types sharing a biomarker."
+                },
+                {
+                    question: "What is the key challenge in designing a biomarker-stratified trial for precision medicine?",
+                    options: [
+                        "Biomarkers are too expensive to measure routinely",
+                        "Balancing power within biomarker subgroups vs overall population",
+                        "Regulatory agencies don't accept biomarker-driven designs",
+                        "Patients refuse to participate in biomarker-based trials"
+                    ],
+                    correct: 1,
+                    explanation: "Stratifying by biomarkers reduces power within subgroups, requiring careful sample size planning to ensure adequate power for both subgroup and overall analyses."
+                }
+            ],
+
+            sequential: [
+                {
+                    question: "In a sequential clinical trial using group sequential design, what does crossing the futility boundary indicate?",
+                    options: [
+                        "Strong evidence of treatment benefit, recommend early approval",
+                        "Insufficient evidence to detect meaningful difference, stop for futility",
+                        "Safety concerns require immediate trial termination",
+                        "Need to increase sample size to achieve adequate power"
+                    ],
+                    correct: 1,
+                    explanation: "Futility boundaries indicate low probability of demonstrating meaningful benefit even if the trial continues, allowing early termination to avoid exposing patients to ineffective treatments."
+                },
+                {
+                    question: "Why do group sequential trials typically require larger maximum sample sizes than fixed-sample designs?",
+                    options: [
+                        "Early stopping rules reduce statistical efficiency",
+                        "Multiple testing penalty requires inflation of sample size",
+                        "Interim analyses introduce bias requiring larger samples",
+                        "Regulatory agencies mandate larger samples for adaptive trials"
+                    ],
+                    correct: 1,
+                    explanation: "The flexibility to stop early comes at a cost: group sequential designs require ~5-15% larger maximum sample sizes to maintain the same power under worst-case scenarios."
+                },
+                {
+                    question: "In O'Brien-Fleming sequential boundaries, what characterizes the early stopping thresholds?",
+                    options: [
+                        "Constant critical values at each interim analysis",
+                        "Very stringent early thresholds, approaching conventional at end",
+                        "Liberal early thresholds, becoming more stringent over time", 
+                        "No early stopping for efficacy, only safety monitoring"
+                    ],
+                    correct: 1,
+                    explanation: "O'Brien-Fleming boundaries require very strong evidence for early stopping (e.g., p<0.005 at first interim), gradually approaching conventional levels (p<0.05) at final analysis."
+                }
+            ]
+        };
+
+        function runAdaptive() {
+            const cohorts = parseInt(document.getElementById('adaptive-cohorts').value);
+            const size = parseInt(document.getElementById('adaptive-size').value);
+            const target = parseFloat(document.getElementById('adaptive-target').value);
+            const startDose = parseFloat(document.getElementById('adaptive-start').value);
+
+            // Simulate CRM adaptive trial
+            const doses = [25, 50, 75, 100, 150, 200]; // mg/m²
+            const trueToxRates = [0.05, 0.15, 0.25, 0.45, 0.70, 0.90];
+            
+            let currentDose = startDose;
+            let currentDoseIndex = doses.indexOf(currentDose);
+            let totalPatients = 0;
+            let cohortResults = [];
+            let dltCounts = new Array(doses.length).fill(0);
+            let patientCounts = new Array(doses.length).fill(0);
+            
+            for (let cohort = 1; cohort <= cohorts; cohort++) {
+                // Simulate DLT outcomes for current cohort
+                let dlts = 0;
+                for (let i = 0; i < size; i++) {
+                    if (Math.random() < trueToxRates[currentDoseIndex]) {
+                        dlts++;
+                    }
+                }
+                
+                dltCounts[currentDoseIndex] += dlts;
+                patientCounts[currentDoseIndex] += size;
+                totalPatients += size;
+                
+                // CRM dose recommendation (simplified)
+                const observedToxRate = dltCounts[currentDoseIndex] / patientCounts[currentDoseIndex];
+                const nextDoseIndex = findNextDose(target, observedToxRate, currentDoseIndex);
+                
+                cohortResults.push({
+                    cohort: cohort,
+                    dose: doses[currentDoseIndex],
+                    dlts: dlts,
+                    size: size,
+                    rate: dlts / size,
+                    nextDose: cohort < cohorts ? doses[nextDoseIndex] : null
+                });
+                
+                currentDoseIndex = nextDoseIndex;
+            }
+
+            // Find MTD recommendation
+            const mtdIndex = findMTD(dltCounts, patientCounts, target);
+            const mtd = doses[mtdIndex];
+
+            document.getElementById('adaptive-results').style.display = 'block';
+            document.getElementById('adaptive-results').innerHTML = `
+                <h4>Adaptive Dose-Finding Results: Health Canada Oncology Study</h4>
+                <p><strong>Trial Design:</strong></p>
+                <p>• Total patients: ${totalPatients}</p>
+                <p>• Target DLT rate: ${(target*100).toFixed(0)}%</p>
+                <p>• Dose levels tested: ${doses.filter((_, i) => patientCounts[i] > 0).length}</p>
+                
+                <p><strong>Cohort-by-Cohort Results:</strong></p>
+                <table>
+                    <tr><th>Cohort</th><th>Dose (mg/m²)</th><th>DLTs</th><th>Patients</th><th>DLT Rate</th><th>Next Dose</th></tr>
+                    ${cohortResults.map(c => `
+                        <tr><td>${c.cohort}</td><td>${c.dose}</td><td>${c.dlts}</td><td>${c.size}</td><td>${(c.rate*100).toFixed(0)}%</td><td>${c.nextDose || 'Complete'}</td></tr>
+                    `).join('')}
+                </table>
+                
+                <p><strong>Final Recommendations:</strong></p>
+                <p>• <span class="highlight">Recommended MTD: ${mtd} mg/m²</span></p>
+                <p>• Patients treated at MTD: ${patientCounts[mtdIndex]}</p>
+                <p>• Observed DLT rate at MTD: ${patientCounts[mtdIndex] > 0 ? (dltCounts[mtdIndex]/patientCounts[mtdIndex]*100).toFixed(1) : 'N/A'}%</p>
+                <p>• Efficiency gain: ~${((1 - totalPatients/100)*100).toFixed(0)}% fewer patients vs traditional design</p>
+            `;
+
+            createAdaptiveChart(doses, patientCounts, dltCounts, trueToxRates);
+        }
+
+        function findNextDose(target, observedRate, currentIndex) {
+            if (observedRate > target + 0.1) {
+                return Math.max(0, currentIndex - 1); // De-escalate
+            } else if (observedRate < target - 0.1) {
+                return Math.min(5, currentIndex + 1); // Escalate
+            }
+            return currentIndex; // Stay at same dose
+        }
+
+        function findMTD(dltCounts, patientCounts, target) {
+            let bestIndex = 0;
+            let bestDistance = Infinity;
+            
+            for (let i = 0; i < dltCounts.length; i++) {
+                if (patientCounts[i] > 0) {
+                    const rate = dltCounts[i] / patientCounts[i];
+                    const distance = Math.abs(rate - target);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestIndex = i;
+                    }
+                }
+            }
+            return bestIndex;
+        }
+
+        function createAdaptiveChart(doses, patientCounts, dltCounts, trueToxRates) {
+            const ctx = document.getElementById('adaptive-chart').getContext('2d');
+            
+            if (charts.adaptive) charts.adaptive.destroy();
+
+            const observedRates = doses.map((_, i) => 
+                patientCounts[i] > 0 ? dltCounts[i] / patientCounts[i] : null
+            );
+
+            charts.adaptive = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: doses,
+                    datasets: [{
+                        label: 'True DLT Rate',
+                        data: trueToxRates.map(rate => rate * 100),
+                        borderColor: '#dc143c',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 6
+                    }, {
+                        label: 'Observed DLT Rate',
+                        data: observedRates.map(rate => rate ? rate * 100 : null),
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointStyle: 'triangle'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Adaptive Dose-Finding: DLT Rates by Dose Level'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Dose Level (mg/m²)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'DLT Rate (%)'
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function runPlatform() {
+            const controlAlloc = parseFloat(document.getElementById('platform-control').value) / 100;
+            const numArms = parseInt(document.getElementById('platform-arms').value);
+            const monthlyEnroll = parseInt(document.getElementById('platform-enroll').value);
+            const interimWeeks = parseInt(document.getElementById('platform-interim').value);
+
+            // Simulate platform trial over 12 months
+            const months = 12;
+            const treatmentAlloc = (1 - controlAlloc) / numArms;
+            
+            let cumulativeEnrollment = [];
+            let interimDecisions = [];
+            let armStatus = new Array(numArms).fill('Active');
+            let totalEnrolled = 0;
+
+            for (let month = 1; month <= months; month++) {
+                totalEnrolled += monthlyEnroll;
+                const controlN = Math.floor(totalEnrolled * controlAlloc);
+                const treatmentNs = Array(numArms).fill(Math.floor(totalEnrolled * treatmentAlloc));
+                
+                cumulativeEnrollment.push({
+                    month: month,
+                    control: controlN,
+                    treatments: [...treatmentNs],
+                    total: totalEnrolled
+                });
+
+                // Interim analysis every interimWeeks
+                if (month % Math.ceil(interimWeeks / 4) === 0) {
+                    // Simulate efficacy results
+                    const interimResults = [];
+                    for (let arm = 0; arm < numArms; arm++) {
+                        const effectSize = (Math.random() - 0.3) * 0.5; // Some negative, some positive
+                        const pValue = Math.random() * 0.1 + (effectSize > 0.15 ? 0.01 : 0.05);
+                        const status = pValue < 0.01 ? 'Graduate' : pValue > 0.8 ? 'Futile' : 'Continue';
+                        
+                        interimResults.push({
+                            arm: arm + 1,
+                            effect: effectSize,
+                            pValue: pValue,
+                            decision: status
+                        });
+                        
+                        if (status !== 'Continue') {
+                            armStatus[arm] = status;
+                        }
+                    }
+                    interimDecisions.push({
+                        month: month,
+                        results: interimResults
+                    });
+                }
+            }
+
+            const activeArms = armStatus.filter(s => s === 'Active').length;
+            const graduatedArms = armStatus.filter(s => s === 'Graduate').length;
+            const futileArms = armStatus.filter(s => s === 'Futile').length;
+
+            document.getElementById('platform-results').style.display = 'block';
+            document.getElementById('platform-results').innerHTML = `
+                <h4>Platform Trial Results: Canadian COVID-19 Immunity Task Force</h4>
+                <p><strong>Trial Design Efficiency:</strong></p>
+                <p>• Total enrollment: ${totalEnrolled} patients over ${months} months</p>
+                <p>• Control arm: ${Math.floor(totalEnrolled * controlAlloc)} patients (${(controlAlloc*100).toFixed(0)}%)</p>
+                <p>• Treatment arms: ${numArms} arms, ~${Math.floor(totalEnrolled * treatmentAlloc)} patients each</p>
+                
+                <p><strong>Arm Status Summary:</strong></p>
+                <table>
+                    <tr><th>Outcome</th><th>Number of Arms</th><th>Percentage</th></tr>
+                    <tr><td>Active (continuing)</td><td>${activeArms}</td><td>${(activeArms/numArms*100).toFixed(0)}%</td></tr>
+                    <tr><td>Graduated (efficacious)</td><td>${graduatedArms}</td><td>${(graduatedArms/numArms*100).toFixed(0)}%</td></tr>
+                    <tr><td>Stopped (futile)</td><td>${futileArms}</td><td>${(futileArms/numArms*100).toFixed(0)}%</td></tr>
+                </table>
+                
+                <p><strong>Platform Advantages:</strong></p>
+                <p>• <span class="highlight">Efficiency: ${(totalEnrolled*0.3/1000).toFixed(1)}x faster than separate trials</span></p>
+                <p>• Shared infrastructure saves ~CAD $${(numArms*2).toFixed(0)}M in setup costs</p>
+                <p>• Regulatory streamlining reduces approval time by ~${Math.floor(Math.random()*6+6)} months</p>
+                <p>• Adaptive allocation optimizes patient benefit</p>
+            `;
+
+            createPlatformChart(cumulativeEnrollment, armStatus);
+        }
+
+        function createPlatformChart(enrollment, armStatus) {
+            const ctx = document.getElementById('platform-chart').getContext('2d');
+            
+            if (charts.platform) charts.platform.destroy();
+
+            const months = enrollment.map(e => e.month);
+            const controlData = enrollment.map(e => e.control);
+            
+            // Create datasets for each treatment arm
+            const datasets = [{
+                label: 'Control Arm',
+                data: controlData,
+                borderColor: '#dc143c',
+                backgroundColor: 'rgba(220, 20, 60, 0.2)',
+                fill: true
+            }];
+
+            const colors = ['#2f8b8b', '#ff6b6b', '#ffd93d', '#6a5acd', '#20b2aa', '#ff69b4'];
+            
+            for (let arm = 0; arm < enrollment[0].treatments.length; arm++) {
+                const armData = enrollment.map(e => e.treatments[arm]);
+                datasets.push({
+                    label: `Treatment ${arm + 1} (${armStatus[arm]})`,
+                    data: armData,
+                    borderColor: colors[arm % colors.length],
+                    backgroundColor: `${colors[arm % colors.length]}20`,
+                    fill: false
+                });
+            }
+
+            charts.platform = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Platform Trial: Cumulative Enrollment by Arm'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cumulative Patients'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runBasket() {
+            const cancerTypes = parseInt(document.getElementById('basket-types').value);
+            const patientsPerType = parseInt(document.getElementById('basket-n').value);
+            const threshold = parseFloat(document.getElementById('basket-threshold').value) / 100;
+            const biomarkerPrev = parseFloat(document.getElementById('basket-prev').value) / 100;
+
+            const cancerNames = ['Lung', 'Colorectal', 'Melanoma', 'Breast', 'Ovarian', 'Pancreatic', 'Glioblastoma', 'Sarcoma'];
+            
+            // Simulate basket trial results
+            const results = [];
+            let totalPositiveBaskets = 0;
+            
+            for (let i = 0; i < cancerTypes; i++) {
+                const cancerType = cancerNames[i % cancerNames.length];
+                const screeningNeeded = Math.ceil(patientsPerType / biomarkerPrev);
+                
+                // Simulate heterogeneous responses across cancer types
+                const trueResponseRate = 0.15 + (Math.random() * 0.4); // 15-55% range
+                
+                let responders = 0;
+                for (let j = 0; j < patientsPerType; j++) {
+                    if (Math.random() < trueResponseRate) {
+                        responders++;
+                    }
+                }
+                
+                const observedRate = responders / patientsPerType;
+                const standardError = Math.sqrt(observedRate * (1 - observedRate) / patientsPerType);
+                const ciLower = Math.max(0, observedRate - 1.96 * standardError);
+                const ciUpper = Math.min(1, observedRate + 1.96 * standardError);
+                const meetsThreshold = ciLower > threshold;
+                
+                if (meetsThreshold) totalPositiveBaskets++;
+                
+                results.push({
+                    cancer: cancerType,
+                    screened: screeningNeeded,
+                    enrolled: patientsPerType,
+                    responders: responders,
+                    rate: observedRate,
+                    ciLower: ciLower,
+                    ciUpper: ciUpper,
+                    positive: meetsThreshold
+                });
+            }
+
+            const totalScreened = results.reduce((sum, r) => sum + r.screened, 0);
+            const totalEnrolled = results.reduce((sum, r) => sum + r.enrolled, 0);
+            const overallResponse = results.reduce((sum, r) => sum + r.responders, 0) / totalEnrolled;
+
+            document.getElementById('basket-results').style.display = 'block';
+            document.getElementById('basket-results').innerHTML = `
+                <h4>Basket Trial Results: Canadian Cancer Genomics Consortium</h4>
+                <p><strong>Study Overview:</strong></p>
+                <p>• Total patients screened: ${totalScreened}</p>
+                <p>• Biomarker-positive enrolled: ${totalEnrolled}</p>
+                <p>• Screen failure rate: ${((totalScreened-totalEnrolled)/totalScreened*100).toFixed(1)}%</p>
+                <p>• Efficacy threshold: >${(threshold*100).toFixed(0)}% response rate</p>
+                
+                <p><strong>Results by Cancer Type:</strong></p>
+                <table>
+                    <tr><th>Cancer Type</th><th>Patients</th><th>Responses</th><th>Rate (%)</th><th>95% CI</th><th>Meets Threshold</th></tr>
+                    ${results.map(r => `
+                        <tr style="background-color: ${r.positive ? '#e8ffe8' : '#ffe8e8'}">
+                            <td>${r.cancer}</td><td>${r.enrolled}</td><td>${r.responders}</td>
+                            <td>${(r.rate*100).toFixed(1)}</td>
+                            <td>${(r.ciLower*100).toFixed(1)}% - ${(r.ciUpper*100).toFixed(1)}%</td>
+                            <td>${r.positive ? '✓ Yes' : '✗ No'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+                
+                <p><strong>Regulatory Implications:</strong></p>
+                <p>• <span class="highlight">Positive cancer types: ${totalPositiveBaskets}/${cancerTypes} (${(totalPositiveBaskets/cancerTypes*100).toFixed(0)}%)</span></p>
+                <p>• Overall response rate: ${(overallResponse*100).toFixed(1)}%</p>
+                <p>• Basket design efficiency: ~${(60/cancerTypes).toFixed(0)}% time saving vs separate trials</p>
+                <p>• Regulatory pathway: ${totalPositiveBaskets > 0 ? `Accelerated approval for ${totalPositiveBaskets} indication(s)` : 'Insufficient efficacy for approval'}</p>
+            `;
+
+            createBasketChart(results, threshold);
+        }
+
+        function createBasketChart(results, threshold) {
+            const ctx = document.getElementById('basket-chart').getContext('2d');
+            
+            if (charts.basket) charts.basket.destroy();
+
+            const cancerTypes = results.map(r => r.cancer);
+            const responseRates = results.map(r => r.rate * 100);
+            const ciLowers = results.map(r => r.ciLower * 100);
+            const ciUppers = results.map(r => r.ciUpper * 100);
+            const colors = responseRates.map(rate => rate > threshold * 100 ? '#2f8b8b' : '#ff6b6b');
+
+            charts.basket = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: cancerTypes,
+                    datasets: [{
+                        label: 'Response Rate',
+                        data: responseRates,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 2
+                    }, {
+                        label: 'Efficacy Threshold',
+                        data: Array(cancerTypes.length).fill(threshold * 100),
+                        type: 'line',
+                        borderColor: '#dc143c',
+                        borderWidth: 3,
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Basket Trial: Response Rates by Cancer Type'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Cancer Type'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Response Rate (%)'
+                            },
+                            min: 0,
+                            max: Math.max(60, Math.max(...responseRates) + 10)
+                        }
+                    }
+                }
+            });
+        }
+
+        function runSequential() {
+            const alpha = parseFloat(document.getElementById('seq-alpha').value);
+            const power = parseFloat(document.getElementById('seq-power').value);
+            const effectSize = parseFloat(document.getElementById('seq-effect').value);
+            const maxN = parseInt(document.getElementById('seq-maxn').value);
+
+            // Simulate group sequential design with 4 interim analyses
+            const numLooks = 5; // 4 interim + 1 final
+            const lookTimes = [0.25, 0.5, 0.75, 0.9, 1.0];
+            const sampleSizes = lookTimes.map(t => Math.floor(t * maxN));
+            
+            // O'Brien-Fleming boundaries (simplified)
+            const efficacyBounds = lookTimes.map((t, i) => {
+                const spending = alpha * (2 * (1 - normalCDF(2.963 / Math.sqrt(t))) - 1);
+                return Math.abs(normalInv(spending / 2));
+            });
+            
+            const futilityBounds = lookTimes.slice(0, -1).map((t, i) => {
+                return normalInv(0.1); // 10% futility threshold
+            });
+
+            // Simulate trial execution
+            let trialStopped = false;
+            let stopReason = '';
+            let stopLook = numLooks;
+            let observedEffect = effectSize + (Math.random() - 0.5) * 0.1;
+            
+            const results = [];
+            
+            for (let look = 0; look < numLooks; look++) {
+                const n = sampleSizes[look];
+                const se = Math.sqrt(2 / n); // Standard error for difference
+                const zStat = observedEffect / se;
+                const pValue = 2 * (1 - normalCDF(Math.abs(zStat)));
+                
+                let decision = 'Continue';
+                if (Math.abs(zStat) >= efficacyBounds[look]) {
+                    decision = 'Stop for Efficacy';
+                    trialStopped = true;
+                    stopReason = 'Efficacy';
+                    stopLook = look + 1;
+                } else if (look < numLooks - 1 && Math.abs(zStat) <= futilityBounds[look]) {
+                    decision = 'Stop for Futility';
+                    trialStopped = true;
+                    stopReason = 'Futility';
+                    stopLook = look + 1;
+                }
+                
+                results.push({
+                    look: look + 1,
+                    n: n,
+                    zStat: zStat,
+                    pValue: pValue,
+                    efficacyBound: efficacyBounds[look],
+                    futilityBound: look < numLooks - 1 ? futilityBounds[look] : null,
+                    decision: decision
+                });
+                
+                if (trialStopped) break;
+            }
+
+            const finalN = trialStopped ? sampleSizes[stopLook - 1] : maxN;
+            const efficiency = (1 - finalN / maxN) * 100;
+
+            document.getElementById('seq-results').style.display = 'block';
+            document.getElementById('seq-results').innerHTML = `
+                <h4>Sequential Trial Design: Manitoba Centre for Health Policy</h4>
+                <p><strong>Design Parameters:</strong></p>
+                <p>• Type I error: ${(alpha*100).toFixed(1)}%</p>
+                <p>• Power: ${(power*100).toFixed(0)}%</p>
+                <p>• Expected effect size: ${effectSize.toFixed(2)}</p>
+                <p>• Maximum sample size: ${maxN}</p>
+                
+                <p><strong>Sequential Analysis Results:</strong></p>
+                <table>
+                    <tr><th>Look</th><th>Sample Size</th><th>Z-Statistic</th><th>P-Value</th><th>Efficacy Bound</th><th>Decision</th></tr>
+                    ${results.map(r => `
+                        <tr style="background-color: ${r.decision.includes('Stop') ? (r.decision.includes('Efficacy') ? '#e8ffe8' : '#ffe8e8') : '#f8f8f8'}">
+                            <td>${r.look}</td><td>${r.n}</td><td>${r.zStat.toFixed(2)}</td><td>${r.pValue.toFixed(4)}</td>
+                            <td>±${r.efficacyBound.toFixed(2)}</td><td>${r.decision}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+                
+                <p><strong>Trial Outcome:</strong></p>
+                <p>• <span class="highlight">Final decision: ${stopReason || 'Complete to planned end'}</span></p>
+                <p>• Final sample size: ${finalN} (${efficiency.toFixed(1)}% efficiency gain)</p>
+                <p>• Cost savings: ~CAD $${(efficiency * 50000 / 100).toFixed(0)}K</p>
+                <p>• Time savings: ~${Math.floor(efficiency * 24 / 100)} months</p>
+            `;
+
+            createSequentialChart(results, efficacyBounds, futilityBounds);
+        }
+
+        function createSequentialChart(results, efficacyBounds, futilityBounds) {
+            const ctx = document.getElementById('seq-chart').getContext('2d');
+            
+            if (charts.sequential) charts.sequential.destroy();
+
+            const lookNumbers = results.map(r => r.look);
+            const zStats = results.map(r => r.zStat);
+            const efficacyUpper = efficacyBounds.slice(0, results.length);
+            const efficacyLower = efficacyBounds.slice(0, results.length).map(b => -b);
+            const futilityUpper = futilityBounds.slice(0, results.length - 1).concat([null]);
+            const futilityLower = futilityBounds.slice(0, results.length - 1).map(b => -b).concat([null]);
+
+            charts.sequential = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: lookNumbers,
+                    datasets: [{
+                        label: 'Observed Z-Statistic',
+                        data: zStats,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.2)',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointStyle: 'circle'
+                    }, {
+                        label: 'Efficacy Boundary (Upper)',
+                        data: efficacyUpper,
+                        borderColor: '#dc143c',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        fill: false
+                    }, {
+                        label: 'Efficacy Boundary (Lower)',
+                        data: efficacyLower,
+                        borderColor: '#dc143c',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        fill: false
+                    }, {
+                        label: 'Futility Boundary (Upper)',
+                        data: futilityUpper,
+                        borderColor: '#ff6b6b',
+                        borderDash: [2, 2],
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        fill: false
+                    }, {
+                        label: 'Futility Boundary (Lower)',
+                        data: futilityLower,
+                        borderColor: '#ff6b6b',
+                        borderDash: [2, 2],
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Sequential Trial: Monitoring Boundaries'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Interim Analysis'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Z-Statistic'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runCluster() {
+            const numClusters = parseInt(document.getElementById('cluster-k').value);
+            const clusterSize = parseInt(document.getElementById('cluster-m').value);
+            const icc = parseFloat(document.getElementById('cluster-icc').value);
+            const effect = parseFloat(document.getElementById('cluster-effect').value);
+
+            // Calculate design effect and effective sample size
+            const designEffect = 1 + (clusterSize - 1) * icc;
+            const totalParticipants = numClusters * clusterSize;
+            const effectiveSampleSize = totalParticipants / designEffect;
+            
+            // Simulate cluster trial results
+            const controlClusters = numClusters / 2;
+            const treatmentClusters = numClusters / 2;
+            
+            // Generate cluster-level outcomes
+            const controlResults = [];
+            const treatmentResults = [];
+            
+            for (let i = 0; i < controlClusters; i++) {
+                const clusterMean = 8.2 + Math.random() * 0.4 + Math.random() * Math.sqrt(icc) * 1.5; // Cluster effect
+                const individualMeans = [];
+                for (let j = 0; j < clusterSize; j++) {
+                    individualMeans.push(clusterMean + Math.random() * 0.8);
+                }
+                controlResults.push({
+                    cluster: i + 1,
+                    mean: individualMeans.reduce((a, b) => a + b) / individualMeans.length,
+                    participants: clusterSize
+                });
+            }
+            
+            for (let i = 0; i < treatmentClusters; i++) {
+                const clusterMean = 8.2 - effect + Math.random() * 0.4 + Math.random() * Math.sqrt(icc) * 1.5;
+                const individualMeans = [];
+                for (let j = 0; j < clusterSize; j++) {
+                    individualMeans.push(clusterMean + Math.random() * 0.8);
+                }
+                treatmentResults.push({
+                    cluster: i + 1,
+                    mean: individualMeans.reduce((a, b) => a + b) / individualMeans.length,
+                    participants: clusterSize
+                });
+            }
+
+            // Calculate cluster-level analysis
+            const controlClusterMean = controlResults.reduce((sum, c) => sum + c.mean, 0) / controlResults.length;
+            const treatmentClusterMean = treatmentResults.reduce((sum, c) => sum + c.mean, 0) / treatmentResults.length;
+            const clusterEffect = controlClusterMean - treatmentClusterMean;
+            
+            // Standard error accounting for clustering
+            const pooledSD = 1.2;
+            const clusterSE = pooledSD * Math.sqrt(designEffect * 2 / numClusters);
+            const tStat = clusterEffect / clusterSE;
+            const pValue = 2 * (1 - getTValue(Math.abs(tStat), numClusters - 2));
+            
+            // Individual-level analysis (incorrect - for comparison)
+            const incorrectSE = pooledSD * Math.sqrt(2 / totalParticipants);
+            const incorrectT = clusterEffect / incorrectSE;
+            const incorrectP = 2 * (1 - getTValue(Math.abs(incorrectT), totalParticipants - 2));
+
+            document.getElementById('cluster-results').style.display = 'block';
+            document.getElementById('cluster-results').innerHTML = `
+                <h4>Cluster Randomized Trial: Ontario Primary Care Network</h4>
+                <p><strong>Design Characteristics:</strong></p>
+                <p>• Number of practices: ${numClusters} (${controlClusters} control, ${treatmentClusters} intervention)</p>
+                <p>• Patients per practice: ${clusterSize}</p>
+                <p>• Total participants: ${totalParticipants}</p>
+                <p>• Intracluster correlation: ${icc.toFixed(3)}</p>
+                <p>• Design effect: ${designEffect.toFixed(2)}</p>
+                
+                <p><strong>Results by Group:</strong></p>
+                <table>
+                    <tr><th>Group</th><th>Practices</th><th>Mean HbA1c</th><th>Standard Error</th></tr>
+                    <tr><td>Control</td><td>${controlClusters}</td><td>${controlClusterMean.toFixed(2)}%</td><td>${(pooledSD/Math.sqrt(controlClusters)).toFixed(3)}</td></tr>
+                    <tr><td>Intervention</td><td>${treatmentClusters}</td><td>${treatmentClusterMean.toFixed(2)}%</td><td>${(pooledSD/Math.sqrt(treatmentClusters)).toFixed(3)}</td></tr>
+                </table>
+                
+                <p><strong>Statistical Analysis Comparison:</strong></p>
+                <table>
+                    <tr><th>Analysis Method</th><th>Effect Size</th><th>Standard Error</th><th>t-statistic</th><th>p-value</th></tr>
+                    <tr style="background-color: #e8ffe8;"><td>Cluster-adjusted (Correct)</td><td>${clusterEffect.toFixed(2)}</td><td>${clusterSE.toFixed(3)}</td><td>${tStat.toFixed(2)}</td><td>${pValue.toFixed(4)}</td></tr>
+                    <tr style="background-color: #ffe8e8;"><td>Individual-level (Incorrect)</td><td>${clusterEffect.toFixed(2)}</td><td>${incorrectSE.toFixed(3)}</td><td>${incorrectT.toFixed(2)}</td><td>${incorrectP.toFixed(6)}</td></tr>
+                </table>
+                
+                <p><strong>Clinical and Policy Impact:</strong></p>
+                <p>• <span class="highlight">Intervention effect: ${clusterEffect.toFixed(2)}% HbA1c reduction</span></p>
+                <p>• Effective sample size: ${effectiveSampleSize.toFixed(0)} (due to clustering)</p>
+                <p>• Implementation feasibility: ${pValue < 0.05 ? 'Recommend system-wide adoption' : 'Needs refinement before scaling'}</p>
+                <p>• Cost per practice: ~CAD $${(Math.random() * 5000 + 10000).toFixed(0)} annually</p>
+            `;
+
+            createClusterChart(controlResults, treatmentResults, controlClusterMean, treatmentClusterMean);
+        }
+
+        function createClusterChart(controlResults, treatmentResults, controlMean, treatmentMean) {
+            const ctx = document.getElementById('cluster-chart').getContext('2d');
+            
+            if (charts.cluster) charts.cluster.destroy();
+
+            // Create box plot-like visualization
+            const labels = ['Control Practices', 'Intervention Practices'];
+            const boxData = [
+                {
+                    label: 'Control',
+                    data: controlResults.map(c => c.mean),
+                    mean: controlMean,
+                    color: '#ff6b6b'
+                },
+                {
+                    label: 'Intervention', 
+                    data: treatmentResults.map(c => c.mean),
+                    mean: treatmentMean,
+                    color: '#2f8b8b'
+                }
+            ];
+
+            // Create scatter plot for cluster means
+            const controlScatter = controlResults.map((c, i) => ({x: 0, y: c.mean}));
+            const treatmentScatter = treatmentResults.map((c, i) => ({x: 1, y: c.mean}));
+
+            charts.cluster = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Control Practice Means',
+                        data: controlScatter,
+                        backgroundColor: 'rgba(255, 107, 107, 0.7)',
+                        borderColor: '#ff6b6b',
+                        pointRadius: 6
+                    }, {
+                        label: 'Intervention Practice Means',
+                        data: treatmentScatter,
+                        backgroundColor: 'rgba(47, 139, 139, 0.7)',
+                        borderColor: '#2f8b8b',
+                        pointRadius: 6
+                    }, {
+                        label: 'Control Group Mean',
+                        data: [{x: 0, y: controlMean}],
+                        backgroundColor: '#dc143c',
+                        borderColor: '#dc143c',
+                        pointRadius: 10,
+                        pointStyle: 'triangle'
+                    }, {
+                        label: 'Intervention Group Mean',
+                        data: [{x: 1, y: treatmentMean}],
+                        backgroundColor: '#dc143c',
+                        borderColor: '#dc143c',
+                        pointRadius: 10,
+                        pointStyle: 'triangle'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Cluster Randomized Trial: Practice-Level HbA1c Means'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Study Group'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value === 0 ? 'Control' : 'Intervention';
+                                }
+                            },
+                            min: -0.5,
+                            max: 1.5
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Mean HbA1c (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Assessment functions
+        function generateQuestions() {
+            currentQuestions = [];
+            const pools = Object.keys(questionPools);
+            
+            // Select one question from each pool
+            pools.forEach(pool => {
+                const questions = questionPools[pool];
+                const randomQ = questions[Math.floor(Math.random() * questions.length)];
+                currentQuestions.push(randomQ);
+            });
+
+            displayQuestions();
+        }
+
+        function displayQuestions() {
+            const container = document.getElementById('questions-container');
+            let html = '';
+            
+            currentQuestions.forEach((q, index) => {
+                // Shuffle answer options
+                const shuffledOptions = [...q.options];
+                const correctAnswer = shuffledOptions[q.correct];
+                
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+                
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                html += `
+                    <div class="question">
+                        <h4>Question ${index + 1}</h4>
+                        <p><strong>${q.question}</strong></p>
+                        ${shuffledOptions.map((option, i) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${i}" data-correct="${i === newCorrectIndex}">
+                                ${String.fromCharCode(65 + i)}. ${option}
+                            </label><br>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('check-btn').style.display = 'block';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            let total = currentQuestions.length;
+            let results = '<h4>Assessment Results</h4>';
+            
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const isCorrect = selected && selected.dataset.correct === 'true';
+                
+                if (isCorrect) correct++;
+                
+                results += `
+                    <p><strong>Question ${index + 1}:</strong> ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</p>
+                    <p><em>Explanation:</em> ${q.explanation}</p>
+                `;
+            });
+            
+            const percentage = (correct / total * 100).toFixed(1);
+            results = `<p><strong>Score: ${correct}/${total} (${percentage}%)</strong></p>` + results;
+            
+            if (correct === total) {
+                results += '<p><span style="color: #2f8b8b; font-weight: bold;">🎓 Congratulations! You have mastered advanced clinical trial design methodology!</span></p>';
+            }
+            
+            document.getElementById('assessment-results').innerHTML = results;
+        }
+
+        // Utility functions
+        function normalCDF(x) {
+            return 0.5 * (1 + erf(x / Math.sqrt(2)));
+        }
+
+        function normalInv(p) {
+            // Approximate inverse normal using rational approximation
+            if (p <= 0) return -Infinity;
+            if (p >= 1) return Infinity;
+            if (p === 0.5) return 0;
+            
+            const sign = p < 0.5 ? -1 : 1;
+            const r = p < 0.5 ? p : 1 - p;
+            const t = Math.sqrt(-2 * Math.log(r));
+            
+            let x = t - (2.30753 + t * 0.27061) / (1 + t * (0.99229 + t * 0.04481));
+            
+            // Refine with one iteration of Halley's method
+            const e = 0.5 * (1 + erf(x / Math.sqrt(2))) - r;
+            const f = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-x * x / 2);
+            x = x - e / (f * (1 + x * e / 2));
+            
+            return sign * x;
+        }
+
+        function erf(x) {
+            const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+            const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+        }
+
+        function getTValue(t, df) {
+            // Simplified t-distribution CDF approximation
+            if (df >= 30) return normalCDF(t);
+            const x = t / Math.sqrt(df);
+            return 0.5 + 0.5 * Math.sign(t) * Math.pow(1 + x * x / df, -(df + 1) / 2);
+        }
+
+        // Initialize
+        window.onload = function() {
+            generateQuestions();
+        };
+    </script>
+</body>
+</html>
