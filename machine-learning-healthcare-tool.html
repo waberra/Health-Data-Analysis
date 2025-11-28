@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Series: Machine Learning for Healthcare & Medical Outcomes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-emerald: #059669;
+            --secondary-green: #10B981;
+            --forest-deep: #064E3B;
+            --tech-mint: #6EE7B7;
+            --clinical-sage: #047857;
+            --data-teal: #0D9488;
+            --ai-lime: #84CC16;
+            --algorithm-cyan: #06B6D4;
+            --charcoal: #1F2937;
+            --steel-dark: #374151;
+            --silver: #9CA3AF;
+            --platinum: #F3F4F6;
+            --pure-white: #FFFFFF;
+            --cream: #FEFEFE;
+            --accent-orange: #F97316;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F8FAFC 30%, #F0FDF4 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(5, 150, 105, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 65%),
+                linear-gradient(135deg, rgba(6, 78, 59, 0.02) 0%, rgba(13, 148, 136, 0.04) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header-container {
+            background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--clinical-sage) 50%, var(--forest-deep) 100%);
+            padding: 3.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(110, 231, 183, 0.15) 0%, transparent 60%);
+            z-index: 1;
+        }
+
+        .header-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tech-mint) 0%, var(--ai-lime) 50%, var(--algorithm-cyan) 100%);
+            z-index: 3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 800;
+            color: #DC2626;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            letter-spacing: -1.5px;
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            color: var(--pure-white);
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            opacity: 0.95;
+        }
+
+        .expert-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #EA580C 100%);
+            color: var(--pure-white);
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.15rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .expert-badge:hover::before {
+            left: 100%;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3.5rem 2rem;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3.5rem;
+            background: linear-gradient(135deg, var(--pure-white) 0%, rgba(240, 253, 244, 0.8) 100%);
+            border-radius: 28px;
+            border: 2px solid rgba(5, 150, 105, 0.1);
+            box-shadow: 
+                0 25px 50px rgba(5, 150, 105, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+
+        .intro-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+            border-radius: 28px;
+            z-index: 1;
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .intro-text {
+            font-size: 1.25rem;
+            color: var(--steel-dark);
+            max-width: 900px;
+            margin: 0 auto 2.5rem;
+            font-weight: 400;
+        }
+
+        .ml-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 4rem;
+        }
+
+        .ml-feature-card {
+            background: var(--pure-white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(5, 150, 105, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ml-feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-emerald) 0%, var(--tech-mint) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .ml-feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(5, 150, 105, 0.15),
+                0 8px 16px rgba(5, 150, 105, 0.1);
+            border-color: var(--secondary-green);
+        }
+
+        .ml-feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .ml-feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .ml-feature-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-emerald);
+            margin-bottom: 1rem;
+        }
+
+        .ml-feature-desc {
+            color: var(--steel-dark);
+            line-height: 1.6;
+        }
+
+        .applications-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #DC2626;
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-emerald) 0%, var(--tech-mint) 100%);
+        }
+
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .application-card {
+            background: var(--pure-white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 
+                0 15px 35px rgba(5, 150, 105, 0.12),
+                0 5px 15px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(5, 150, 105, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .application-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 
+                0 25px 60px rgba(5, 150, 105, 0.2),
+                0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .application-header {
+            background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--clinical-sage) 100%);
+            color: var(--pure-white);
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .application-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .application-emoji {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .application-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .application-subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .application-content {
+            padding: 3rem;
+        }
+
+        .application-description {
+            color: var(--steel-dark);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .controls-group {
+            margin-bottom: 2rem;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-emerald);
+            margin-bottom: 0.7rem;
+            font-size: 1rem;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(5, 150, 105, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(240, 253, 244, 0.3);
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--secondary-green);
+            background: var(--pure-white);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .control-range {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, rgba(5, 150, 105, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%);
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .control-range::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-emerald);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--secondary-green) 100%);
+            color: var(--pure-white);
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 25px rgba(5, 150, 105, 0.3),
+                0 4px 8px rgba(5, 150, 105, 0.2);
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .results-panel {
+            background: linear-gradient(135deg, rgba(240, 253, 244, 0.8) 0%, var(--pure-white) 100%);
+            border: 2px solid rgba(5, 150, 105, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--primary-emerald);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .results-content {
+            color: var(--steel-dark);
+            line-height: 1.7;
+        }
+
+        .chart-container {
+            background: var(--pure-white);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.04),
+                0 2px 4px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(5, 150, 105, 0.1);
+        }
+
+        .theory-section {
+            background: linear-gradient(135deg, var(--pure-white) 0%, rgba(240, 253, 244, 0.6) 100%);
+            border-radius: 28px;
+            padding: 4rem;
+            margin: 4rem 0;
+            border: 2px solid rgba(5, 150, 105, 0.1);
+            position: relative;
+        }
+
+        .theory-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(5, 150, 105, 0.03) 0%, transparent 60%);
+            border-radius: 28px;
+        }
+
+        .theory-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .theory-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-emerald);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .theory-text {
+            max-width: 1000px;
+            margin: 0 auto;
+            color: var(--steel-dark);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .formula-box {
+            background: var(--pure-white);
+            border: 2px solid rgba(5, 150, 105, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            color: var(--primary-emerald);
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(5, 150, 105, 0.1);
+        }
+
+        .assessment-section {
+            background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--forest-deep) 100%);
+            color: var(--pure-white);
+            padding: 4.5rem 3.5rem;
+            border-radius: 28px;
+            margin: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assessment-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(110, 231, 183, 0.1) 0%, transparent 60%);
+        }
+
+        .assessment-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .assessment-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .option-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--pure-white);
+            padding: 1rem 1.8rem;
+            border-radius: 12px;
+            margin: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.95rem;
+        }
+
+        .option-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .option-button.correct {
+            background: var(--secondary-green);
+            border-color: var(--secondary-green);
+        }
+
+        .option-button.incorrect {
+            background: #EF4444;
+            border-color: #EF4444;
+        }
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 3rem; }
+            .applications-grid { grid-template-columns: 1fr; }
+            .ml-features-grid { grid-template-columns: 1fr; }
+            .main-container { padding: 2rem 1rem; }
+            .application-card { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-content">
+            <h1 class="title">Expert Series</h1>
+            <h2 class="subtitle">Machine Learning for Healthcare & Medical Outcomes</h2>
+            <div class="expert-badge">🤖 Tool #14: AI-Powered Clinical Intelligence 💚</div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="intro-section">
+            <div class="intro-content">
+                <p class="intro-text">
+                    Harness the power of machine learning for transformative healthcare outcomes. This expert-level tool demonstrates cutting-edge AI applications in medical contexts, combining sophisticated predictive modeling with practical Canadian healthcare scenarios for optimal clinical decision-making.
+                </p>
+
+                <div class="ml-features-grid">
+                    <div class="ml-feature-card">
+                        <span class="ml-feature-icon">🎯</span>
+                        <h3 class="ml-feature-title">Predictive Modeling</h3>
+                        <p class="ml-feature-desc">Advanced algorithms for forecasting medical outcomes with uncertainty quantification</p>
+                    </div>
+                    <div class="ml-feature-card">
+                        <span class="ml-feature-icon">🔍</span>
+                        <h3 class="ml-feature-title">Disease Classification</h3>
+                        <p class="ml-feature-desc">Sophisticated diagnostic models with performance metrics and validation</p>
+                    </div>
+                    <div class="ml-feature-card">
+                        <span class="ml-feature-icon">🧬</span>
+                        <h3 class="ml-feature-title">Feature Selection</h3>
+                        <p class="ml-feature-desc">High-dimensional data analysis for biomarker discovery and model optimization</p>
+                    </div>
+                    <div class="ml-feature-card">
+                        <span class="ml-feature-icon">✅</span>
+                        <h3 class="ml-feature-title">Model Validation</h3>
+                        <p class="ml-feature-desc">Robust cross-validation techniques for clinical deployment readiness</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="applications-section">
+            <h2 class="section-title">Canadian Healthcare ML Applications</h2>
+
+            <div class="applications-grid">
+                <!-- Application 1: Hospital Readmission Prediction -->
+                <div class="application-card">
+                    <div class="application-header">
+                        <span class="application-emoji">🏥</span>
+                        <h3 class="application-title">Hospital Readmission Prediction</h3>
+                        <p class="application-subtitle">Ontario Health System Analytics</p>
+                    </div>
+                    <div class="application-content">
+                        <p class="application-description">
+                            Ontario Health Institute using machine learning to predict 30-day hospital readmissions, optimizing resource allocation and improving patient outcomes across provincial healthcare networks.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Patient Age</label>
+                            <input type="number" class="control-input" id="patient-age-1" value="67" min="18" max="95">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Length of Stay (days)</label>
+                            <input type="range" class="control-range" id="los-1" min="1" max="30" step="1" value="5">
+                            <span id="los-value-1">5</span> days
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Comorbidity Count</label>
+                            <input type="range" class="control-range" id="comorbidity-1" min="0" max="10" step="1" value="3">
+                            <span id="comorbidity-value-1">3</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Emergency Admission</label>
+                            <select class="control-input" id="emergency-1">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <button class="action-button" onclick="runReadmissionPrediction()">Predict Readmission Risk</button>
+
+                        <div class="results-panel" id="results-1">
+                            <div class="results-title">ML Readmission Analysis</div>
+                            <div class="results-content" id="results-content-1"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application 2: Cancer Diagnosis Classification -->
+                <div class="application-card">
+                    <div class="application-header">
+                        <span class="application-emoji">🩺</span>
+                        <h3 class="application-title">Cancer Diagnosis Classification</h3>
+                        <p class="application-subtitle">BC Cancer Agency AI</p>
+                    </div>
+                    <div class="application-content">
+                        <p class="application-description">
+                            BC Cancer Agency deploying deep learning for medical imaging classification, enabling early detection and improving diagnostic accuracy across British Columbia's cancer care network.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Image Quality Score</label>
+                            <input type="range" class="control-range" id="quality-2" min="0.5" max="1.0" step="0.01" value="0.85">
+                            <span id="quality-value-2">0.85</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Tumor Size (mm)</label>
+                            <input type="range" class="control-range" id="tumor-size-2" min="5" max="50" step="1" value="15">
+                            <span id="tumor-size-value-2">15</span> mm
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Patient Risk Factors</label>
+                            <input type="range" class="control-range" id="risk-factors-2" min="0" max="8" step="1" value="2">
+                            <span id="risk-factors-value-2">2</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Model Ensemble Size</label>
+                            <select class="control-input" id="ensemble-2">
+                                <option value="5">5 models</option>
+                                <option value="10">10 models</option>
+                                <option value="15">15 models</option>
+                            </select>
+                        </div>
+
+                        <button class="action-button" onclick="runCancerClassification()">Analyze Cancer Risk</button>
+
+                        <div class="results-panel" id="results-2">
+                            <div class="results-title">AI Diagnostic Classification</div>
+                            <div class="results-content" id="results-content-2"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application 3: Genomic Feature Selection -->
+                <div class="application-card">
+                    <div class="application-header">
+                        <span class="application-emoji">🧬</span>
+                        <h3 class="application-title">Genomic Biomarker Discovery</h3>
+                        <p class="application-subtitle">Genome Quebec Research</p>
+                    </div>
+                    <div class="application-content">
+                        <p class="application-description">
+                            Genome Quebec leveraging high-dimensional machine learning for biomarker discovery, identifying genetic predictors for personalized medicine across Quebec's precision health initiative.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Gene Expression Features</label>
+                            <input type="number" class="control-input" id="gene-features-3" value="15000" min="1000" max="50000">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Sample Size</label>
+                            <input type="range" class="control-range" id="sample-size-3" min="100" max="2000" step="50" value="500">
+                            <span id="sample-size-value-3">500</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Regularization Strength</label>
+                            <input type="range" class="control-range" id="regularization-3" min="0.001" max="1.0" step="0.001" value="0.1">
+                            <span id="regularization-value-3">0.100</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Selection Method</label>
+                            <select class="control-input" id="selection-method-3">
+                                <option value="lasso">LASSO Regression</option>
+                                <option value="elastic">Elastic Net</option>
+                                <option value="rfe">Recursive Feature Elimination</option>
+                                <option value="mi">Mutual Information</option>
+                            </select>
+                        </div>
+
+                        <button class="action-button" onclick="runGenomicSelection()">Discover Biomarkers</button>
+
+                        <div class="results-panel" id="results-3">
+                            <div class="results-title">Genomic Feature Analysis</div>
+                            <div class="results-content" id="results-content-3"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application 4: Clinical Model Validation -->
+                <div class="application-card">
+                    <div class="application-header">
+                        <span class="application-emoji">✅</span>
+                        <h3 class="application-title">Clinical Model Validation</h3>
+                        <p class="application-subtitle">Health Canada AI Approval</p>
+                    </div>
+                    <div class="application-content">
+                        <p class="application-description">
+                            Health Canada regulatory framework for AI medical device validation, ensuring robust performance through comprehensive cross-validation and real-world evidence collection.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Validation Dataset Size</label>
+                            <input type="number" class="control-input" id="validation-size-4" value="1000" min="100" max="5000">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Cross-Validation Folds</label>
+                            <input type="range" class="control-range" id="cv-folds-4" min="3" max="10" step="1" value="5">
+                            <span id="cv-folds-value-4">5</span>-fold CV
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Model Complexity</label>
+                            <input type="range" class="control-range" id="complexity-4" min="1" max="10" step="1" value="5">
+                            <span id="complexity-value-4">5</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Performance Metric</label>
+                            <select class="control-input" id="metric-4">
+                                <option value="auc">AUC-ROC</option>
+                                <option value="sensitivity">Sensitivity</option>
+                                <option value="specificity">Specificity</option>
+                                <option value="f1">F1-Score</option>
+                            </select>
+                        </div>
+
+                        <button class="action-button" onclick="runModelValidation()">Validate Model Performance</button>
+
+                        <div class="results-panel" id="results-4">
+                            <div class="results-title">Clinical Validation Results</div>
+                            <div class="results-content" id="results-content-4"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-4"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application 5: Drug Discovery ML -->
+                <div class="application-card">
+                    <div class="application-header">
+                        <span class="application-emoji">💊</span>
+                        <h3 class="application-title">Drug Discovery Optimization</h3>
+                        <p class="application-subtitle">CIHR Pharmaceutical AI</p>
+                    </div>
+                    <div class="application-content">
+                        <p class="application-description">
+                            Canadian Institutes of Health Research accelerating drug discovery through machine learning, predicting molecular properties and optimizing compound selection for clinical trials.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Molecular Descriptors</label>
+                            <input type="number" class="control-input" id="descriptors-5" value="1000" min="100" max="5000">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Training Compounds</label>
+                            <input type="range" class="control-range" id="compounds-5" min="1000" max="50000" step="1000" value="10000">
+                            <span id="compounds-value-5">10000</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Activity Threshold</label>
+                            <input type="range" class="control-range" id="activity-5" min="0.1" max="10" step="0.1" value="5.0">
+                            <span id="activity-value-5">5.0</span> μM
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">ML Algorithm</label>
+                            <select class="control-input" id="algorithm-5">
+                                <option value="rf">Random Forest</option>
+                                <option value="gb">Gradient Boosting</option>
+                                <option value="svm">Support Vector Machine</option>
+                                <option value="nn">Neural Network</option>
+                            </select>
+                        </div>
+
+                        <button class="action-button" onclick="runDrugDiscovery()">Optimize Drug Selection</button>
+
+                        <div class="results-panel" id="results-5">
+                            <div class="results-title">Drug Discovery Analysis</div>
+                            <div class="results-content" id="results-content-5"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-5"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="theory-section">
+            <div class="theory-content">
+                <h2 class="theory-title">Advanced ML Framework for Healthcare</h2>
+                <div class="theory-text">
+                    <p><strong>Machine learning in healthcare leverages sophisticated algorithms to extract patterns from complex medical data:</strong></p>
+                    
+                    <div class="formula-box">
+                        ŷ = f(X; θ) + ε<br>
+                        where ŷ = predicted outcome, X = feature matrix, θ = model parameters
+                    </div>
+
+                    <p><strong>Key ML Paradigms in Clinical Applications:</strong></p>
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li><strong>Supervised Learning:</strong> Diagnostic classification, outcome prediction, risk stratification</li>
+                        <li><strong>Unsupervised Learning:</strong> Patient phenotyping, disease subtyping, anomaly detection</li>
+                        <li><strong>Reinforcement Learning:</strong> Treatment optimization, clinical decision support, drug dosing</li>
+                        <li><strong>Deep Learning:</strong> Medical imaging, natural language processing, genomic analysis</li>
+                    </ul>
+
+                    <p><strong>Critical Validation Considerations:</strong></p>
+                    <ul style="margin-left: 2rem;">
+                        <li>External validation across diverse populations and healthcare systems</li>
+                        <li>Temporal validation for model stability over time</li>
+                        <li>Fairness and bias assessment across demographic groups</li>
+                        <li>Interpretability and explainability for clinical acceptance</li>
+                        <li>Integration with existing clinical workflows and EHR systems</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="assessment-section">
+            <div class="assessment-content">
+                <h2 class="assessment-title">Expert Assessment</h2>
+                <p style="margin-bottom: 2rem;">Test your mastery of machine learning applications in healthcare and medical research.</p>
+
+                <div class="question-card">
+                    <div class="question-text">
+                        <strong>Question 1:</strong> When developing a machine learning model for sepsis prediction in ICU patients, which approach best addresses the class imbalance problem where sepsis cases represent only 3% of admissions?
+                    </div>
+                    <button class="option-button" onclick="checkMLAnswer(1, 'a', false)">A) Simple random undersampling of majority class</button>
+                    <button class="option-button" onclick="checkMLAnswer(1, 'b', true)">B) SMOTE with careful validation strategy</button>
+                    <button class="option-button" onclick="checkMLAnswer(1, 'c', false)">C) Ignoring imbalance and using accuracy as metric</button>
+                    <button class="option-button" onclick="checkMLAnswer(1, 'd', false)">D) Only oversampling minority class examples</button>
+                    <div class="explanation" id="ml-explanation-1">
+                        <strong>Correct!</strong> SMOTE (Synthetic Minority Oversampling Technique) generates synthetic examples while preserving class distributions, but requires careful validation to avoid overfitting and ensure clinical relevance of synthetic cases.
+                    </div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-text">
+                        <strong>Question 2:</strong> In genomic biomarker discovery with 20,000 gene expression features and 500 patients, which regularization approach is most appropriate for identifying clinically relevant predictors?
+                    </div>
+                    <button class="option-button" onclick="checkMLAnswer(2, 'a', false)">A) Ridge regression only</button>
+                    <button class="option-button" onclick="checkMLAnswer(2, 'b', true)">B) Elastic net with pathway-informed penalties</button>
+                    <button class="option-button" onclick="checkMLAnswer(2, 'c', false)">C) No regularization to preserve all information</button>
+                    <button class="option-button" onclick="checkMLAnswer(2, 'd', false)">D) Simple univariate filtering only</button>
+                    <div class="explanation" id="ml-explanation-2">
+                        <strong>Correct!</strong> Elastic net combines L1 and L2 penalties for feature selection while handling correlated features, and pathway-informed penalties incorporate biological knowledge to improve interpretability and clinical relevance.
+                    </div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-text">
+                        <strong>Question 3:</strong> For a deep learning model analyzing medical images for cancer detection, which validation approach provides the most reliable estimate of real-world performance?
+                    </div>
+                    <button class="option-button" onclick="checkMLAnswer(3, 'a', false)">A) Random 80-20 train-test split</button>
+                    <button class="option-button" onclick="checkMLAnswer(3, 'b', false)">B) 10-fold cross-validation</button>
+                    <button class="option-button" onclick="checkMLAnswer(3, 'c', true)">C) External validation on different institutions</button>
+                    <button class="option-button" onclick="checkMLAnswer(3, 'd', false)">D) Leave-one-out cross-validation</button>
+                    <div class="explanation" id="ml-explanation-3">
+                        <strong>Correct!</strong> External validation across different institutions, imaging equipment, and patient populations provides the most realistic assessment of model generalizability and clinical utility in diverse real-world settings.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Global chart storage
+        let mlCharts = {};
+
+        // Range slider updates
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliders = [
+                { slider: 'los-1', display: 'los-value-1' },
+                { slider: 'comorbidity-1', display: 'comorbidity-value-1' },
+                { slider: 'quality-2', display: 'quality-value-2' },
+                { slider: 'tumor-size-2', display: 'tumor-size-value-2' },
+                { slider: 'risk-factors-2', display: 'risk-factors-value-2' },
+                { slider: 'sample-size-3', display: 'sample-size-value-3' },
+                { slider: 'regularization-3', display: 'regularization-value-3' },
+                { slider: 'cv-folds-4', display: 'cv-folds-value-4' },
+                { slider: 'complexity-4', display: 'complexity-value-4' },
+                { slider: 'compounds-5', display: 'compounds-value-5' },
+                { slider: 'activity-5', display: 'activity-value-5' }
+            ];
+
+            sliders.forEach(s => {
+                const slider = document.getElementById(s.slider);
+                const display = document.getElementById(s.display);
+                if (slider && display) {
+                    slider.addEventListener('input', function() {
+                        display.textContent = parseFloat(this.value).toFixed(3).replace(/\.?0+$/, '');
+                    });
+                }
+            });
+        });
+
+        // ML Application Functions
+        function runReadmissionPrediction() {
+            const age = parseInt(document.getElementById('patient-age-1').value);
+            const los = parseInt(document.getElementById('los-1').value);
+            const comorbidity = parseInt(document.getElementById('comorbidity-1').value);
+            const emergency = parseInt(document.getElementById('emergency-1').value);
+
+            // Simplified logistic regression model
+            const logOdds = -2.1 + (age - 65) * 0.03 + los * 0.15 + comorbidity * 0.4 + emergency * 0.8;
+            const probability = 1 / (1 + Math.exp(-logOdds));
+            
+            const riskLevel = probability < 0.1 ? 'Low' : probability < 0.3 ? 'Moderate' : 'High';
+            const recommendation = probability > 0.2 ? 'Enhanced discharge planning' : 'Standard care pathway';
+            const confidence = 0.85 + Math.random() * 0.1;
+
+            const resultsHTML = `
+                <strong>Readmission Probability:</strong> ${(probability * 100).toFixed(1)}%<br>
+                <strong>Risk Category:</strong> ${riskLevel}<br>
+                <strong>Model Confidence:</strong> ${(confidence * 100).toFixed(1)}%<br>
+                <strong>95% Prediction Interval:</strong> [${((probability - 0.08) * 100).toFixed(1)}%, ${((probability + 0.08) * 100).toFixed(1)}%]<br>
+                <strong>Ontario Health Recommendation:</strong> ${recommendation}<br>
+                <strong>Expected LOS Reduction:</strong> ${probability > 0.2 ? '1.2 days' : '0.3 days'}
+            `;
+
+            document.getElementById('results-content-1').innerHTML = resultsHTML;
+            document.getElementById('results-1').style.display = 'block';
+
+            createRiskChart('chart-1', probability, 'Readmission Risk Prediction', ['Low Risk', 'High Risk']);
+        }
+
+        function runCancerClassification() {
+            const quality = parseFloat(document.getElementById('quality-2').value);
+            const tumorSize = parseInt(document.getElementById('tumor-size-2').value);
+            const riskFactors = parseInt(document.getElementById('risk-factors-2').value);
+            const ensembleSize = parseInt(document.getElementById('ensemble-2').value);
+
+            // Ensemble model simulation
+            const baseProb = 0.1 + (tumorSize - 5) * 0.015 + riskFactors * 0.08 + (1 - quality) * 0.3;
+            const ensembleBoost = 1 + (ensembleSize - 5) * 0.02;
+            const malignantProb = Math.min(Math.max(baseProb * ensembleBoost, 0.01), 0.99);
+            
+            const classification = malignantProb > 0.5 ? 'Malignant' : 'Benign';
+            const confidence = 0.75 + Math.random() * 0.2;
+            const sensitivity = 0.91 + Math.random() * 0.06;
+            const specificity = 0.87 + Math.random() * 0.08;
+
+            const resultsHTML = `
+                <strong>Classification:</strong> ${classification}<br>
+                <strong>Malignancy Probability:</strong> ${(malignantProb * 100).toFixed(1)}%<br>
+                <strong>Ensemble Confidence:</strong> ${(confidence * 100).toFixed(1)}%<br>
+                <strong>Model Sensitivity:</strong> ${(sensitivity * 100).toFixed(1)}%<br>
+                <strong>Model Specificity:</strong> ${(specificity * 100).toFixed(1)}%<br>
+                <strong>BC Cancer Recommendation:</strong> ${malignantProb > 0.3 ? 'Immediate biopsy' : 'Routine follow-up'}
+            `;
+
+            document.getElementById('results-content-2').innerHTML = resultsHTML;
+            document.getElementById('results-2').style.display = 'block';
+
+            createPerformanceChart('chart-2', sensitivity, specificity, malignantProb, 'Cancer Classification Performance');
+        }
+
+        function runGenomicSelection() {
+            const geneFeatures = parseInt(document.getElementById('gene-features-3').value);
+            const sampleSize = parseInt(document.getElementById('sample-size-3').value);
+            const regularization = parseFloat(document.getElementById('regularization-3').value);
+            const method = document.getElementById('selection-method-3').value;
+
+            // Feature selection simulation
+            const featureRatio = Math.min(sampleSize / 10, geneFeatures * 0.01);
+            const selectedFeatures = Math.round(Math.max(50, featureRatio * (1 - regularization)));
+            const cvScore = 0.65 + Math.random() * 0.25 + (sampleSize / 10000) * 0.1;
+            
+            const methodNames = {
+                'lasso': 'LASSO Regression',
+                'elastic': 'Elastic Net',
+                'rfe': 'Recursive Feature Elimination',
+                'mi': 'Mutual Information'
+            };
+
+            const stability = 0.7 + Math.random() * 0.25;
+            const interpretability = method === 'mi' ? 0.9 : method === 'lasso' ? 0.85 : 0.75;
+
+            const resultsHTML = `
+                <strong>Selection Method:</strong> ${methodNames[method]}<br>
+                <strong>Features Selected:</strong> ${selectedFeatures} / ${geneFeatures}<br>
+                <strong>Cross-Validation AUC:</strong> ${cvScore.toFixed(3)}<br>
+                <strong>Feature Stability:</strong> ${(stability * 100).toFixed(1)}%<br>
+                <strong>Interpretability Score:</strong> ${(interpretability * 100).toFixed(1)}%<br>
+                <strong>Genome Quebec Assessment:</strong> ${cvScore > 0.8 ? 'Ready for clinical validation' : 'Requires model refinement'}
+            `;
+
+            document.getElementById('results-content-3').innerHTML = resultsHTML;
+            document.getElementById('results-3').style.display = 'block';
+
+            createFeatureChart('chart-3', geneFeatures, selectedFeatures, cvScore, 'Genomic Feature Selection');
+        }
+
+        function runModelValidation() {
+            const validationSize = parseInt(document.getElementById('validation-size-4').value);
+            const cvFolds = parseInt(document.getElementById('cv-folds-4').value);
+            const complexity = parseInt(document.getElementById('complexity-4').value);
+            const metric = document.getElementById('metric-4').value;
+
+            // Cross-validation simulation
+            const basePerformance = 0.75 + Math.random() * 0.2;
+            const sizeBonus = Math.min((validationSize - 100) / 5000, 0.1);
+            const complexityPenalty = (complexity - 5) * 0.02;
+            const finalScore = Math.max(0.5, basePerformance + sizeBonus - complexityPenalty);
+            
+            const variance = 0.02 + (10 - cvFolds) * 0.01;
+            const ciLower = finalScore - 1.96 * variance;
+            const ciUpper = finalScore + 1.96 * variance;
+
+            const metricNames = {
+                'auc': 'AUC-ROC',
+                'sensitivity': 'Sensitivity',
+                'specificity': 'Specificity',
+                'f1': 'F1-Score'
+            };
+
+            const approvalProb = finalScore > 0.8 ? 0.92 : finalScore > 0.7 ? 0.65 : 0.25;
+
+            const resultsHTML = `
+                <strong>Validation Metric:</strong> ${metricNames[metric]}<br>
+                <strong>CV Performance:</strong> ${finalScore.toFixed(3)}<br>
+                <strong>95% Confidence Interval:</strong> [${ciLower.toFixed(3)}, ${ciUpper.toFixed(3)}]<br>
+                <strong>Performance Variance:</strong> ${variance.toFixed(4)}<br>
+                <strong>Approval Probability:</strong> ${(approvalProb * 100).toFixed(1)}%<br>
+                <strong>Health Canada Status:</strong> ${finalScore > 0.75 ? 'Recommended for approval' : 'Additional validation required'}
+            `;
+
+            document.getElementById('results-content-4').innerHTML = resultsHTML;
+            document.getElementById('results-4').style.display = 'block';
+
+            createValidationChart('chart-4', finalScore, variance, cvFolds, 'Model Validation Results');
+        }
+
+        function runDrugDiscovery() {
+            const descriptors = parseInt(document.getElementById('descriptors-5').value);
+            const compounds = parseInt(document.getElementById('compounds-5').value);
+            const activity = parseFloat(document.getElementById('activity-5').value);
+            const algorithm = document.getElementById('algorithm-5').value;
+
+            // Drug discovery ML simulation
+            const dataRatio = compounds / descriptors;
+            const baseAccuracy = 0.6 + Math.min(dataRatio * 0.2, 0.25);
+            const algorithmBonus = {
+                'rf': 0.05,
+                'gb': 0.08,
+                'svm': 0.03,
+                'nn': 0.10
+            };
+            
+            const finalAccuracy = Math.min(baseAccuracy + algorithmBonus[algorithm], 0.95);
+            const hitRate = 0.02 + (finalAccuracy - 0.6) * 0.08;
+            const enrichment = hitRate / 0.02;
+
+            const algorithmNames = {
+                'rf': 'Random Forest',
+                'gb': 'Gradient Boosting',
+                'svm': 'Support Vector Machine',
+                'nn': 'Neural Network'
+            };
+
+            const timeReduction = Math.round(20 + finalAccuracy * 30);
+            const costSavings = Math.round(500000 + finalAccuracy * 2000000);
+
+            const resultsHTML = `
+                <strong>ML Algorithm:</strong> ${algorithmNames[algorithm]}<br>
+                <strong>Model Accuracy:</strong> ${(finalAccuracy * 100).toFixed(1)}%<br>
+                <strong>Active Hit Rate:</strong> ${(hitRate * 100).toFixed(2)}%<br>
+                <strong>Enrichment Factor:</strong> ${enrichment.toFixed(1)}x<br>
+                <strong>Time Reduction:</strong> ${timeReduction}%<br>
+                <strong>CIHR Impact:</strong> $${costSavings.toLocaleString()} savings per campaign
+            `;
+
+            document.getElementById('results-content-5').innerHTML = resultsHTML;
+            document.getElementById('results-5').style.display = 'block';
+
+            createDrugChart('chart-5', finalAccuracy, hitRate, enrichment, 'Drug Discovery ML Performance');
+        }
+
+        // Chart creation functions
+        function createRiskChart(canvasId, probability, title, labels) {
+            const ctx = document.getElementById(canvasId);
+            if (mlCharts[canvasId]) mlCharts[canvasId].destroy();
+
+            const riskPercent = probability * 100;
+            mlCharts[canvasId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: [riskPercent, 100 - riskPercent],
+                        backgroundColor: ['#EF4444', '#059669'],
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        title: { display: true, text: title, font: { size: 16, weight: 'bold' } },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function createPerformanceChart(canvasId, sensitivity, specificity, probability, title) {
+            const ctx = document.getElementById(canvasId);
+            if (mlCharts[canvasId]) mlCharts[canvasId].destroy();
+
+            mlCharts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sensitivity', 'Specificity', 'Malignancy Prob'],
+                    datasets: [{
+                        label: 'Performance (%)',
+                        data: [sensitivity * 100, specificity * 100, probability * 100],
+                        backgroundColor: ['#059669', '#10B981', '#EF4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        function createFeatureChart(canvasId, total, selected, score, title) {
+            const ctx = document.getElementById(canvasId);
+            if (mlCharts[canvasId]) mlCharts[canvasId].destroy();
+
+            mlCharts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Features', 'Selected Features', 'CV Score (×1000)'],
+                    datasets: [{
+                        label: 'Values',
+                        data: [total, selected, score * 1000],
+                        backgroundColor: ['#9CA3AF', '#059669', '#F97316']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function createValidationChart(canvasId, performance, variance, folds, title) {
+            const ctx = document.getElementById(canvasId);
+            if (mlCharts[canvasId]) mlCharts[canvasId].destroy();
+
+            const data = [];
+            for (let i = 1; i <= folds; i++) {
+                data.push(performance + (Math.random() - 0.5) * variance * 2);
+            }
+
+            mlCharts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: folds}, (_, i) => `Fold ${i + 1}`),
+                    datasets: [{
+                        label: 'CV Performance',
+                        data: data,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: { y: { beginAtZero: false, min: 0.5, max: 1.0 } }
+                }
+            });
+        }
+
+        function createDrugChart(canvasId, accuracy, hitRate, enrichment, title) {
+            const ctx = document.getElementById(canvasId);
+            if (mlCharts[canvasId]) mlCharts[canvasId].destroy();
+
+            mlCharts[canvasId] = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Model Accuracy', 'Hit Rate (×10)', 'Enrichment Factor', 'Efficiency', 'Cost Reduction'],
+                    datasets: [{
+                        label: 'ML Performance',
+                        data: [accuracy, hitRate * 10, enrichment / 10, accuracy * 0.9, accuracy * 0.8],
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        pointBackgroundColor: '#059669'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: { r: { beginAtZero: true, max: 1.0 } }
+                }
+            });
+        }
+
+        // Assessment functions
+        function checkMLAnswer(questionNum, choice, isCorrect) {
+            const buttons = document.querySelectorAll(`#ml-explanation-${questionNum}`).parentNode?.querySelectorAll('.option-button') || [];
+            const explanation = document.getElementById(`ml-explanation-${questionNum}`);
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.startsWith(choice.toUpperCase())) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+
+            if (explanation) {
+                explanation.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
