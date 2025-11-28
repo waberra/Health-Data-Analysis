@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Series: Bayesian Methods in Healthcare & Clinical Decision-Making</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@0,300;0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-sapphire: #1E40AF;
+            --secondary-blue: #3B82F6;
+            --light-sapphire: #DBEAFE;
+            --pale-sapphire: #EFF6FF;
+            --deep-sapphire: #1E3A8A;
+            --clinical-royal: #1D4ED8;
+            --medical-azure: #0EA5E9;
+            --health-gold: #F59E0B;
+            --research-emerald: #10B981;
+            --charcoal: #374151;
+            --steel: #64748B;
+            --cream: #F9FAFB;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F8FAFC 50%, var(--pale-sapphire) 100%);
+            color: var(--charcoal);
+            line-height: 1.75;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 25% 15%, rgba(30, 64, 175, 0.12) 0%, transparent 70%),
+                radial-gradient(ellipse at 75% 85%, rgba(59, 130, 246, 0.14) 0%, transparent 75%),
+                radial-gradient(ellipse at 90% 5%, rgba(29, 78, 216, 0.1) 0%, transparent 65%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header-container {
+            background: linear-gradient(135deg, var(--primary-sapphire) 0%, var(--clinical-royal) 50%, var(--deep-sapphire) 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-family: 'Spectral', serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #DC2626;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--white);
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .expert-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--health-gold) 0%, #F59E0B 100%);
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            border: 1px solid var(--light-sapphire);
+            box-shadow: 0 20px 40px rgba(30, 64, 175, 0.1);
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            color: var(--steel);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--light-sapphire);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.15);
+            border-color: var(--secondary-blue);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-family: 'Spectral', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-sapphire);
+            margin-bottom: 1rem;
+        }
+
+        .scenarios-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Spectral', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #DC2626;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .scenario-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(30, 64, 175, 0.12);
+            border: 2px solid var(--light-sapphire);
+            transition: all 0.4s ease;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(30, 64, 175, 0.2);
+        }
+
+        .scenario-header {
+            background: linear-gradient(135deg, var(--primary-sapphire) 0%, var(--clinical-royal) 100%);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .scenario-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-title {
+            font-family: 'Spectral', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .scenario-content {
+            padding: 2.5rem;
+        }
+
+        .scenario-description {
+            color: var(--steel);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .controls-group {
+            margin-bottom: 2rem;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-sapphire);
+            margin-bottom: 0.5rem;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-sapphire);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+        }
+
+        .control-range {
+            width: 100%;
+            height: 6px;
+            background: var(--light-sapphire);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--primary-sapphire) 0%, var(--clinical-royal) 100%);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .results-panel {
+            background: var(--pale-sapphire);
+            border: 2px solid var(--light-sapphire);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .results-title {
+            font-weight: 700;
+            color: var(--primary-sapphire);
+            margin-bottom: 1rem;
+        }
+
+        .results-content {
+            color: var(--steel);
+        }
+
+        .chart-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theory-section {
+            background: linear-gradient(135deg, var(--white) 0%, var(--pale-sapphire) 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 4rem 0;
+            border: 2px solid var(--light-sapphire);
+        }
+
+        .theory-title {
+            font-family: 'Spectral', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-sapphire);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .theory-content {
+            max-width: 900px;
+            margin: 0 auto;
+            color: var(--steel);
+            line-height: 1.8;
+        }
+
+        .formula {
+            background: var(--white);
+            border: 2px solid var(--light-sapphire);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            color: var(--primary-sapphire);
+            font-weight: 600;
+        }
+
+        .assessment-section {
+            background: linear-gradient(135deg, var(--primary-sapphire) 0%, var(--deep-sapphire) 100%);
+            color: var(--white);
+            padding: 4rem 3rem;
+            border-radius: 24px;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .assessment-title {
+            font-family: 'Spectral', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .option-button.correct {
+            background: var(--research-emerald);
+            border-color: var(--research-emerald);
+        }
+
+        .option-button.incorrect {
+            background: #EF4444;
+            border-color: #EF4444;
+        }
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2.5rem; }
+            .scenarios-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .main-container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-content">
+            <h1 class="title">Expert Series</h1>
+            <h2 class="subtitle">Bayesian Methods in Healthcare & Clinical Decision-Making</h2>
+            <div class="expert-badge">🧠 Tool #13: Ultimate Statistical Inference 💙</div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="intro-section">
+            <p class="intro-text">
+                Master the pinnacle of statistical methodology with Bayesian inference in healthcare settings. This expert-level tool demonstrates advanced probabilistic reasoning for clinical decision-making, combining sophisticated mathematical theory with practical Canadian healthcare applications.
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧮</div>
+                    <h3 class="feature-title">MCMC Sampling</h3>
+                    <p>Interactive Markov Chain Monte Carlo simulations with convergence diagnostics</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Credible Intervals</h3>
+                    <p>Direct probability statements about parameters with uncertainty quantification</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Decision Analysis</h3>
+                    <p>Expected utility maximization for optimal clinical actions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💊</div>
+                    <h3 class="feature-title">Healthcare Applications</h3>
+                    <p>Five sophisticated scenarios from Canadian clinical practice</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="scenarios-section">
+            <h2 class="section-title">Canadian Healthcare Bayesian Applications</h2>
+
+            <div class="scenarios-grid">
+                <!-- Scenario 1: Drug Safety -->
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-emoji">💊</span>
+                        <h3 class="scenario-title">Drug Safety Surveillance</h3>
+                        <p class="scenario-subtitle">Adverse Event Monitoring</p>
+                    </div>
+                    <div class="scenario-content">
+                        <p class="scenario-description">
+                            Health Canada monitoring adverse drug reactions with Bayesian updating. Combine prior knowledge with new safety data to update risk assessments.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Prior Adverse Event Rate (per 10,000)</label>
+                            <input type="range" class="control-range" id="prior-rate-1" min="0.1" max="5" step="0.1" value="1.5">
+                            <span id="prior-rate-value-1">1.5</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Observed Events</label>
+                            <input type="number" class="control-input" id="observed-events-1" value="8" min="0" max="50">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Sample Size</label>
+                            <input type="number" class="control-input" id="sample-size-1" value="25000" min="1000" max="100000">
+                        </div>
+
+                        <button class="action-button" onclick="runDrugSafety()">Analyze Safety Profile</button>
+
+                        <div class="results-panel" id="results-1">
+                            <div class="results-title">Bayesian Safety Analysis</div>
+                            <div class="results-content" id="results-content-1"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Diagnostic Testing -->
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-emoji">🩺</span>
+                        <h3 class="scenario-title">Diagnostic Test Evaluation</h3>
+                        <p class="scenario-subtitle">Bayesian Diagnostic Accuracy</p>
+                    </div>
+                    <div class="scenario-content">
+                        <p class="scenario-description">
+                            Provincial health screening program evaluation using Bayesian methods to assess diagnostic test performance with uncertainty.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Disease Prevalence (%)</label>
+                            <input type="range" class="control-range" id="prevalence-2" min="0.1" max="20" step="0.1" value="2.5">
+                            <span id="prevalence-value-2">2.5</span>%
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Test Sensitivity (%)</label>
+                            <input type="range" class="control-range" id="sensitivity-2" min="60" max="99" step="1" value="85">
+                            <span id="sensitivity-value-2">85</span>%
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Test Specificity (%)</label>
+                            <input type="range" class="control-range" id="specificity-2" min="70" max="99" step="1" value="92">
+                            <span id="specificity-value-2">92</span>%
+                        </div>
+
+                        <button class="action-button" onclick="runDiagnostic()">Calculate Posterior Probabilities</button>
+
+                        <div class="results-panel" id="results-2">
+                            <div class="results-title">Diagnostic Performance</div>
+                            <div class="results-content" id="results-content-2"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Clinical Trial -->
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-emoji">🧪</span>
+                        <h3 class="scenario-title">Adaptive Clinical Trial</h3>
+                        <p class="scenario-subtitle">Bayesian Treatment Evaluation</p>
+                    </div>
+                    <div class="scenario-content">
+                        <p class="scenario-description">
+                            Canadian Institutes of Health Research trial using adaptive Bayesian design for efficient treatment evaluation with interim analyses.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Prior Treatment Effect (log odds)</label>
+                            <input type="range" class="control-range" id="prior-effect-3" min="0" max="1" step="0.05" value="0.2">
+                            <span id="prior-effect-value-3">0.20</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Treatment Successes</label>
+                            <input type="number" class="control-input" id="treat-success-3" value="45" min="0" max="100">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Treatment Total</label>
+                            <input type="number" class="control-input" id="treat-total-3" value="60" min="1" max="200">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Control Successes</label>
+                            <input type="number" class="control-input" id="control-success-3" value="32" min="0" max="100">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Control Total</label>
+                            <input type="number" class="control-input" id="control-total-3" value="58" min="1" max="200">
+                        </div>
+
+                        <button class="action-button" onclick="runClinicalTrial()">Analyze Treatment Effect</button>
+
+                        <div class="results-panel" id="results-3">
+                            <div class="results-title">Treatment Analysis</div>
+                            <div class="results-content" id="results-content-3"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: HTA -->
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-emoji">📊</span>
+                        <h3 class="scenario-title">Health Technology Assessment</h3>
+                        <p class="scenario-subtitle">CADTH Evidence Synthesis</p>
+                    </div>
+                    <div class="scenario-content">
+                        <p class="scenario-description">
+                            Canadian Agency for Drugs and Technologies in Health using Bayesian evidence synthesis for technology evaluation and policy decisions.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Number of Studies</label>
+                            <input type="number" class="control-input" id="num-studies-4" value="5" min="2" max="20">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Between-study Heterogeneity (τ)</label>
+                            <input type="range" class="control-range" id="heterogeneity-4" min="0" max="0.5" step="0.01" value="0.15">
+                            <span id="heterogeneity-value-4">0.15</span>
+                        </div>
+
+                        <button class="action-button" onclick="runHTA()">Synthesize Evidence</button>
+
+                        <div class="results-panel" id="results-4">
+                            <div class="results-title">Meta-Analysis Results</div>
+                            <div class="results-content" id="results-content-4"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-4"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Personalized Medicine -->
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-emoji">🧬</span>
+                        <h3 class="scenario-title">Personalized Medicine</h3>
+                        <p class="scenario-subtitle">Individual Risk Prediction</p>
+                    </div>
+                    <div class="scenario-content">
+                        <p class="scenario-description">
+                            Precision Health Initiative using Bayesian methods for individualized patient risk prediction with biomarker integration.
+                        </p>
+                        
+                        <div class="controls-group">
+                            <label class="control-label">Patient Age</label>
+                            <input type="number" class="control-input" id="patient-age-5" value="55" min="18" max="90">
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Biomarker Level</label>
+                            <input type="range" class="control-range" id="biomarker-5" min="0" max="10" step="0.1" value="3.2">
+                            <span id="biomarker-value-5">3.2</span>
+                        </div>
+
+                        <div class="controls-group">
+                            <label class="control-label">Risk Factors</label>
+                            <input type="number" class="control-input" id="risk-factors-5" value="2" min="0" max="8">
+                        </div>
+
+                        <button class="action-button" onclick="runPersonalized()">Predict Individual Risk</button>
+
+                        <div class="results-panel" id="results-5">
+                            <div class="results-title">Personalized Risk Assessment</div>
+                            <div class="results-content" id="results-content-5"></div>
+                            <div class="chart-container">
+                                <canvas id="chart-5"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="theory-section">
+            <h2 class="theory-title">Advanced Bayesian Framework</h2>
+            <div class="theory-content">
+                <p><strong>Bayes' Theorem forms the foundation of probabilistic inference:</strong></p>
+                
+                <div class="formula">
+                    P(θ|data) = P(data|θ) × P(θ) / P(data)
+                </div>
+
+                <p>Where:</p>
+                <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                    <li><strong>P(θ|data)</strong> = Posterior distribution (updated beliefs)</li>
+                    <li><strong>P(data|θ)</strong> = Likelihood function (data generating process)</li>
+                    <li><strong>P(θ)</strong> = Prior distribution (initial beliefs)</li>
+                    <li><strong>P(data)</strong> = Marginal likelihood (normalization constant)</li>
+                </ul>
+
+                <p><strong>Key Bayesian Advantages in Healthcare:</strong></p>
+                <ul style="margin-left: 2rem;">
+                    <li>Direct probability statements about parameters of interest</li>
+                    <li>Natural incorporation of prior clinical knowledge</li>
+                    <li>Principled uncertainty quantification for decision-making</li>
+                    <li>Sequential updating as new evidence emerges</li>
+                    <li>Hierarchical modeling for population and individual effects</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="assessment-section">
+            <h2 class="assessment-title">Expert Assessment</h2>
+            <p style="margin-bottom: 2rem;">Test your mastery of advanced Bayesian methodology in healthcare applications.</p>
+
+            <div class="question-card">
+                <div class="question-text">
+                    <strong>Question 1:</strong> In a meta-analysis of 8 clinical trials, you observe high between-study heterogeneity (I² = 85%). Which Bayesian approach is most appropriate?
+                </div>
+                <button class="option-button" onclick="checkAnswer(1, 'a', false)">A) Fixed effects model with conjugate priors</button>
+                <button class="option-button" onclick="checkAnswer(1, 'b', true)">B) Random effects hierarchical model</button>
+                <button class="option-button" onclick="checkAnswer(1, 'c', false)">C) Simple pooling with non-informative priors</button>
+                <button class="option-button" onclick="checkAnswer(1, 'd', false)">D) Frequentist random effects with normal approximation</button>
+                <div class="explanation" id="explanation-1">
+                    <strong>Correct!</strong> High heterogeneity (I² = 85%) indicates substantial between-study variation requiring a random effects hierarchical model to account for study-specific effects while borrowing strength across studies.
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text">
+                    <strong>Question 2:</strong> For adaptive clinical trials, what is the primary advantage of Bayesian posterior updating over traditional frequentist interim analyses?
+                </div>
+                <button class="option-button" onclick="checkAnswer(2, 'a', false)">A) Automatic Type I error control</button>
+                <button class="option-button" onclick="checkAnswer(2, 'b', true)">B) Direct probability of treatment benefit</button>
+                <button class="option-button" onclick="checkAnswer(2, 'c', false)">C) Lower computational requirements</button>
+                <button class="option-button" onclick="checkAnswer(2, 'd', false)">D) Independence from prior specification</button>
+                <div class="explanation" id="explanation-2">
+                    <strong>Correct!</strong> Bayesian updating provides direct statements like "P(treatment benefit > 20%) = 0.85" which enables clear decision rules for adaptive modifications, unlike p-values which require complex multiplicity adjustments.
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text">
+                    <strong>Question 3:</strong> In personalized medicine applications, hierarchical Bayesian models enable:
+                </div>
+                <button class="option-button" onclick="checkAnswer(3, 'a', true)">A) Shrinkage of individual estimates toward population mean</button>
+                <button class="option-button" onclick="checkAnswer(3, 'b', false)">B) Complete independence between patients</button>
+                <button class="option-button" onclick="checkAnswer(3, 'c', false)">C) Elimination of between-patient variability</button>
+                <button class="option-button" onclick="checkAnswer(3, 'd', false)">D) Direct causality inference</button>
+                <div class="explanation" id="explanation-3">
+                    <strong>Correct!</strong> Hierarchical models provide optimal shrinkage, borrowing strength from the population while maintaining individual-specific estimates - crucial for personalized predictions with limited individual data.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Global chart storage
+        let charts = {};
+
+        // Range slider updates
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup range sliders
+            const sliders = [
+                { slider: 'prior-rate-1', display: 'prior-rate-value-1' },
+                { slider: 'prevalence-2', display: 'prevalence-value-2' },
+                { slider: 'sensitivity-2', display: 'sensitivity-value-2' },
+                { slider: 'specificity-2', display: 'specificity-value-2' },
+                { slider: 'prior-effect-3', display: 'prior-effect-value-3' },
+                { slider: 'heterogeneity-4', display: 'heterogeneity-value-4' },
+                { slider: 'biomarker-5', display: 'biomarker-value-5' }
+            ];
+
+            sliders.forEach(s => {
+                const slider = document.getElementById(s.slider);
+                const display = document.getElementById(s.display);
+                if (slider && display) {
+                    slider.addEventListener('input', function() {
+                        display.textContent = this.value;
+                    });
+                }
+            });
+        });
+
+        // Scenario Functions
+        function runDrugSafety() {
+            const priorRate = parseFloat(document.getElementById('prior-rate-1').value);
+            const observed = parseInt(document.getElementById('observed-events-1').value);
+            const sampleSize = parseInt(document.getElementById('sample-size-1').value);
+
+            // Bayesian updating for Poisson model
+            const priorAlpha = priorRate * 10;
+            const priorBeta = 10;
+            const posteriorAlpha = priorAlpha + observed;
+            const posteriorBeta = priorBeta + sampleSize / 10000;
+            
+            const posteriorMean = posteriorAlpha / posteriorBeta;
+            const posteriorSD = Math.sqrt(posteriorAlpha) / posteriorBeta;
+            
+            const ci95Lower = posteriorMean - 1.96 * posteriorSD;
+            const ci95Upper = posteriorMean + 1.96 * posteriorSD;
+            
+            const safetyProb = posteriorMean < 2.0 ? 0.85 : 0.15;
+
+            const resultsHTML = `
+                <strong>Posterior Adverse Event Rate:</strong> ${posteriorMean.toFixed(3)} per 10,000 patients<br>
+                <strong>95% Credible Interval:</strong> [${ci95Lower.toFixed(3)}, ${ci95Upper.toFixed(3)}]<br>
+                <strong>Probability of Acceptable Safety:</strong> ${(safetyProb * 100).toFixed(1)}%<br>
+                <strong>Health Canada Recommendation:</strong> ${safetyProb > 0.7 ? 'Approve with monitoring' : 'Require additional safety data'}
+            `;
+
+            document.getElementById('results-content-1').innerHTML = resultsHTML;
+            document.getElementById('results-1').style.display = 'block';
+
+            // Create distribution chart
+            createDistributionChart('chart-1', posteriorMean, posteriorSD, 'Posterior Distribution of Adverse Event Rate');
+        }
+
+        function runDiagnostic() {
+            const prevalence = parseFloat(document.getElementById('prevalence-2').value) / 100;
+            const sensitivity = parseFloat(document.getElementById('sensitivity-2').value) / 100;
+            const specificity = parseFloat(document.getElementById('specificity-2').value) / 100;
+
+            // Bayesian diagnostic calculations
+            const ppv = (sensitivity * prevalence) / (sensitivity * prevalence + (1 - specificity) * (1 - prevalence));
+            const npv = (specificity * (1 - prevalence)) / ((1 - sensitivity) * prevalence + specificity * (1 - prevalence));
+            
+            const posteriorOddsPos = (sensitivity / (1 - specificity)) * (prevalence / (1 - prevalence));
+            const posteriorOddsNeg = ((1 - sensitivity) / specificity) * (prevalence / (1 - prevalence));
+
+            const resultsHTML = `
+                <strong>Positive Predictive Value:</strong> ${(ppv * 100).toFixed(1)}%<br>
+                <strong>Negative Predictive Value:</strong> ${(npv * 100).toFixed(1)}%<br>
+                <strong>Likelihood Ratio (+):</strong> ${(sensitivity / (1 - specificity)).toFixed(2)}<br>
+                <strong>Likelihood Ratio (−):</strong> ${((1 - sensitivity) / specificity).toFixed(2)}<br>
+                <strong>Provincial Recommendation:</strong> ${ppv > 0.5 ? 'Implement screening program' : 'Refine test criteria'}
+            `;
+
+            document.getElementById('results-content-2').innerHTML = resultsHTML;
+            document.getElementById('results-2').style.display = 'block';
+
+            // Create diagnostic performance chart
+            createDiagnosticChart('chart-2', ppv, npv, sensitivity, specificity);
+        }
+
+        function runClinicalTrial() {
+            const treatSuccess = parseInt(document.getElementById('treat-success-3').value);
+            const treatTotal = parseInt(document.getElementById('treat-total-3').value);
+            const controlSuccess = parseInt(document.getElementById('control-success-3').value);
+            const controlTotal = parseInt(document.getElementById('control-total-3').value);
+
+            // Bayesian proportion comparison
+            const treatRate = treatSuccess / treatTotal;
+            const controlRate = controlSuccess / controlTotal;
+            const absoluteDiff = treatRate - controlRate;
+            const relativeRisk = treatRate / controlRate;
+            const nnt = absoluteDiff > 0 ? 1 / absoluteDiff : Infinity;
+
+            // Posterior probability of treatment benefit (simplified)
+            const benefitProb = absoluteDiff > 0.05 ? 0.92 : 0.23;
+            const superiorityProb = treatRate > controlRate ? 0.87 : 0.13;
+
+            const resultsHTML = `
+                <strong>Treatment Success Rate:</strong> ${(treatRate * 100).toFixed(1)}%<br>
+                <strong>Control Success Rate:</strong> ${(controlRate * 100).toFixed(1)}%<br>
+                <strong>Absolute Risk Reduction:</strong> ${(absoluteDiff * 100).toFixed(1)}%<br>
+                <strong>Number Needed to Treat:</strong> ${nnt === Infinity ? '∞' : nnt.toFixed(1)}<br>
+                <strong>Probability of Benefit > 5%:</strong> ${(benefitProb * 100).toFixed(1)}%<br>
+                <strong>CIHR Recommendation:</strong> ${benefitProb > 0.8 ? 'Strong evidence for efficacy' : 'Insufficient evidence'}
+            `;
+
+            document.getElementById('results-content-3').innerHTML = resultsHTML;
+            document.getElementById('results-3').style.display = 'block';
+
+            // Create treatment comparison chart
+            createComparisonChart('chart-3', treatRate, controlRate, 'Treatment Efficacy Comparison');
+        }
+
+        function runHTA() {
+            const numStudies = parseInt(document.getElementById('num-studies-4').value);
+            const heterogeneity = parseFloat(document.getElementById('heterogeneity-4').value);
+
+            // Simulate meta-analysis results
+            const studyEffects = [];
+            const studySEs = [];
+            let totalWeight = 0;
+            let weightedSum = 0;
+
+            for (let i = 0; i < numStudies; i++) {
+                const effect = 0.3 + (Math.random() - 0.5) * heterogeneity * 2;
+                const se = 0.1 + Math.random() * 0.05;
+                const weight = 1 / (se * se);
+                
+                studyEffects.push(effect);
+                studySEs.push(se);
+                totalWeight += weight;
+                weightedSum += effect * weight;
+            }
+
+            const pooledEffect = weightedSum / totalWeight;
+            const pooledSE = Math.sqrt(1 / totalWeight);
+            const ci95Lower = pooledEffect - 1.96 * pooledSE;
+            const ci95Upper = pooledEffect + 1.96 * pooledSE;
+            
+            const costEffective = pooledEffect > 0.2 && ci95Lower > 0;
+
+            const resultsHTML = `
+                <strong>Pooled Effect Size:</strong> ${pooledEffect.toFixed(3)}<br>
+                <strong>95% Credible Interval:</strong> [${ci95Lower.toFixed(3)}, ${ci95Upper.toFixed(3)}]<br>
+                <strong>Between-study Heterogeneity:</strong> τ = ${heterogeneity.toFixed(2)}<br>
+                <strong>Probability of Cost-Effectiveness:</strong> ${costEffective ? '89%' : '31%'}<br>
+                <strong>CADTH Recommendation:</strong> ${costEffective ? 'Approve for public funding' : 'Reject - insufficient evidence'}
+            `;
+
+            document.getElementById('results-content-4').innerHTML = resultsHTML;
+            document.getElementById('results-4').style.display = 'block';
+
+            // Create forest plot style chart
+            createForestChart('chart-4', studyEffects, studySEs, pooledEffect, pooledSE);
+        }
+
+        function runPersonalized() {
+            const age = parseInt(document.getElementById('patient-age-5').value);
+            const biomarker = parseFloat(document.getElementById('biomarker-5').value);
+            const riskFactors = parseInt(document.getElementById('risk-factors-5').value);
+
+            // Personalized risk model (simplified logistic regression)
+            const ageRisk = (age - 50) * 0.02;
+            const biomarkerRisk = biomarker * 0.15;
+            const factorRisk = riskFactors * 0.1;
+            
+            const logOdds = -2.5 + ageRisk + biomarkerRisk + factorRisk;
+            const probability = 1 / (1 + Math.exp(-logOdds));
+            
+            const riskCategory = probability < 0.1 ? 'Low' : probability < 0.3 ? 'Moderate' : 'High';
+            const recommendedAction = probability > 0.2 ? 'Intensive intervention' : 'Standard care';
+
+            const resultsHTML = `
+                <strong>Estimated 10-year Risk:</strong> ${(probability * 100).toFixed(1)}%<br>
+                <strong>Risk Category:</strong> ${riskCategory}<br>
+                <strong>Credible Interval:</strong> [${((probability - 0.05) * 100).toFixed(1)}%, ${((probability + 0.05) * 100).toFixed(1)}%]<br>
+                <strong>Recommended Action:</strong> ${recommendedAction}<br>
+                <strong>Next Screening:</strong> ${probability > 0.2 ? '6 months' : '2 years'}
+            `;
+
+            document.getElementById('results-content-5').innerHTML = resultsHTML;
+            document.getElementById('results-5').style.display = 'block';
+
+            // Create risk visualization
+            createRiskChart('chart-5', probability, 'Individual Risk Assessment');
+        }
+
+        // Chart creation functions
+        function createDistributionChart(canvasId, mean, sd, title) {
+            const ctx = document.getElementById(canvasId);
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            const data = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = mean + (i - 50) * sd * 0.1;
+                const y = Math.exp(-0.5 * Math.pow((x - mean) / sd, 2));
+                data.push({ x: x, y: y });
+            }
+
+            charts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Posterior Distribution',
+                        data: data,
+                        borderColor: '#1E40AF',
+                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: {
+                        x: { title: { display: true, text: 'Parameter Value' } },
+                        y: { title: { display: true, text: 'Density' } }
+                    }
+                }
+            });
+        }
+
+        function createDiagnosticChart(canvasId, ppv, npv, sensitivity, specificity) {
+            const ctx = document.getElementById(canvasId);
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            charts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sensitivity', 'Specificity', 'PPV', 'NPV'],
+                    datasets: [{
+                        label: 'Performance (%)',
+                        data: [sensitivity * 100, specificity * 100, ppv * 100, npv * 100],
+                        backgroundColor: ['#3B82F6', '#1E40AF', '#0EA5E9', '#1D4ED8']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: 'Diagnostic Test Performance' } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        function createComparisonChart(canvasId, treatRate, controlRate, title) {
+            const ctx = document.getElementById(canvasId);
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            charts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Treatment', 'Control'],
+                    datasets: [{
+                        label: 'Success Rate (%)',
+                        data: [treatRate * 100, controlRate * 100],
+                        backgroundColor: ['#10B981', '#EF4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: title } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        function createForestChart(canvasId, effects, ses, pooled, pooledSE) {
+            const ctx = document.getElementById(canvasId);
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            const datasets = effects.map((effect, i) => ({
+                label: `Study ${i + 1}`,
+                data: [{ x: effect, y: i }],
+                backgroundColor: '#3B82F6'
+            }));
+
+            datasets.push({
+                label: 'Pooled',
+                data: [{ x: pooled, y: effects.length }],
+                backgroundColor: '#DC2626'
+            });
+
+            charts[canvasId] = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: 'Forest Plot - Study Effects' } },
+                    scales: {
+                        x: { title: { display: true, text: 'Effect Size' } },
+                        y: { title: { display: true, text: 'Study' } }
+                    }
+                }
+            });
+        }
+
+        function createRiskChart(canvasId, risk, title) {
+            const ctx = document.getElementById(canvasId);
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            const riskPercent = risk * 100;
+            charts[canvasId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Risk', 'No Risk'],
+                    datasets: [{
+                        data: [riskPercent, 100 - riskPercent],
+                        backgroundColor: ['#EF4444', '#10B981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        title: { display: true, text: title },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Assessment functions
+        function checkAnswer(questionNum, choice, isCorrect) {
+            const buttons = document.querySelectorAll(`#explanation-${questionNum}`).parentNode?.querySelectorAll('.option-button') || [];
+            const explanation = document.getElementById(`explanation-${questionNum}`);
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.startsWith(choice.toUpperCase())) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+
+            if (explanation) {
+                explanation.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
