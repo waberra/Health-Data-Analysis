@@ -3247,7 +3247,7 @@
 
             const uniqueTimes = [...new Set(combinedData.filter(d => d.event === 1).map(d => d.time))];
             
-            let observedMinus Expected = 0;
+            let observedMinusExpected = 0;
             let variance = 0;
             
             for (const time of uniqueTimes) {
