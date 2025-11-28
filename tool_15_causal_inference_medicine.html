@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool #15: Causal Inference in Medicine - Medical Biostatistics Tools</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fffe;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 3px solid #20b2aa;
+        }
+        h1 {
+            color: #dc143c;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #dc143c;
+            border-bottom: 3px solid #dc143c;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2f8b8b;
+            margin-top: 25px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #2f8b8b;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .expert-badge {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+        .method-section {
+            background: #f0ffff;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #2f8b8b;
+        }
+        .scenario {
+            background: #e8fffe;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #20b2aa;
+        }
+        .controls {
+            background: #f8ffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #20b2aa;
+        }
+        button {
+            background: linear-gradient(45deg, #2f8b8b, #20b2aa);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .results {
+            background: #ffffff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #20b2aa;
+            height: 400px;
+            position: relative;
+        }
+        select, input {
+            padding: 8px;
+            margin: 5px;
+            border: 2px solid #20b2aa;
+            border-radius: 4px;
+            background: white;
+        }
+        .formula {
+            background: #f0f8ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #2f8b8b;
+        }
+        .causal-diagram {
+            background: #ffffff;
+            border: 2px solid #20b2aa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .assessment {
+            background: linear-gradient(to right, #f0ffff, #e8fffe);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #2f8b8b;
+        }
+        .question {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #20b2aa;
+        }
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #20b2aa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #2f8b8b;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8fffe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tool #15: Causal Inference in Medicine</h1>
+        <div class="subtitle">Expert Series: Identifying Causal Effects in Healthcare Research</div>
+        
+        <div class="expert-badge">🏥 EXPERT SERIES: Advanced Medical Research Methodology</div>
+
+        <div class="method-section">
+            <h2>🎯 Causal Inference Framework</h2>
+            <p>Causal inference in medicine addresses the fundamental question: <strong>Does treatment X cause outcome Y?</strong> This goes beyond correlation to establish causation using rigorous methodological approaches.</p>
+            
+            <h3>Fundamental Problem of Causal Inference</h3>
+            <div class="formula">
+                Individual Treatment Effect = Y₁ᵢ - Y₀ᵢ
+                <br>where Y₁ᵢ = outcome if treated, Y₀ᵢ = outcome if untreated
+                <br><strong>Problem:</strong> We can never observe both states for same individual
+            </div>
+
+            <div class="causal-diagram">
+                <h4>Causal DAG Template</h4>
+                <p><strong>Treatment → Outcome</strong></p>
+                <p>Confounders ↘ ↙</p>
+                <p>Goal: Eliminate confounding bias through design or analysis</p>
+            </div>
+        </div>
+
+        <div class="method-section">
+            <h2>🔬 Method 1: Randomized Controlled Trials (RCTs)</h2>
+            
+            <div class="scenario">
+                <h3>Application: Health Canada Drug Approval Study</h3>
+                <p>Evaluate effectiveness of new hypertension medication in Canadian population</p>
+                
+                <div class="controls">
+                    <label>Sample Size per Group: <input type="number" id="rct-n" value="500" min="100" max="2000" step="50"></label>
+                    <label>Treatment Effect (mmHg): <input type="number" id="rct-effect" value="8" min="2" max="15" step="0.5"></label>
+                    <label>Baseline BP (mmHg): <input type="number" id="rct-baseline" value="145" min="130" max="160" step="1"></label>
+                    <label>Standard Deviation: <input type="number" id="rct-sd" value="12" min="8" max="20" step="0.5"></label>
+                    <button onclick="runRCT()">Conduct RCT Analysis</button>
+                </div>
+                
+                <div id="rct-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="rct-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="method-section">
+            <h2>🧬 Method 2: Instrumental Variables (Genetic Instruments)</h2>
+            
+            <div class="scenario">
+                <h3>Application: Mendelian Randomization via Canadian Partnership for Tomorrow Project</h3>
+                <p>Use genetic variants as instruments to study causal effect of BMI on cardiovascular disease</p>
+                
+                <div class="controls">
+                    <label>Sample Size: <input type="number" id="iv-n" value="50000" min="10000" max="100000" step="5000"></label>
+                    <label>Instrument Strength (F-stat): <input type="number" id="iv-strength" value="25" min="10" max="50" step="1"></label>
+                    <label>BMI Effect per Allele: <input type="number" id="iv-allele" value="0.3" min="0.1" max="0.8" step="0.05"></label>
+                    <button onclick="runIV()">Analyze Genetic Instrument</button>
+                </div>
+                
+                <div id="iv-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="iv-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="method-section">
+            <h2>📊 Method 3: Regression Discontinuity Design</h2>
+            
+            <div class="scenario">
+                <h3>Application: Ontario Health Insurance Plan Age Eligibility</h3>
+                <p>Examine impact of enhanced coverage at age 65 on healthcare utilization</p>
+                
+                <div class="controls">
+                    <label>Bandwidth (years): <input type="number" id="rd-bandwidth" value="5" min="2" max="10" step="0.5"></label>
+                    <label>Treatment Effect (%): <input type="number" id="rd-effect" value="15" min="5" max="30" step="1"></label>
+                    <label>Sample Size: <input type="number" id="rd-n" value="2000" min="500" max="5000" step="100"></label>
+                    <button onclick="runRD()">Analyze Discontinuity</button>
+                </div>
+                
+                <div id="rd-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="rd-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="method-section">
+            <h2>⏱️ Method 4: Difference-in-Differences</h2>
+            
+            <div class="scenario">
+                <h3>Application: Quebec Smoking Ban Impact Analysis</h3>
+                <p>Evaluate effect of restaurant smoking ban on acute MI admissions using Quebec vs Ontario data</p>
+                
+                <div class="controls">
+                    <label>Pre-period (months): <input type="number" id="dd-pre" value="24" min="12" max="48" step="6"></label>
+                    <label>Post-period (months): <input type="number" id="dd-post" value="24" min="12" max="48" step="6"></label>
+                    <label>Treatment Effect (%): <input type="number" id="dd-effect" value="12" min="5" max="25" step="1"></label>
+                    <button onclick="runDD()">Analyze Policy Impact</button>
+                </div>
+                
+                <div id="dd-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="dd-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="method-section">
+            <h2>🎯 Method 5: Propensity Score Methods</h2>
+            
+            <div class="scenario">
+                <h3>Application: BC Cancer Agency Treatment Comparison</h3>
+                <p>Compare effectiveness of two cancer treatments using observational data with propensity matching</p>
+                
+                <div class="controls">
+                    <label>Total Patients: <input type="number" id="ps-n" value="1500" min="500" max="3000" step="100"></label>
+                    <label>Treatment Rate (%): <input type="number" id="ps-rate" value="40" min="20" max="60" step="5"></label>
+                    <label>True Effect (months): <input type="number" id="ps-effect" value="6" min="2" max="12" step="0.5"></label>
+                    <label>Confounding Strength: <input type="range" id="ps-confound" min="0.1" max="0.9" step="0.1" value="0.5"></label>
+                    <button onclick="runPS()">Perform Propensity Matching</button>
+                </div>
+                
+                <div id="ps-results" class="results" style="display:none;">
+                    <!-- Results populated by JavaScript -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="ps-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="assessment">
+            <h2>🧠 Expert Assessment: Causal Inference in Medicine</h2>
+            <p>Test your understanding of causal inference methods in medical research. Questions rotate each session.</p>
+            <button onclick="generateQuestions()">Generate New Questions</button>
+            
+            <div id="questions-container">
+                <!-- Questions will be populated by JavaScript -->
+            </div>
+            
+            <button onclick="checkAnswers()" id="check-btn" style="display:none;">Check Answers</button>
+            <div id="assessment-results"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestions = [];
+        let charts = {};
+
+        // Question pools for dynamic assessment
+        const questionPools = {
+            rct: [
+                {
+                    question: "In a randomized controlled trial for a new cardiac medication, why is intention-to-treat analysis preferred over per-protocol analysis?",
+                    options: [
+                        "Per-protocol analysis preserves randomization and provides unbiased estimates of treatment effectiveness",
+                        "Intention-to-treat analysis preserves randomization and provides unbiased estimates of treatment effectiveness", 
+                        "Per-protocol analysis better reflects real-world treatment compliance patterns",
+                        "Intention-to-treat analysis excludes patients who don't complete the study"
+                    ],
+                    correct: 1,
+                    explanation: "Intention-to-treat preserves randomization by analyzing patients in their originally assigned groups, preventing selection bias from differential dropout or compliance."
+                },
+                {
+                    question: "A Health Canada RCT shows treatment reduces mortality by 20% (RR=0.80, 95% CI: 0.65-0.98). What can we conclude?",
+                    options: [
+                        "The treatment definitely saves lives and should be approved immediately",
+                        "The result is statistically significant and suggests a causal mortality benefit",
+                        "The confidence interval is too wide to draw any conclusions",
+                        "We need to adjust for multiple testing before interpreting results"
+                    ],
+                    correct: 1,
+                    explanation: "The CI excludes 1.0, indicating statistical significance. RCTs provide strong causal inference, though clinical significance and benefit-risk must still be evaluated."
+                },
+                {
+                    question: "In a multi-center Canadian RCT, what is the primary advantage of stratified randomization by province?",
+                    options: [
+                        "It reduces the total sample size needed for adequate power",
+                        "It ensures treatment groups are balanced within each province",
+                        "It allows for province-specific treatment effect estimation", 
+                        "It eliminates the need for statistical adjustment in analysis"
+                    ],
+                    correct: 1,
+                    explanation: "Stratified randomization ensures treatment balance within strata (provinces), controlling for potential geographic confounders and improving precision."
+                }
+            ],
+            
+            instruments: [
+                {
+                    question: "In Mendelian randomization using Canadian genetic data, what makes a genetic variant a valid instrument?",
+                    options: [
+                        "It must be associated with the outcome through pathways other than the exposure",
+                        "It must be strongly associated with the exposure, not associated with confounders, and affect outcome only through exposure",
+                        "It must be present in at least 50% of the Canadian population",
+                        "It must have been discovered in genome-wide association studies"
+                    ],
+                    correct: 1,
+                    explanation: "Valid instruments require three assumptions: relevance (associated with exposure), independence (no confounding), and exclusion restriction (affects outcome only through exposure)."
+                },
+                {
+                    question: "A Mendelian randomization study using CPTP data finds F-statistic = 8 for the genetic instrument. What does this suggest?",
+                    options: [
+                        "The instrument is very strong and results are highly reliable",
+                        "The instrument may be weak, potentially leading to biased estimates",
+                        "The sample size is too small for meaningful analysis",
+                        "The genetic variant is not suitable for Canadian populations"
+                    ],
+                    correct: 1,
+                    explanation: "F-statistics below 10 suggest weak instruments, which can lead to bias toward null and unreliable IV estimates. Rule of thumb: F > 10 for adequate instrument strength."
+                },
+                {
+                    question: "In IV analysis of BMI effects on diabetes using genetic instruments, what does the exclusion restriction require?",
+                    options: [
+                        "The genetic variant affects diabetes risk only through its effect on BMI",
+                        "The genetic variant is randomly distributed in the population",
+                        "The genetic variant has a large effect on BMI",
+                        "The genetic variant is not associated with other metabolic traits"
+                    ],
+                    correct: 0,
+                    explanation: "Exclusion restriction means the instrument (genetic variant) affects the outcome (diabetes) only through the exposure (BMI), with no direct effects or through other pathways."
+                }
+            ],
+
+            discontinuity: [
+                {
+                    question: "In an RD study of Ontario's 65+ drug coverage policy, patients just below vs above age 65 differ systematically in health status. What does this threaten?",
+                    options: [
+                        "External validity only - internal validity remains strong", 
+                        "The identifying assumption that assignment around cutoff is quasi-random",
+                        "Statistical power but not validity of estimates",
+                        "Precision but not bias of treatment effect estimates"
+                    ],
+                    correct: 1,
+                    explanation: "RD validity requires that individuals just below and above the cutoff are similar except for treatment assignment. Systematic health differences violate this key assumption."
+                },
+                {
+                    question: "When analyzing healthcare utilization around the Ontario age 65 cutoff, why is optimal bandwidth selection crucial?",
+                    options: [
+                        "Larger bandwidths always provide more precise estimates",
+                        "Bandwidth choice balances bias from model misspecification against variance from sample size",
+                        "Smaller bandwidths eliminate all potential confounding factors",
+                        "Bandwidth selection determines the treatment effect magnitude"
+                    ],
+                    correct: 1,
+                    explanation: "Bandwidth choice creates a bias-variance tradeoff: wider bandwidths increase sample size (lower variance) but may include non-comparable units (higher bias)."
+                },
+                {
+                    question: "In RD analysis of prescription drug coverage at age 65, what would density discontinuity in age distribution suggest?",
+                    options: [
+                        "Natural aging patterns around the eligibility threshold",
+                        "Potential manipulation of assignment variable, threatening validity",
+                        "Seasonal variation in birth patterns across Canadian provinces",
+                        "Random sampling variation with no methodological implications"
+                    ],
+                    correct: 1,
+                    explanation: "Density discontinuity (McCrary test) suggests people may manipulate their age reporting to gain eligibility, violating the assumption of quasi-random assignment around cutoff."
+                }
+            ],
+
+            differences: [
+                {
+                    question: "A difference-in-differences study of Quebec's restaurant smoking ban shows parallel pre-trends in MI admissions between Quebec and Ontario. What does this support?",
+                    options: [
+                        "The treatment effect is statistically significant",
+                        "The identifying assumption that trends would remain parallel without treatment",
+                        "External validity to other Canadian provinces",
+                        "The absence of spillover effects between provinces"
+                    ],
+                    correct: 1,
+                    explanation: "Parallel pre-trends support the identifying assumption that treatment and control would have followed similar trajectories without intervention, validating the DD design."
+                },
+                {
+                    question: "In a DD study of provincial health policy, what would staggered treatment adoption across provinces allow you to estimate?",
+                    options: [
+                        "Only average treatment effects across all provinces",
+                        "Province-specific treatment effects and test robustness",
+                        "Long-term equilibrium effects only",
+                        "Treatment effects only in the first adopting province"
+                    ],
+                    correct: 1,
+                    explanation: "Staggered adoption allows province-specific effect estimation, robustness testing, and can help identify temporal variations in treatment effects across different implementation contexts."
+                },
+                {
+                    question: "A DD analysis finds negative treatment effects in event-study results before policy implementation. This suggests:",
+                    options: [
+                        "The policy had anticipatory effects before official implementation",
+                        "Violation of parallel trends assumption, threatening validity",
+                        "Random variation that doesn't affect interpretation",
+                        "The need for longer post-treatment follow-up periods"
+                    ],
+                    correct: 1,
+                    explanation: "Pre-treatment effects in event studies suggest violation of parallel trends, indicating that treatment and control groups were already diverging before the intervention."
+                }
+            ]
+        };
+
+        function runRCT() {
+            const n = parseInt(document.getElementById('rct-n').value);
+            const effect = parseFloat(document.getElementById('rct-effect').value);
+            const baseline = parseFloat(document.getElementById('rct-baseline').value);
+            const sd = parseFloat(document.getElementById('rct-sd').value);
+
+            // Simulate RCT data
+            const controlMean = baseline;
+            const treatmentMean = baseline - effect;
+            
+            // Calculate statistics
+            const pooledSD = sd;
+            const standardError = pooledSD * Math.sqrt(2/n);
+            const tStat = effect / standardError;
+            const df = 2*n - 2;
+            const pValue = 2 * (1 - getApproximateTValue(Math.abs(tStat), df));
+            const ciLower = effect - 1.96 * standardError;
+            const ciUpper = effect + 1.96 * standardError;
+            
+            // Power calculation
+            const power = calculatePower(effect, standardError);
+            const numberNeeded = Math.ceil(1 / (effect/100 * 0.1)); // Rough NNT calculation
+
+            document.getElementById('rct-results').style.display = 'block';
+            document.getElementById('rct-results').innerHTML = `
+                <h4>RCT Results: Health Canada Hypertension Study</h4>
+                <table>
+                    <tr><th>Group</th><th>N</th><th>Mean BP (mmHg)</th><th>SD</th></tr>
+                    <tr><td>Control</td><td>${n}</td><td>${controlMean.toFixed(1)}</td><td>${sd.toFixed(1)}</td></tr>
+                    <tr><td>Treatment</td><td>${n}</td><td>${treatmentMean.toFixed(1)}</td><td>${sd.toFixed(1)}</td></tr>
+                </table>
+                <p><strong>Primary Analysis:</strong></p>
+                <p>• Mean Difference: ${effect.toFixed(1)} mmHg (95% CI: ${ciLower.toFixed(1)} to ${ciUpper.toFixed(1)})</p>
+                <p>• t-statistic: ${tStat.toFixed(2)} (df=${df})</p>
+                <p>• p-value: ${pValue.toFixed(4)}</p>
+                <p>• Statistical Power: ${(power*100).toFixed(1)}%</p>
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• Number Needed to Treat: ~${numberNeeded} patients</p>
+                <p>• Effect Size (Cohen's d): ${(effect/sd).toFixed(2)} (${interpretCohenD(effect/sd)})</p>
+                <p>• <span class="highlight">Regulatory Decision: ${pValue < 0.05 && ciLower > 2 ? "Recommend Approval" : "Insufficient Evidence"}</span></p>
+            `;
+
+            // Create visualization
+            createRCTChart(controlMean, treatmentMean, sd, n);
+        }
+
+        function createRCTChart(controlMean, treatmentMean, sd, n) {
+            const ctx = document.getElementById('rct-chart').getContext('2d');
+            
+            if (charts.rct) charts.rct.destroy();
+
+            // Generate distribution data
+            const xValues = [];
+            const controlDist = [];
+            const treatmentDist = [];
+            
+            const min = Math.min(controlMean, treatmentMean) - 3*sd;
+            const max = Math.max(controlMean, treatmentMean) + 3*sd;
+            
+            for (let x = min; x <= max; x += 0.5) {
+                xValues.push(x);
+                controlDist.push(normalDensity(x, controlMean, sd/Math.sqrt(n/10)));
+                treatmentDist.push(normalDensity(x, treatmentMean, sd/Math.sqrt(n/10)));
+            }
+
+            charts.rct = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'Control Group',
+                        data: controlDist,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Treatment Group', 
+                        data: treatmentDist,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Blood Pressure Distributions: RCT Results'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Blood Pressure (mmHg)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Probability Density'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runIV() {
+            const n = parseInt(document.getElementById('iv-n').value);
+            const fStat = parseFloat(document.getElementById('iv-strength').value);
+            const alleleEffect = parseFloat(document.getElementById('iv-allele').value);
+
+            // Simulate IV analysis
+            const firstStageR2 = fStat / (fStat + n - 2);
+            const instrumentStrength = Math.sqrt(firstStageR2) * 100;
+            
+            // Estimate causal effect (BMI on CVD risk)
+            const reducedFormEffect = alleleEffect * 0.15; // Each BMI unit increases CVD risk by 15%
+            const causalEffect = reducedFormEffect / alleleEffect;
+            const ivSE = Math.sqrt((1-firstStageR2) / (n * firstStageR2)) * 2;
+            const ivT = causalEffect / ivSE;
+            const ivP = 2 * (1 - getApproximateTValue(Math.abs(ivT), n-2));
+
+            document.getElementById('iv-results').style.display = 'block';
+            document.getElementById('iv-results').innerHTML = `
+                <h4>Mendelian Randomization: Canadian Partnership for Tomorrow Project</h4>
+                <p><strong>Genetic Instrument Analysis:</strong></p>
+                <p>• First-stage F-statistic: ${fStat.toFixed(1)} (${fStat >= 10 ? "Strong instrument" : "Weak instrument - caution needed"})</p>
+                <p>• Instrument explains ${(firstStageR2*100).toFixed(1)}% of BMI variance</p>
+                <p>• BMI effect per allele: ${alleleEffect.toFixed(2)} kg/m²</p>
+                
+                <p><strong>Causal Effect Estimation:</strong></p>
+                <p>• IV estimate: ${causalEffect.toFixed(2)} (SE=${ivSE.toFixed(3)})</p>
+                <p>• t-statistic: ${ivT.toFixed(2)}</p>
+                <p>• p-value: ${ivP.toFixed(4)}</p>
+                
+                <p><strong>Clinical Interpretation:</strong></p>
+                <p>• 1 kg/m² BMI increase → ${(causalEffect*100).toFixed(1)}% CVD risk increase</p>
+                <p>• <span class="highlight">Causal Inference: ${ivP < 0.05 ? "Significant causal effect detected" : "No significant causal effect"}</span></p>
+                <p>• Pleiotropy concerns: ${fStat < 10 ? "High (weak instrument)" : "Moderate (check for horizontal pleiotropy)"}</p>
+            `;
+
+            createIVChart(fStat, causalEffect, alleleEffect);
+        }
+
+        function createIVChart(fStat, causalEffect, alleleEffect) {
+            const ctx = document.getElementById('iv-chart').getContext('2d');
+            
+            if (charts.iv) charts.iv.destroy();
+
+            // Create scatter plot simulation
+            const dataPoints = [];
+            for (let i = 0; i < 50; i++) {
+                const genotype = Math.floor(Math.random() * 3);
+                const bmi = 25 + genotype * alleleEffect + (Math.random() - 0.5) * 6;
+                const cvdRisk = 0.1 + bmi * causalEffect / 10 + (Math.random() - 0.5) * 0.1;
+                dataPoints.push({x: bmi, y: cvdRisk, genotype: genotype});
+            }
+
+            const genotypeColors = ['#ff6b6b', '#ffd93d', '#2f8b8b'];
+            
+            charts.iv = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: '0 Risk Alleles',
+                        data: dataPoints.filter(p => p.genotype === 0),
+                        backgroundColor: genotypeColors[0],
+                        borderColor: genotypeColors[0]
+                    }, {
+                        label: '1 Risk Allele',
+                        data: dataPoints.filter(p => p.genotype === 1),
+                        backgroundColor: genotypeColors[1],
+                        borderColor: genotypeColors[1]
+                    }, {
+                        label: '2 Risk Alleles',
+                        data: dataPoints.filter(p => p.genotype === 2),
+                        backgroundColor: genotypeColors[2],
+                        borderColor: genotypeColors[2]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Genetic Instrument: BMI and CVD Risk'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Body Mass Index (kg/m²)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'CVD Risk Score'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runRD() {
+            const bandwidth = parseFloat(document.getElementById('rd-bandwidth').value);
+            const effect = parseFloat(document.getElementById('rd-effect').value);
+            const n = parseInt(document.getElementById('rd-n').value);
+
+            // Simulate RD data around age 65 cutoff
+            const ages = [];
+            const utilization = [];
+            const treated = [];
+            
+            for (let i = 0; i < n; i++) {
+                const age = 65 + (Math.random() - 0.5) * 2 * bandwidth;
+                ages.push(age);
+                
+                const baseline = 5 + (age - 65) * 0.2 + Math.random() * 2;
+                const treatment = age >= 65 ? effect : 0;
+                utilization.push(baseline + treatment);
+                treated.push(age >= 65 ? 1 : 0);
+            }
+
+            // Calculate RD estimate
+            const treatedData = utilization.filter((_, i) => treated[i] === 1);
+            const controlData = utilization.filter((_, i) => treated[i] === 0);
+            const rdEstimate = treatedData.reduce((a, b) => a + b, 0) / treatedData.length - 
+                             controlData.reduce((a, b) => a + b, 0) / controlData.length;
+            
+            const rdSE = Math.sqrt(2) * Math.sqrt((treatedData.length + controlData.length) / (treatedData.length * controlData.length));
+            const rdT = rdEstimate / rdSE;
+            const rdP = 2 * (1 - getApproximateTValue(Math.abs(rdT), n-2));
+
+            document.getElementById('rd-results').style.display = 'block';
+            document.getElementById('rd-results').innerHTML = `
+                <h4>Regression Discontinuity: Ontario Health Coverage at Age 65</h4>
+                <p><strong>Design Characteristics:</strong></p>
+                <p>• Cutoff: Age 65 (enhanced drug coverage eligibility)</p>
+                <p>• Bandwidth: ±${bandwidth} years around cutoff</p>
+                <p>• Sample: ${n} patients (${treatedData.length} treated, ${controlData.length} control)</p>
+                
+                <p><strong>RD Estimate:</strong></p>
+                <p>• Treatment Effect: ${rdEstimate.toFixed(2)}% increase in utilization</p>
+                <p>• Standard Error: ${rdSE.toFixed(3)}</p>
+                <p>• t-statistic: ${rdT.toFixed(2)}</p>
+                <p>• p-value: ${rdP.toFixed(4)}</p>
+                
+                <p><strong>Policy Implications:</strong></p>
+                <p>• <span class="highlight">Causal Effect: ${rdP < 0.05 ? "Significant increase in healthcare utilization" : "No significant effect detected"}</span></p>
+                <p>• Cost per patient: Estimated $${(rdEstimate * 50).toFixed(0)} annually</p>
+                <p>• Validity check: ${bandwidth >= 3 ? "Adequate bandwidth for estimation" : "Consider wider bandwidth"}</p>
+            `;
+
+            createRDChart(ages, utilization, treated);
+        }
+
+        function createRDChart(ages, utilization, treated) {
+            const ctx = document.getElementById('rd-chart').getContext('2d');
+            
+            if (charts.rd) charts.rd.destroy();
+
+            const controlPoints = ages.map((age, i) => treated[i] === 0 ? {x: age, y: utilization[i]} : null).filter(p => p);
+            const treatmentPoints = ages.map((age, i) => treated[i] === 1 ? {x: age, y: utilization[i]} : null).filter(p => p);
+
+            charts.rd = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Under 65 (No Enhanced Coverage)',
+                        data: controlPoints,
+                        backgroundColor: '#ff6b6b',
+                        borderColor: '#ff6b6b',
+                        pointRadius: 3
+                    }, {
+                        label: '65+ (Enhanced Coverage)',
+                        data: treatmentPoints,
+                        backgroundColor: '#2f8b8b',
+                        borderColor: '#2f8b8b',
+                        pointRadius: 3
+                    }, {
+                        label: 'Cutoff at Age 65',
+                        data: [{x: 65, y: Math.min(...utilization)}, {x: 65, y: Math.max(...utilization)}],
+                        type: 'line',
+                        borderColor: '#dc143c',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Healthcare Utilization Around Age 65 Cutoff'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Age (years)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Healthcare Utilization (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runDD() {
+            const prePeriod = parseInt(document.getElementById('dd-pre').value);
+            const postPeriod = parseInt(document.getElementById('dd-post').value);
+            const effect = parseFloat(document.getElementById('dd-effect').value);
+
+            // Simulate DD data for Quebec (treatment) vs Ontario (control)
+            const months = [];
+            const quebecData = [];
+            const ontarioData = [];
+            
+            const totalPeriods = prePeriod + postPeriod;
+            
+            for (let t = -prePeriod; t < postPeriod; t++) {
+                months.push(t);
+                
+                // Quebec data (treatment group)
+                const quebecBaseline = 100 + t * 0.5 + Math.random() * 5;
+                const quebecTreatment = t >= 0 ? -effect : 0;
+                quebecData.push(quebecBaseline + quebecTreatment);
+                
+                // Ontario data (control group)  
+                const ontarioBaseline = 102 + t * 0.5 + Math.random() * 5;
+                ontarioData.push(ontarioBaseline);
+            }
+
+            // Calculate DD estimate
+            const quebecPre = quebecData.slice(0, prePeriod).reduce((a, b) => a + b, 0) / prePeriod;
+            const quebecPost = quebecData.slice(prePeriod).reduce((a, b) => a + b, 0) / postPeriod;
+            const ontarioPre = ontarioData.slice(0, prePeriod).reduce((a, b) => a + b, 0) / prePeriod;
+            const ontarioPost = ontarioData.slice(prePeriod).reduce((a, b) => a + b, 0) / postPeriod;
+            
+            const ddEstimate = (quebecPost - quebecPre) - (ontarioPost - ontarioPre);
+            const ddSE = 1.5; // Simplified SE calculation
+            const ddT = ddEstimate / ddSE;
+            const ddP = 2 * (1 - getApproximateTValue(Math.abs(ddT), totalPeriods-4));
+
+            document.getElementById('dd-results').style.display = 'block';
+            document.getElementById('dd-results').innerHTML = `
+                <h4>Difference-in-Differences: Quebec Restaurant Smoking Ban</h4>
+                <p><strong>Study Design:</strong></p>
+                <p>• Treatment: Quebec (smoking ban implemented at t=0)</p>
+                <p>• Control: Ontario (no ban during study period)</p>
+                <p>• Pre-period: ${prePeriod} months, Post-period: ${postPeriod} months</p>
+                
+                <p><strong>Pre-Post Changes:</strong></p>
+                <table>
+                    <tr><th>Province</th><th>Pre-Ban Mean</th><th>Post-Ban Mean</th><th>Change</th></tr>
+                    <tr><td>Quebec (Treatment)</td><td>${quebecPre.toFixed(1)}</td><td>${quebecPost.toFixed(1)}</td><td>${(quebecPost-quebecPre).toFixed(1)}</td></tr>
+                    <tr><td>Ontario (Control)</td><td>${ontarioPre.toFixed(1)}</td><td>${ontarioPost.toFixed(1)}</td><td>${(ontarioPost-ontarioPre).toFixed(1)}</td></tr>
+                </table>
+                
+                <p><strong>DD Estimate:</strong></p>
+                <p>• Treatment Effect: ${ddEstimate.toFixed(2)} fewer MI admissions per 100,000</p>
+                <p>• Standard Error: ${ddSE.toFixed(2)}</p>
+                <p>• t-statistic: ${ddT.toFixed(2)}</p>
+                <p>• p-value: ${ddP.toFixed(4)}</p>
+                
+                <p><strong>Policy Impact:</strong></p>
+                <p>• <span class="highlight">Causal Effect: ${ddP < 0.05 ? `Significant ${Math.abs(ddEstimate).toFixed(1)}% reduction in MI admissions` : "No significant effect detected"}</span></p>
+                <p>• Lives saved annually: ~${Math.abs(ddEstimate * 2).toFixed(0)} in Quebec</p>
+            `;
+
+            createDDChart(months, quebecData, ontarioData, prePeriod);
+        }
+
+        function createDDChart(months, quebecData, ontarioData, prePeriod) {
+            const ctx = document.getElementById('dd-chart').getContext('2d');
+            
+            if (charts.dd) charts.dd.destroy();
+
+            charts.dd = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Quebec (Treatment)',
+                        data: quebecData,
+                        borderColor: '#2f8b8b',
+                        backgroundColor: 'rgba(47, 139, 139, 0.1)',
+                        tension: 0.1
+                    }, {
+                        label: 'Ontario (Control)',
+                        data: ontarioData,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'MI Admissions: Quebec vs Ontario (Smoking Ban at t=0)'
+                        },
+                        annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    xMin: prePeriod - 0.5,
+                                    xMax: prePeriod - 0.5,
+                                    borderColor: '#dc143c',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        content: 'Smoking Ban',
+                                        enabled: true,
+                                        position: 'top'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months Relative to Ban Implementation'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'MI Admissions per 100,000'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runPS() {
+            const n = parseInt(document.getElementById('ps-n').value);
+            const treatmentRate = parseFloat(document.getElementById('ps-rate').value) / 100;
+            const trueEffect = parseFloat(document.getElementById('ps-effect').value);
+            const confoundingStrength = parseFloat(document.getElementById('ps-confound').value);
+
+            // Simulate propensity score analysis
+            const patients = [];
+            for (let i = 0; i < n; i++) {
+                const age = 55 + Math.random() * 20;
+                const comorbidities = Math.floor(Math.random() * 4);
+                const stage = Math.floor(Math.random() * 4) + 1;
+                
+                // Propensity score (probability of treatment)
+                const logitP = -2 + 0.05 * age + 0.3 * comorbidities - 0.2 * stage + confoundingStrength * Math.random();
+                const propensityScore = 1 / (1 + Math.exp(-logitP));
+                const treated = Math.random() < propensityScore ? 1 : 0;
+                
+                // Outcome (survival months)
+                const baseline = 24 + 2 * (4 - stage) - 0.1 * age - 1.5 * comorbidities;
+                const treatmentEffect = treated * trueEffect;
+                const survival = baseline + treatmentEffect + Math.random() * 6;
+                
+                patients.push({
+                    treated: treated,
+                    propensityScore: propensityScore,
+                    survival: survival,
+                    age: age,
+                    comorbidities: comorbidities,
+                    stage: stage
+                });
+            }
+
+            // Naive comparison
+            const treatedPatients = patients.filter(p => p.treated === 1);
+            const controlPatients = patients.filter(p => p.treated === 0);
+            const naiveEffect = treatedPatients.reduce((a, b) => a + b.survival, 0) / treatedPatients.length -
+                              controlPatients.reduce((a, b) => a + b.survival, 0) / controlPatients.length;
+
+            // Propensity score matching (1:1 nearest neighbor)
+            const matched = [];
+            const usedControls = new Set();
+            
+            treatedPatients.forEach(treatedPatient => {
+                let bestMatch = null;
+                let minDistance = Infinity;
+                
+                controlPatients.forEach((controlPatient, index) => {
+                    if (!usedControls.has(index)) {
+                        const distance = Math.abs(treatedPatient.propensityScore - controlPatient.propensityScore);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            bestMatch = {controlPatient, index};
+                        }
+                    }
+                });
+                
+                if (bestMatch && minDistance < 0.1) { // Caliper matching
+                    matched.push({
+                        treated: treatedPatient,
+                        control: bestMatch.controlPatient
+                    });
+                    usedControls.add(bestMatch.index);
+                }
+            });
+
+            const matchedEffect = matched.length > 0 ? 
+                matched.reduce((sum, pair) => sum + (pair.treated.survival - pair.control.survival), 0) / matched.length : 0;
+
+            document.getElementById('ps-results').style.display = 'block';
+            document.getElementById('ps-results').innerHTML = `
+                <h4>Propensity Score Analysis: BC Cancer Agency Treatment Comparison</h4>
+                <p><strong>Study Population:</strong></p>
+                <p>• Total patients: ${n}</p>
+                <p>• Treatment A: ${treatedPatients.length} (${(100*treatedPatients.length/n).toFixed(1)}%)</p>
+                <p>• Treatment B: ${controlPatients.length} (${(100*controlPatients.length/n).toFixed(1)}%)</p>
+                
+                <p><strong>Propensity Score Matching:</strong></p>
+                <p>• Matched pairs: ${matched.length}</p>
+                <p>• Match rate: ${(100*matched.length/treatedPatients.length).toFixed(1)}%</p>
+                <p>• Mean propensity score difference: ${matched.length > 0 ? (matched.reduce((sum, pair) => sum + Math.abs(pair.treated.propensityScore - pair.control.propensityScore), 0) / matched.length).toFixed(3) : 'N/A'}</p>
+                
+                <p><strong>Treatment Effect Estimates:</strong></p>
+                <table>
+                    <tr><th>Method</th><th>Effect (months)</th><th>Interpretation</th></tr>
+                    <tr><td>Naive Comparison</td><td>${naiveEffect.toFixed(2)}</td><td>${Math.abs(naiveEffect - trueEffect) > 2 ? "Likely confounded" : "Reasonable estimate"}</td></tr>
+                    <tr><td>PS Matching</td><td>${matchedEffect.toFixed(2)}</td><td>${Math.abs(matchedEffect - trueEffect) < Math.abs(naiveEffect - trueEffect) ? "Better estimate" : "Check balance"}</td></tr>
+                    <tr><td>True Effect</td><td>${trueEffect.toFixed(2)}</td><td>Simulation parameter</td></tr>
+                </table>
+                
+                <p><strong>Clinical Impact:</strong></p>
+                <p>• <span class="highlight">Estimated survival benefit: ${matchedEffect.toFixed(1)} months</span></p>
+                <p>• Bias reduction: ${((Math.abs(naiveEffect - trueEffect) - Math.abs(matchedEffect - trueEffect))/Math.abs(naiveEffect - trueEffect)*100).toFixed(1)}%</p>
+            `;
+
+            createPSChart(patients, matched);
+        }
+
+        function createPSChart(patients, matched) {
+            const ctx = document.getElementById('ps-chart').getContext('2d');
+            
+            if (charts.ps) charts.ps.destroy();
+
+            // Create propensity score distribution
+            const bins = 20;
+            const treatedHist = new Array(bins).fill(0);
+            const controlHist = new Array(bins).fill(0);
+            
+            patients.forEach(p => {
+                const bin = Math.min(Math.floor(p.propensityScore * bins), bins - 1);
+                if (p.treated === 1) {
+                    treatedHist[bin]++;
+                } else {
+                    controlHist[bin]++;
+                }
+            });
+
+            const labels = Array.from({length: bins}, (_, i) => (i / bins).toFixed(2));
+
+            charts.ps = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Treatment A',
+                        data: treatedHist,
+                        backgroundColor: 'rgba(47, 139, 139, 0.7)',
+                        borderColor: '#2f8b8b'
+                    }, {
+                        label: 'Treatment B',
+                        data: controlHist.map(x => -x), // Negative for mirror effect
+                        backgroundColor: 'rgba(255, 107, 107, 0.7)',
+                        borderColor: '#ff6b6b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Propensity Score Distribution (Mirror Histogram)'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Propensity Score'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Patient Count'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Assessment functions
+        function generateQuestions() {
+            currentQuestions = [];
+            const pools = Object.keys(questionPools);
+            
+            // Select one question from each pool
+            pools.forEach(pool => {
+                const questions = questionPools[pool];
+                const randomQ = questions[Math.floor(Math.random() * questions.length)];
+                currentQuestions.push(randomQ);
+            });
+
+            displayQuestions();
+        }
+
+        function displayQuestions() {
+            const container = document.getElementById('questions-container');
+            let html = '';
+            
+            currentQuestions.forEach((q, index) => {
+                // Shuffle answer options
+                const shuffledOptions = [...q.options];
+                const correctAnswer = shuffledOptions[q.correct];
+                
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+                
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                html += `
+                    <div class="question">
+                        <h4>Question ${index + 1}</h4>
+                        <p><strong>${q.question}</strong></p>
+                        ${shuffledOptions.map((option, i) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${i}" data-correct="${i === newCorrectIndex}">
+                                ${String.fromCharCode(65 + i)}. ${option}
+                            </label><br>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('check-btn').style.display = 'block';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            let total = currentQuestions.length;
+            let results = '<h4>Assessment Results</h4>';
+            
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const isCorrect = selected && selected.dataset.correct === 'true';
+                
+                if (isCorrect) correct++;
+                
+                results += `
+                    <p><strong>Question ${index + 1}:</strong> ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</p>
+                    <p><em>Explanation:</em> ${q.explanation}</p>
+                `;
+            });
+            
+            const percentage = (correct / total * 100).toFixed(1);
+            results = `<p><strong>Score: ${correct}/${total} (${percentage}%)</strong></p>` + results;
+            
+            document.getElementById('assessment-results').innerHTML = results;
+        }
+
+        // Utility functions
+        function normalDensity(x, mean, sd) {
+            return (1 / (sd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mean) / sd, 2));
+        }
+
+        function getApproximateTValue(t, df) {
+            // Simplified t-distribution CDF approximation
+            if (df >= 30) return normalCDF(t);
+            const a = df / (df + t * t);
+            return 0.5 + 0.5 * Math.sign(t) * Math.sqrt(1 - a);
+        }
+
+        function normalCDF(x) {
+            return 0.5 * (1 + erf(x / Math.sqrt(2)));
+        }
+
+        function erf(x) {
+            const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+            const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+        }
+
+        function calculatePower(effect, se) {
+            const z = effect / se;
+            const power = 1 - normalCDF(1.96 - z) + normalCDF(-1.96 - z);
+            return Math.max(0, Math.min(1, power));
+        }
+
+        function interpretCohenD(d) {
+            const absD = Math.abs(d);
+            if (absD < 0.2) return "small effect";
+            if (absD < 0.5) return "small to medium effect";
+            if (absD < 0.8) return "medium effect";
+            return "large effect";
+        }
+
+        // Initialize
+        window.onload = function() {
+            generateQuestions();
+        };
+    </script>
+</body>
+</html>
